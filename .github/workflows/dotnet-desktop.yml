@@ -27,13 +27,13 @@ jobs:
       run: dotnet restore
 
     - name: Build solution (${{ matrix.configuration }})
-      run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
+      run: dotnet build --no-restore --configuration ${{ matrix.configuration }} --verbosity detailed
 
     - name: Test solution (${{ matrix.configuration }})
-      run: dotnet test --configuration ${{ matrix.configuration }} --no-build
+      run: dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity detailed
 
     - name: Lint with dotnet-format
-      run: dotnet format --verify-no-changes
+      run: dotnet format --verify-no-changes --verbosity detailed
       continue-on-error: true 
 
     - name: Upload test results
