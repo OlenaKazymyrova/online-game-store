@@ -3,4 +3,4 @@ using OnlineGameStore.DAL.Repositories;
 
 namespace OnlineGameStore.DAL.Tests;
 
-public class GameRepositoryCreator : IRepositoryCreator<GameRepository, Game> { }
+public class GameRepositoryCreator : RepositoryCreator<GameRepository> { }
