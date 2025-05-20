@@ -1,4 +1,4 @@
-﻿namespace UI.Tests;
+﻿namespace OnlineGameStore.UI.Tests;
 
 public class UnitTest1
 {

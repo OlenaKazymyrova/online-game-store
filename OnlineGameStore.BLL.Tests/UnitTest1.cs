@@ -1,4 +1,4 @@
-﻿namespace BLL.Tests;
+﻿namespace OnlineGameStore.BLL.Tests;
 
 public class UnitTest1
 {

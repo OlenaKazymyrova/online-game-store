@@ -1,4 +1,4 @@
-﻿namespace DAL;
+﻿namespace OnlineGameStore.DAL;
 
 public class Class1
 {
