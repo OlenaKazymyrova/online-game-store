@@ -27,7 +27,7 @@ jobs:
       run: dotnet restore
 
     - name: Build solution (${{ matrix.configuration }})
-      run: dotnet build --no-restore --configuration ${{ matrix.configuration }} --verbosity normal
+      run: dotnet build --no-restore --configuration ${{ matrix.configuration }} --verbosity minimal
 
     - name: Test solution (${{ matrix.configuration }})
       run: dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal
