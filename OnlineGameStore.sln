@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{F99396D3-EE5F-4EC5-8CF2-E2FF6BAE0CDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineGameStore.UI", "OnlineGameStore.UI\OnlineGameStore.UI.csproj", "{F99396D3-EE5F-4EC5-8CF2-E2FF6BAE0CDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{798C7214-AA0F-4968-BDA6-42EB70F319F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineGameStore.BLL", "OnlineGameStore.BLL\OnlineGameStore.BLL.csproj", "{798C7214-AA0F-4968-BDA6-42EB70F319F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{8DB34720-30AD-4527-BA9C-47107B30DFBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineGameStore.DAL", "OnlineGameStore.DAL\OnlineGameStore.DAL.csproj", "{8DB34720-30AD-4527-BA9C-47107B30DFBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI.Tests", "UI.Tests\UI.Tests.csproj", "{7648FB21-8410-4CA3-A1CF-724FC916A1B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineGameStore.UI.Tests", "OnlineGameStore.UI.Tests\OnlineGameStore.UI.Tests.csproj", "{7648FB21-8410-4CA3-A1CF-724FC916A1B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL.Tests", "BLL.Tests\BLL.Tests.csproj", "{8E8896DE-2E22-4B02-9D76-27648073F433}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineGameStore.BLL.Tests", "OnlineGameStore.BLL.Tests\OnlineGameStore.BLL.Tests.csproj", "{8E8896DE-2E22-4B02-9D76-27648073F433}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL.Tests", "DAL.Tests\DAL.Tests.csproj", "{5854E286-438C-4121-A5A5-D953BD82D859}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineGameStore.DAL.Tests", "OnlineGameStore.DAL.Tests\OnlineGameStore.DAL.Tests.csproj", "{5854E286-438C-4121-A5A5-D953BD82D859}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

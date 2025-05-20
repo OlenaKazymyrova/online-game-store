@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <RootNamespace>DAL.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UI\UI.csproj" />
-    <ProjectReference Include="..\BLL\BLL.csproj" />
+    <ProjectReference Include="..\OnlineGameStore.DAL\OnlineGameStore.DAL.csproj" />
   </ItemGroup>
 
 </Project>

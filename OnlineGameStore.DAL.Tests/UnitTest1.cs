@@ -1,4 +1,4 @@
-﻿namespace DAL.Tests;
+﻿namespace OnlineGameStore.DAL.Tests;
 
 public class UnitTest1
 {
