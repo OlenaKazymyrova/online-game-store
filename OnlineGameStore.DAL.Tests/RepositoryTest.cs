@@ -1,6 +1,6 @@
 ﻿namespace OnlineGameStore.DAL.Tests;
 
-public class UnitTest1
+public class RepositoryTest
 {
     [Fact]
     public void Test1()
