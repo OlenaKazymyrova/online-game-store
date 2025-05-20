@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace OnlineGameStore.DAL.Tests;
+namespace OnlineGameStore.DAL.Tests.RepositoryCreators;
 
 public class RepositoryCreator<T>
 {

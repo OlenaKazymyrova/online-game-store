@@ -1,6 +1,7 @@
 ﻿using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
-namespace OnlineGameStore.DAL.Tests;
+namespace OnlineGameStore.DAL.Tests.Tests;
 
 public class GameRepositoryTests
 {
