@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.DAL;
 

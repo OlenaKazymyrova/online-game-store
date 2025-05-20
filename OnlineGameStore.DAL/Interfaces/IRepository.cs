@@ -1,4 +1,4 @@
-namespace OnlineGameStore.DAL;
+namespace OnlineGameStore.DAL.Interfaces;
 
 public interface IRepository<T>
 {

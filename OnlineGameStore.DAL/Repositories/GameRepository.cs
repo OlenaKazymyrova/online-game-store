@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Interfaces;
 
-namespace OnlineGameStore.DAL;
+namespace OnlineGameStore.DAL.Repositories;
 
 public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 {

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace OnlineGameStore.DAL;
+namespace OnlineGameStore.DAL.Entities;
 
 public class Game
 {
