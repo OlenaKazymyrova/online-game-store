@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.DAL.Tests;
 
