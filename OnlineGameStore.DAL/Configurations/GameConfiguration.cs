@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineGameStore.DAL.Entities;
 
-namespace OnlineGameStore.DAL;
+namespace OnlineGameStore.DAL.Configurations;
 
 public class GameConfiguration : IEntityTypeConfiguration<Game>
 {
