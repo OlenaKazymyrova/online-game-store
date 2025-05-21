@@ -14,7 +14,6 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
 
         builder.Property(g => g.Id)
             .HasColumnName("id")
-            .ValueGeneratedOnAdd()
             .IsRequired();
 
         builder.Property(g => g.Name)
@@ -28,15 +27,12 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .HasMaxLength(4096);
 
         builder.Property(g => g.Publisher)
-            .HasColumnName("publisher_id")
-            .IsRequired();
+            .HasColumnName("publisher_id");
 
         builder.Property(g => g.Genre)
-            .HasColumnName("genre_id")
-            .IsRequired();
+            .HasColumnName("genre_id");
 
         builder.Property(g => g.License)
-            .HasColumnName("license_id")
-            .IsRequired();
+            .HasColumnName("license_id");
     }
 }
