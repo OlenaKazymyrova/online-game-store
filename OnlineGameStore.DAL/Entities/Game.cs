@@ -4,12 +4,12 @@ namespace OnlineGameStore.DAL.Entities;
 
 public class Game
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     [MaxLength(256)]
     public required string Name { get; set; } = string.Empty;
     [MaxLength(4096)]
     public required string Description { get; set; } = string.Empty;
-    public required int Publisher { get; set; }
-    public required int Genre { get; set; }
-    public required int License { get; set; }
+    public required Guid Publisher { get; set; }
+    public required Guid Genre { get; set; }
+    public required Guid License { get; set; }
 }

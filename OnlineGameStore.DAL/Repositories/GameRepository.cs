@@ -6,7 +6,7 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 {
-    public async Task<Game?> GetByIdAsync(int id)
+    public async Task<Game?> GetByIdAsync(Guid id)
     {
         return await context.Games.FirstOrDefaultAsync(g => g.Id == id);
     }
@@ -54,7 +54,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var game = await context.Games.FirstOrDefaultAsync(g => g.Id == id);
         if (game == null)
