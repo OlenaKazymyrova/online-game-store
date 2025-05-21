@@ -32,7 +32,19 @@ jobs:
     - name: Test solution (${{ matrix.configuration }})
       run: dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal
 
+
+  lint: 
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps: 
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 9 SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
     - name: Lint with dotnet-format
       run: dotnet format --verify-no-changes --verbosity normal
-      continue-on-error: true 
 
