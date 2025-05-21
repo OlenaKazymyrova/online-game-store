@@ -11,9 +11,9 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
         return await context.Games.FirstOrDefaultAsync(g => g.Id == id);
     }
 
-    public Task<IEnumerable<Game>> GetAllAsync()
+    public async Task<List<Game>> GetAllAsync()
     {
-        return Task.FromResult(context.Games.AsEnumerable());
+        return await context.Games.ToListAsync();
     }
 
     public async Task<Game?> AddAsync(Game entity)
@@ -56,7 +56,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var game = context.Games.FirstOrDefault(g => g.Id == id);
+        var game = await context.Games.FirstOrDefaultAsync(g => g.Id == id);
         if (game == null)
         {
             return false;
