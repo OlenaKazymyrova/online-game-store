@@ -15,14 +15,14 @@ public class GameRepositoryTests
         {
             Name = "Test Game",
             Description = "Test Description",
-            Publisher = 1,
-            Genre = 1,
-            License = 1
+            Publisher = Guid.NewGuid(),
+            Genre = Guid.NewGuid(),
+            License = Guid.NewGuid()
         };
         var result = await repository.AddAsync(game);
 
         Assert.NotNull(result);
-        Assert.True(result.Id > 0);
+        Assert.True(result.Id != Guid.Empty);
         Assert.Equal(game.Name, result.Name);
         Assert.Equal(game.Description, result.Description);
         Assert.Equal(game.Publisher, result.Publisher);
@@ -38,9 +38,9 @@ public class GameRepositoryTests
         {
             Name = "Test Game",
             Description = "Test Description",
-            Publisher = 1,
-            Genre = 1,
-            License = 1
+            Publisher = Guid.NewGuid(),
+            Genre = Guid.NewGuid(),
+            License = Guid.NewGuid()
         };
         var addedGame = await repository.AddAsync(game);
         var result = await repository.GetByIdAsync(addedGame!.Id);
@@ -62,17 +62,17 @@ public class GameRepositoryTests
         {
             Name = "Test Game 1",
             Description = "Test Description 1",
-            Publisher = 1,
-            Genre = 1,
-            License = 1
+            Publisher = Guid.NewGuid(),
+            Genre = Guid.NewGuid(),
+            License = Guid.NewGuid()
         };
         var game2 = new Game
         {
             Name = "Test Game 2",
             Description = "Test Description 2",
-            Publisher = 2,
-            Genre = 2,
-            License = 2
+            Publisher = Guid.NewGuid(),
+            Genre = Guid.NewGuid(),
+            License = Guid.NewGuid()
         };
         await repository.AddAsync(game1);
         await repository.AddAsync(game2);
@@ -91,9 +91,9 @@ public class GameRepositoryTests
         {
             Name = "Test Game",
             Description = "Test Description",
-            Publisher = 1,
-            Genre = 1,
-            License = 1
+            Publisher = Guid.NewGuid(),
+            Genre = Guid.NewGuid(),
+            License = Guid.NewGuid()
         };
         var addedGame = await repository.AddAsync(game);
         addedGame!.Name = "Updated Game";
@@ -110,9 +110,9 @@ public class GameRepositoryTests
         {
             Name = "Test Game",
             Description = "Test Description",
-            Publisher = 1,
-            Genre = 1,
-            License = 1
+            Publisher = Guid.NewGuid(),
+            Genre = Guid.NewGuid(),
+            License = Guid.NewGuid()
         };
         var addedGame = await repository.AddAsync(game);
         var result = await repository.DeleteAsync(addedGame!.Id);
