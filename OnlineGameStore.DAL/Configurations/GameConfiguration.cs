@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OnlineGameStore.DAL.Constants;
 using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.DAL.Configurations;
@@ -19,12 +20,12 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.Property(g => g.Name)
             .HasColumnName("name")
             .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(GameConstants.NameMaxLength);
 
         builder.Property(g => g.Description)
             .HasColumnName("description")
             .IsRequired()
-            .HasMaxLength(4096);
+            .HasMaxLength(GameConstants.DescriptionMaxLength);
 
         builder.Property(g => g.Publisher)
             .HasColumnName("publisher_id");
