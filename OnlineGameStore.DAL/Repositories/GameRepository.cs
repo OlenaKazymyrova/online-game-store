@@ -8,7 +8,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 {
     public async Task<Game?> GetByIdAsync(Guid id)
     {
-        return await context.Games.FirstOrDefaultAsync(g => g.Id == id);
+        return await context.Games.FindAsync(id);
     }
 
     public async Task<IEnumerable<Game>> GetAllAsync()
@@ -38,7 +38,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 
     public async Task<bool> UpdateAsync(Game entity)
     {
-        var game = await context.Games.FirstOrDefaultAsync(g => g.Id == entity.Id);
+        var game = await context.Games.FindAsync(entity.Id);
         if (game == null)
         {
             return false;
@@ -56,7 +56,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        var game = await context.Games.FirstOrDefaultAsync(g => g.Id == id);
+        var game = await context.Games.FindAsync(id);
         if (game == null)
         {
             return false;
