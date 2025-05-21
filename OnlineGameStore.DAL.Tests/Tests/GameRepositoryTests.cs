@@ -101,7 +101,7 @@ public class GameRepositoryTests
 
         Assert.True(result);
     }
-    
+
     [Fact]
     public async Task DeleteAsync_DeletesGame()
     {
