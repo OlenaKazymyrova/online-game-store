@@ -11,7 +11,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
         return await context.Games.FirstOrDefaultAsync(g => g.Id == id);
     }
 
-    public async Task<List<Game>> GetAllAsync()
+    public async Task<IEnumerable<Game>> GetAllAsync()
     {
         return await context.Games.ToListAsync();
     }
