@@ -4,8 +4,15 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class GameService(IGameRepository repository) : IGameService
+public class GameService : IGameService
 {
+    private readonly IGameRepository _repository;
+
+    public GameService(IGameRepository repository)
+    {
+        _repository = repository;
+    }
+
     public async Task<GameDto?> GetByIdAsync(Guid id)
     {
         throw new NotImplementedException();
