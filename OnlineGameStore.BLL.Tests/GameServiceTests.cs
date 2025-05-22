@@ -1,4 +1,6 @@
-﻿using OnlineGameStore.BLL.Services;
+﻿using AutoMapper;
+using OnlineGameStore.BLL.Mapping;
+using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 
@@ -11,6 +13,9 @@ public class GameServiceTests
 
     public GameServiceTests()
     {
+        var config = new MapperConfiguration(cfg => { cfg.AddProfile<MappingProfile>(); });
+        var mapper = config.CreateMapper();
+
         var gen = new GameDataGenerator();
 
         var data = gen.Generate(EntityCount);
@@ -18,6 +23,6 @@ public class GameServiceTests
 
         var mockRepository = repMock.Create();
 
-        _gameService = new GameService(mockRepository);
+        _gameService = new GameService(mockRepository, mapper);
     }
 }
