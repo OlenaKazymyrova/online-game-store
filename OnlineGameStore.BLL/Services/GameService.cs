@@ -1,6 +1,5 @@
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Services;
@@ -17,12 +16,12 @@ public class GameService(IGameRepository repository) : IGameService
         throw new NotImplementedException();
     }
 
-    public async Task<GameDto?> AddAsync(Game entity)
+    public async Task<GameDto?> AddAsync(GameDto game)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<bool> UpdateAsync(Game entity)
+    public async Task<bool> UpdateAsync(GameDto game)
     {
         throw new NotImplementedException();
     }

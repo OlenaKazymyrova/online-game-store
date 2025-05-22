@@ -1,10 +1,10 @@
 ﻿namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IService<in T1, T2>
+public interface IService<T>
 {
-    Task<T2?> GetByIdAsync(Guid id);
-    Task<IEnumerable<T2>> GetAllAsync();
-    Task<T2?> AddAsync(T1 entity);
-    Task<bool> UpdateAsync(T1 entity);
+    Task<T?> GetByIdAsync(Guid id);
+    Task<IEnumerable<T>> GetAllAsync();
+    Task<T?> AddAsync(T dto);
+    Task<bool> UpdateAsync(T dto);
     Task<bool> DeleteAsync(Guid id);
 }
