@@ -1,3 +1,4 @@
+using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
@@ -7,8 +8,9 @@ namespace OnlineGameStore.BLL.Services;
 public class GameService : IGameService
 {
     private readonly IGameRepository _repository;
+    private readonly IMapper _mapper;
 
-    public GameService(IGameRepository repository)
+    public GameService(IGameRepository repository, IMapper mapper)
     {
         _repository = repository;
     }
