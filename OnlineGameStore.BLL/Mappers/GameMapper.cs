@@ -13,9 +13,9 @@ public abstract class GameMapper : IMapper<Game, GameDto>
             Id = source.Id,
             Name = source.Name,
             Description = source.Description,
-            Publisher = source.Publisher,
-            Genre = source.Genre,
-            License = source.License
+            PublisherId = source.Publisher,
+            GenreId = source.Genre,
+            LicenseId = source.License
         };
     }
 
@@ -26,9 +26,9 @@ public abstract class GameMapper : IMapper<Game, GameDto>
             Id = source.Id,
             Name = source.Name,
             Description = source.Description,
-            Publisher = source.Publisher,
-            Genre = source.Genre,
-            License = source.License
+            Publisher = source.PublisherId,
+            Genre = source.GenreId,
+            License = source.LicenseId
         };
     }
 
