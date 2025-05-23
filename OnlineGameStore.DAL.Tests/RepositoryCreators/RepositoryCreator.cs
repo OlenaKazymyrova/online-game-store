@@ -1,16 +1,36 @@
+using OnlineGameStore.DAL.Repositories;
+
+namespace OnlineGameStore.DAL.Tests.Creators;
+
 using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL;
+using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.DAL.Repositories;
 
-namespace OnlineGameStore.DAL.Tests.RepositoryCreators;
 
-public class RepositoryCreator<T>
+public class RepositoryCreator<T> where T : class
 {
-    public T Create()
+    private readonly OnlineGameStoreDbContext _context;
+
+    public RepositoryCreator()
     {
         var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        var context = new OnlineGameStoreDbContext(options);
-        return (T)Activator.CreateInstance(typeof(T), context)!;
+        _context = new OnlineGameStoreDbContext(options);
     }
-}
+
+    public T CreateRepository()
+    {
+        if (typeof(T) == typeof(IGameRepository))
+            return (T)(object)new GameRepository(_context);
+        if (typeof(T) == typeof(ILicenseRepository))
+            return (T)(object)new LicenseRepository(_context);
+            
+        throw new InvalidOperationException($"Unsupported repository type: {typeof(T)}");
+    }
+
+    
+
+}    

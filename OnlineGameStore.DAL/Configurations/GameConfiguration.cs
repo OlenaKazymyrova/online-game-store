@@ -33,7 +33,6 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.Property(g => g.Genre)
             .HasColumnName("genre_id");
 
-        builder.Property(g => g.License)
-            .HasColumnName("license_id");
+        
     }
 }

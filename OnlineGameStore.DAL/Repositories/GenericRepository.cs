@@ -49,9 +49,10 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
 
-    public  async Task Add(TEntity entity)
+    public async Task<TEntity> Add(TEntity entity)
     {
         await _dbSet.AddAsync(entity);
+        return entity;
     }
 
 

@@ -1,26 +1,46 @@
-// UnitOfWorkDemo.Infrastructure.Repositories
-
 using OnlineGameStore.DAL;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Repositories;
 using OnlineGameStore.DAL.Interfaces;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly OnlineGameStoreDbContext _dbContext;
-    
-    public ILicenseRepository Licenses { get; }
+    private readonly OnlineGameStoreDbContext _dbContext ;
+    private IGameRepository? _gameRepository;
+    private ILicenseRepository? _licenseRepository;
     //add other interfaces of repositories
 
-    public UnitOfWork(
-        OnlineGameStoreDbContext dbContext,
-        ILicenseRepository licenseRepository
-      //add other interfaces of repositories
-      ) 
+    public UnitOfWork(OnlineGameStoreDbContext dbContext)
     {
         _dbContext = dbContext;
-        Licenses = licenseRepository;
-        //add other interfaces of repositories
+    }
+    
+    public IGameRepository Games
+    {
+        get
+        {
+            if (_gameRepository == null)
+            {
+                _gameRepository = new GameRepository(_dbContext);
+            }
+            return _gameRepository;
+        }
     }
 
+    
+    public ILicenseRepository Licenses
+    {
+        get
+        {
+            if (_licenseRepository == null)
+            {
+                _licenseRepository = new LicenseRepository(_dbContext);
+            }
+            return _licenseRepository;
+        }
+    }
+    
+    
     public int Save()
     {
         return _dbContext.SaveChanges();

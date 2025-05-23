@@ -14,7 +14,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
         );
 
     Task<TEntity?> GetById(Guid id); 
-    Task Add(TEntity entity);
+    Task<TEntity?> Add(TEntity entity);
     void Update(TEntity entity);
     void Delete(TEntity entityToDelete);
     void DeleteById(Guid id);

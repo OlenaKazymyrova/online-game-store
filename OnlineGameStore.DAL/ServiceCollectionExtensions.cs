@@ -14,15 +14,12 @@ public static class ServiceCollectionExtensions
             options.UseSqlServer(configuration.GetConnectionString("ConnString"))); // Replace with the actual one
 
         services.AddScoped<IGameRepository, GameRepository>();
-
-        
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        
         services.AddScoped<ILicenseRepository, LicenseRepository>();
         //add other interfaces of repositories
         
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         
-
+        
 
         return services;
     }
