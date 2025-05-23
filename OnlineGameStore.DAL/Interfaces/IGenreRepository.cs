@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OnlineGameStore.DAL.Entities;
 
-namespace OnlineGameStore.DAL.Interfaces
-{
-    internal interface Interface1
-    {
-    }
-}
+namespace OnlineGameStore.DAL.Interfaces;
+
+public interface IGenreRepository : IRepository<Genre> { }
