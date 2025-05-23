@@ -7,7 +7,7 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
-    
+
     private readonly DbContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
 
@@ -17,7 +17,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
         _dbSet = dbContext.Set<TEntity>();
     }
 
-    public  async Task<IEnumerable<TEntity>> Get(
+    public async Task<IEnumerable<TEntity>> Get(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
@@ -28,7 +28,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
         {
             query = include(query);
         }
-        
+
         if (filter != null)
         {
             query = query.Where(filter);
@@ -42,8 +42,8 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
         return await query.ToListAsync();
     }
 
-    
-    public  async Task<TEntity?> GetById(Guid id)
+
+    public async Task<TEntity?> GetById(Guid id)
     {
         return await _dbSet.FindAsync(id);
     }
@@ -56,33 +56,33 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
 
-    public  void Update(TEntity entity)
+    public void Update(TEntity entity)
     {
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
     }
 
-    
-    public  void  DeleteById(Guid id)
+
+    public void DeleteById(Guid id)
     {
-        TEntity entityToDelete =  _dbSet.Find(id);
-        
+        TEntity entityToDelete = _dbSet.Find(id);
+
         if (entityToDelete != null)
         {
             Delete(entityToDelete);
         }
-    } 
-    
-    
-    public  void Delete(TEntity entityToDelete)
+    }
+
+
+    public void Delete(TEntity entityToDelete)
     {
         if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
         {
             _dbSet.Attach(entityToDelete);
         }
         _dbSet.Remove(entityToDelete);
-        
+
     }
 
-    
+
 }

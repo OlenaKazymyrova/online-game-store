@@ -13,11 +13,11 @@ public interface IGenericRepository<TEntity> where TEntity : class
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null
         );
 
-    Task<TEntity?> GetById(Guid id); 
+    Task<TEntity?> GetById(Guid id);
     Task<TEntity?> Add(TEntity entity);
     void Update(TEntity entity);
     void Delete(TEntity entityToDelete);
     void DeleteById(Guid id);
 
-    
+
 }

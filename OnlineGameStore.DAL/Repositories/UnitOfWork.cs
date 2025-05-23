@@ -5,7 +5,7 @@ using OnlineGameStore.DAL.Interfaces;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly OnlineGameStoreDbContext _dbContext ;
+    private readonly OnlineGameStoreDbContext _dbContext;
     private IGameRepository? _gameRepository;
     private ILicenseRepository? _licenseRepository;
     //add other interfaces of repositories
@@ -14,7 +14,7 @@ public class UnitOfWork : IUnitOfWork
     {
         _dbContext = dbContext;
     }
-    
+
     public IGameRepository Games
     {
         get
@@ -27,7 +27,7 @@ public class UnitOfWork : IUnitOfWork
         }
     }
 
-    
+
     public ILicenseRepository Licenses
     {
         get
@@ -39,13 +39,13 @@ public class UnitOfWork : IUnitOfWork
             return _licenseRepository;
         }
     }
-    
-    
+
+
     public int Save()
     {
         return _dbContext.SaveChanges();
     }
-    
+
 
     public void Dispose()
     {

@@ -27,10 +27,10 @@ public class RepositoryCreator<T> where T : class
             return (T)(object)new GameRepository(_context);
         if (typeof(T) == typeof(ILicenseRepository))
             return (T)(object)new LicenseRepository(_context);
-            
+
         throw new InvalidOperationException($"Unsupported repository type: {typeof(T)}");
     }
 
-    
 
-}    
+
+}

@@ -5,5 +5,5 @@ namespace OnlineGameStore.DAL.Interfaces;
 
 public interface ILicenseRepository : IGenericRepository<License>
 {
-    
+
 }

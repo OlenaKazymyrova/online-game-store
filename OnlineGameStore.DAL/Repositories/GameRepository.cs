@@ -4,7 +4,7 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public class GameRepository: GenericRepository<Game>, IGameRepository
+public class GameRepository : GenericRepository<Game>, IGameRepository
 {
     public GameRepository(OnlineGameStoreDbContext dbContext) : base(dbContext)
     {

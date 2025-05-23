@@ -9,7 +9,7 @@ public class LicenseConfiguration : IEntityTypeConfiguration<License>
     public void Configure(EntityTypeBuilder<License> builder)
     {
         builder.ToTable("Licenses");
-        
+
         builder.HasKey(l => l.Id);
 
         builder.Property(l => l.GameId)
@@ -24,7 +24,7 @@ public class LicenseConfiguration : IEntityTypeConfiguration<License>
             .HasDefaultValue(0m);
 
         builder.HasCheckConstraint("CK_License_Cost", "Cost>=0");
-        
+
         builder.HasOne(l => l.Game).
             WithMany(g => g.Licenses)
             .HasForeignKey(l => l.GameId)

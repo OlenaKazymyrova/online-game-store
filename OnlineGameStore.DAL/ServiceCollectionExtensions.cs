@@ -16,10 +16,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<ILicenseRepository, LicenseRepository>();
         //add other interfaces of repositories
-        
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        
-        
+
+
 
         return services;
     }
