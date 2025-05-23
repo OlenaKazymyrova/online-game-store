@@ -1,5 +1,6 @@
 ﻿using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Interaces;
 
 namespace OnlineGameStore.DAL.Interfaces;
 
-public interface IGameRepository : IRepository<Game> { }
+public interface IGameRepository : IGenericRepository<Game> { }
