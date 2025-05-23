@@ -13,7 +13,7 @@ public class LicenseConfiguration : IEntityTypeConfiguration<License>
         builder.HasKey(l => l.Id);
 
         builder.Property(l => l.GameId)
-            .IsRequired();
+            .IsRequired(); // add check that such id exist
 
         builder.Property(l => l.Description)
             .HasMaxLength(500)
