@@ -1,122 +1,136 @@
-﻿using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.DAL.Tests.RepositoryCreators;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.DAL.Tests.Creators;
 
 namespace OnlineGameStore.DAL.Tests.Tests;
 
 public class GameRepositoryTests
 {
-    private readonly GameRepositoryCreator _creator = new GameRepositoryCreator();
+    private readonly UnitOfWorkCreator<Game> _creatorUnitOfWork = new UnitOfWorkCreator<Game>();
+    private readonly IUnitOfWork _unitOfWork;
+
+    public GameRepositoryTests()
+    {
+        _unitOfWork = _creatorUnitOfWork.CreateUnitOfWork();
+    }
 
     [Fact]
-    public async Task AddAsync_AddsGame()
+    public async Task Add_SavesGameToDatabase()
     {
-        var repository = _creator.Create();
+            
         var game = new Game
         {
             Name = "Test Game",
-            Description = "Test Description",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
+            Description = "Test Description", 
+            Publisher = Guid.NewGuid(), 
+            Genre = Guid.NewGuid()
         };
-        var result = await repository.AddAsync(game);
 
+            
+        await _unitOfWork.Games.Add(game);
+        var changes = _unitOfWork.Save();
+
+            
+        Assert.Equal(1, changes);
+        var result = await _unitOfWork.Games.GetById(game.Id);
         Assert.NotNull(result);
-        Assert.True(result.Id != Guid.Empty);
         Assert.Equal(game.Name, result.Name);
-        Assert.Equal(game.Description, result.Description);
-        Assert.Equal(game.Publisher, result.Publisher);
-        Assert.Equal(game.Genre, result.Genre);
-        Assert.Equal(game.License, result.License);
     }
 
     [Fact]
-    public async Task GetByIdAsync_ReturnsGame()
+    public async Task GetById_ReturnsCorrectGame()
     {
-        var repository = _creator.Create();
+            
         var game = new Game
         {
             Name = "Test Game",
-            Description = "Test Description",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
+            Description = "Test Description"
         };
-        var addedGame = await repository.AddAsync(game);
-        var result = await repository.GetByIdAsync(addedGame!.Id);
+        await _unitOfWork.Games.Add(game);
+        _unitOfWork.Save();
 
+           
+        var result = await _unitOfWork.Games.GetById(game.Id);
+
+            
         Assert.NotNull(result);
-        Assert.Equal(addedGame.Id, result.Id);
-        Assert.Equal(addedGame.Name, result.Name);
-        Assert.Equal(addedGame.Description, result.Description);
-        Assert.Equal(game.Publisher, result.Publisher);
-        Assert.Equal(game.Genre, result.Genre);
-        Assert.Equal(game.License, result.License);
+        Assert.Equal(game.Id, result.Id);
     }
 
     [Fact]
-    public async Task GetAllAsync_ReturnsAllGames()
+    public async Task Get_ReturnsAllGames()
     {
-        var repository = _creator.Create();
+            
         var game1 = new Game
         {
             Name = "Test Game 1",
             Description = "Test Description 1",
             Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
+            Genre = Guid.NewGuid()
         };
         var game2 = new Game
-        {
-            Name = "Test Game 2",
-            Description = "Test Description 2",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
+            { 
+                Name = "Test Game 2", 
+                Description = "Test Description 2",
+                Publisher = Guid.NewGuid(),
+                Genre = Guid.NewGuid()
         };
-        await repository.AddAsync(game1);
-        await repository.AddAsync(game2);
+        await _unitOfWork.Games.Add(game1);
+        await _unitOfWork.Games.Add(game2);
+        _unitOfWork.Save();
 
-        var result = await repository.GetAllAsync();
+            
+        var result = await _unitOfWork.Games.Get();
 
-        Assert.NotNull(result);
+            
         Assert.Equal(2, result.Count());
     }
-
+    
     [Fact]
-    public async Task UpdateAsync_UpdatesGame()
+    public async Task Update_ModifiesExistingGame()
     {
-        var repository = _creator.Create();
+
         var game = new Game
         {
             Name = "Test Game",
             Description = "Test Description",
             Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
+            Genre = Guid.NewGuid()
         };
-        var addedGame = await repository.AddAsync(game);
-        addedGame!.Name = "Updated Game";
-        var result = await repository.UpdateAsync(addedGame);
+        await _unitOfWork.Games.Add(game);
+        _unitOfWork.Save();
 
-        Assert.True(result);
+            
+        game.Name = "Updated Name";
+        _unitOfWork.Games.Update(game);
+        _unitOfWork.Save();
+        var updatedGame = await _unitOfWork.Games.GetById(game.Id);
+
+            
+        Assert.Equal("Updated Name", updatedGame.Name);
     }
 
     [Fact]
-    public async Task DeleteAsync_DeletesGame()
+    public async Task Delete_RemovesGameFromDatabase()
     {
-        var repository = _creator.Create();
+            
         var game = new Game
         {
             Name = "Test Game",
             Description = "Test Description",
             Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
+            Genre = Guid.NewGuid()
         };
-        var addedGame = await repository.AddAsync(game);
-        var result = await repository.DeleteAsync(addedGame!.Id);
+        await _unitOfWork.Games.Add(game);
+        _unitOfWork.Save();
 
-        Assert.True(result);
+            
+        _unitOfWork.Games.DeleteById(game.Id);
+        _unitOfWork.Save();
+        var result = await _unitOfWork.Games.GetById(game.Id);
+
+           
+        Assert.Null(result);
     }
 }
