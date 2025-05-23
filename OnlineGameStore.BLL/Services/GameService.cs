@@ -13,6 +13,7 @@ public class GameService : IGameService
     public GameService(IGameRepository repository, IMapper mapper)
     {
         _repository = repository;
+        _mapper = mapper;
     }
 
     public async Task<GameDto?> GetByIdAsync(Guid id)
