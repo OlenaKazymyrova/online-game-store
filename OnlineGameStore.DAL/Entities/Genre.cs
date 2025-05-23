@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+namespace OnlineGameStore.DAL.Entities;
 
-namespace OnlineGameStore.DAL.Entities
+public class Genre
 {
-    internal class Class1
-    {
-    }
+    public required Guid Id { get; set; } = Guid.Empty;
+
+    public required string Name { get; set; } = string.Empty;
+
+    public required string Description { get; set; } = string.Empty;
+
+    public Genre? ParentGenre { get; set; } = default;
+
+    public ICollection<Game> Games { get; set; } = new List<Game>();
+
 }
