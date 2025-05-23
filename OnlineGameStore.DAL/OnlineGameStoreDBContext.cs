@@ -7,7 +7,9 @@ namespace OnlineGameStore.DAL;
 public class OnlineGameStoreDbContext(DbContextOptions<OnlineGameStoreDbContext> options) : DbContext(options)
 {
     public DbSet<Game> Games { get; set; }
+
     public DbSet<License> Licenses { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
