@@ -18,7 +18,8 @@ public class GameService : IGameService
 
     public async Task<GameDto?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var game = await _repository.GetByIdAsync(id);
+        return game == null ? null : _mapper.Map<GameDto>(game);
     }
 
     public async Task<IEnumerable<GameDto>> GetAllAsync()
