@@ -7,7 +7,7 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepository
 {
-    public async Task<Genre?> GetByIdAsync(Guid id) 
+    public async Task<Genre?> GetByIdAsync(Guid id)
     {
         return await context.Genres.FindAsync(id);
     }
@@ -19,7 +19,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
 
     public async Task<Genre?> AddAsync(Genre entity)
     {
-        if (entity.ParentId is not null 
+        if (entity.ParentId is not null
             && entity.ParentId != Guid.Empty
             && await context.Genres.FindAsync(entity.ParentId) is null)
         {
@@ -52,12 +52,12 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
             return false;
         }
 
-        if (entity.ParentId is Guid parentId 
+        if (entity.ParentId is Guid parentId
             && await context.Genres.FindAsync(parentId) is null)
         {
             return false;
         }
-        
+
         context.Entry(genre).CurrentValues.SetValues(entity);
 
         await context.SaveChangesAsync();

@@ -2,7 +2,7 @@
 
 namespace OnlineGameStore.DAL.Entities
 {
-    public class Genre 
+    public class Genre
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public required string Name { get; set; } = string.Empty;

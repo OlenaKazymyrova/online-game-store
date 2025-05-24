@@ -40,7 +40,7 @@ public class GenreRepositoryTests
         Assert.Equal(_testParentGenre.ParentGenre, result.ParentGenre);
     }
 
-    [Fact] 
+    [Fact]
     public async Task GetById_ReturnsById()
     {
         var repository = _creator.Create();
@@ -56,14 +56,14 @@ public class GenreRepositoryTests
 
     }
 
-    [Fact] 
+    [Fact]
     public async Task GetAllAsync_ReturnsAll()
     {
         var repository = _creator.Create();
 
         await repository.AddAsync(_testParentGenre);
         await repository.AddAsync(_testChildGenre);
-        
+
         var result = await repository.GetAllAsync();
 
         Assert.NotNull(result);
@@ -71,7 +71,7 @@ public class GenreRepositoryTests
 
     }
 
-    [Fact] 
+    [Fact]
     public async Task UpdateAsync_UpdatesGenre()
     {
         var repository = _creator.Create();
@@ -128,15 +128,15 @@ public class GenreRepositoryTests
         Assert.False(result);
     }
 
-    [Fact] 
-    public async Task DeleteAsync_DeeleteParent_SetsChildReferenceToNull()
+    [Fact]
+    public async Task DeleteAsync_DeleteParent_SetsChildReferenceToNull()
     {
         var repository = _creator.Create();
 
         // NB: _testGenre2.ParentId = _testGenre1.Id
-        await repository.AddAsync(_testParentGenre);     
+        await repository.AddAsync(_testParentGenre);
         await repository.AddAsync(_testChildGenre);
-        
+
         bool result = await repository.DeleteAsync(_testParentGenre.Id);
 
         var childGenre = await repository.GetByIdAsync(_testChildGenre.Id);
@@ -146,7 +146,7 @@ public class GenreRepositoryTests
         Assert.Null(childGenre.ParentGenre);
     }
 
-    [Fact] 
+    [Fact]
     public async Task DeleteAsync_DeleteChild_NoChangesMadeToParent()
     {
         var repository = _creator.Create();
@@ -173,7 +173,7 @@ public class GenreRepositoryTests
         Assert.Null(secondAddResult);
     }
 
-    [Fact] 
+    [Fact]
     public async Task AddAsync_AddGenreWithNonExistingParent_Fails()
     {
         var repository = _creator.Create();
@@ -184,6 +184,6 @@ public class GenreRepositoryTests
     }
 }
 
-    
+
 
 
