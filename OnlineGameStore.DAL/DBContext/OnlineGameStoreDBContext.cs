@@ -2,11 +2,14 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.DAL.Entities;
 
-namespace OnlineGameStore.DAL;
+namespace OnlineGameStore.DAL.DBContext;
+
 
 public class OnlineGameStoreDbContext(DbContextOptions<OnlineGameStoreDbContext> options) : DbContext(options)
 {
     public DbSet<Game> Games { get; set; }
+
+    public DbSet<Genre> Genres { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
