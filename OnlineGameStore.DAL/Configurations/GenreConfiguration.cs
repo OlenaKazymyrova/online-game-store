@@ -28,9 +28,10 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
             .HasColumnName("description")
             .HasMaxLength(GenreConstants.DescriptionMaxLength);
 
-        builder.Property(g => g.ParentGenre)
-            .IsRequired(false)
-            .HasColumnName("parent_genre");
+        builder.HasOne(g => g.ParentGenre)
+            .WithMany()
+            .HasForeignKey(g => g.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
 
     }
 }
