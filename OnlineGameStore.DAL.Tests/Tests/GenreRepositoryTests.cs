@@ -48,7 +48,7 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task GetById_ReturnsById()
+    public async Task GetByIdAsync_GenreIsPresent_ReturnsGenre()
     {
         var repository = _creator.Create();
 
@@ -64,6 +64,16 @@ public class GenreRepositoryTests
     }
 
     [Fact]
+    public async Task GetByIdAsync_GenreIsNotPresent_ReturnsNull()
+    {
+        var repository = _creator.Create();
+
+        var result = await repository.GetByIdAsync(Guid.NewGuid());
+
+        Assert.Null(result);
+    }
+
+    [Fact]
     public async Task GetAllAsync_ReturnsAll()
     {
         var repository = _creator.Create();
@@ -75,7 +85,6 @@ public class GenreRepositoryTests
 
         Assert.NotNull(result);
         Assert.True(result.Count() == _testGenreAmount);
-
     }
 
     [Fact]
@@ -111,6 +120,16 @@ public class GenreRepositoryTests
         bool updateResult = await repository.UpdateAsync(secondAddResult);
 
         Assert.False(updateResult);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_UpdateNonExistingGenre_Fails()
+    {
+        var repository = _creator.Create();
+
+        var result = await repository.UpdateAsync(_testParentGenre);
+
+        Assert.False(result);
     }
 
     [Fact]
