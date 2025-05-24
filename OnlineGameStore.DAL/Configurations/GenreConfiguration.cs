@@ -31,7 +31,7 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
         builder.HasOne(g => g.ParentGenre)
             .WithMany()
             .HasForeignKey(g => g.ParentId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
     }
 }
