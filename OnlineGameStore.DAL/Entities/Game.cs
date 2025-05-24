@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using OnlineGameStore.DAL.Constants;
 
 namespace OnlineGameStore.DAL.Entities;
 

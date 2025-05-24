@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace OnlineGameStore.DAL.Entities;
 
 public class Genre

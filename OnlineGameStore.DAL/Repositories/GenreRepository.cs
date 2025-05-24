@@ -35,7 +35,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
         }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine($"Error adding game: {ex.Message}");
+            Console.WriteLine($"Error adding genre: {ex.Message}");
             return null;
         }
         catch (Exception ex)
