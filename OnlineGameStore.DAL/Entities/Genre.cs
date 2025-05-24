@@ -1,16 +1,36 @@
-﻿
-namespace OnlineGameStore.DAL.Entities;
+﻿using System;
 
-public class Genre
+namespace OnlineGameStore.DAL.Entities
 {
-    public required Guid Id { get; set; } = Guid.Empty;
+    public class Genre 
+    {
+        public Guid Id { get; set; } = Guid.Empty;
+        public required string Name { get; set; } = string.Empty;
+        public required string Description { get; set; } = string.Empty;
+        public Guid? ParentId { get; set; } = Guid.Empty;
+        public Genre? ParentGenre { get; set; } = default;
 
-    public required string Name { get; set; } = string.Empty;
+        public override bool Equals(object? obj) =>
+            Equals(obj as Genre);
 
-    public required string Description { get; set; } = string.Empty;
+        public override int GetHashCode() =>
+            HashCode.Combine(Id, Name, Description, ParentId);
 
-    public Genre? ParentGenre { get; set; } = default;
+        public static bool operator ==(Genre? left, Genre? right) =>
+            Equals(left, right);
 
-    public ICollection<Game> Games { get; set; } = new List<Game>();
+        public static bool operator !=(Genre? left, Genre? right) =>
+            !Equals(left, right);
 
+        private bool Equals(Genre? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return Id == other.Id
+                && Name == other.Name
+                && Description == other.Description
+                && ParentId == other.ParentId;
+        }
+    }
 }
