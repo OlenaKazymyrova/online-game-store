@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OnlineGameStore.DAL;
+using OnlineGameStore.DAL.DBContext;
 
 #nullable disable
 
@@ -56,6 +56,45 @@ namespace OnlineGameStore.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("games", (string)null);
+                });
+
+            modelBuilder.Entity("OnlineGameStore.DAL.Entities.Genre", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4096)
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Genres", (string)null);
+                });
+
+            modelBuilder.Entity("OnlineGameStore.DAL.Entities.Genre", b =>
+                {
+                    b.HasOne("OnlineGameStore.DAL.Entities.Genre", "ParentGenre")
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ParentGenre");
                 });
 #pragma warning restore 612, 618
         }
