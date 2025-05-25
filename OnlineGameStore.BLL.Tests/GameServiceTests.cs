@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -27,23 +28,42 @@ public class GameServiceTests
 
         _gameService = new GameService(mockRepository, mapper);
     }
-    
+
     [Fact]
     public async Task GetByIdAsync_ShouldReturnGame_WhenGameExists()
     {
         var game = _data[0];
-        
+
         var result = await _gameService.GetByIdAsync(game.Id);
-        
+
         Assert.NotNull(result);
         Assert.Equal(game.Id, result.Id);
     }
-    
+
     [Fact]
     public async Task GetByIdAsync_ShouldReturnNull_WhenGameDoesNotExist()
     {
         var result = await _gameService.GetByIdAsync(Guid.NewGuid());
-        
+
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task AddAsync_ShouldReturnGame()
+    {
+        var newGame = new GameDto
+        {
+            Id = Guid.NewGuid(),
+            Name = "New Game",
+            Description = "Action",
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid()
+        };
+
+        var result = await _gameService.AddAsync(newGame);
+
+        Assert.NotNull(result);
+        Assert.Equal(newGame.Id, result.Id);
     }
 }
