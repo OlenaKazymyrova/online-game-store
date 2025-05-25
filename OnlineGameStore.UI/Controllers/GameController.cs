@@ -5,6 +5,7 @@ using OnlineGameStore.BLL.Interfaces;
 namespace OnlineGameStore.UI.Controllers;
 
 [Route("games")]
+[ApiController]
 public class GameController : ControllerBase
 {
     private readonly IGameService _service;
@@ -40,6 +41,6 @@ public class GameController : ControllerBase
             return BadRequest("Failed to create the game.");
         }
 
-        return CreatedAtAction("Create", new { id = createdGame.Id }, createdGame);
+        return Created($"/games/{createdGame.Id}", createdGame);
     }
 }
