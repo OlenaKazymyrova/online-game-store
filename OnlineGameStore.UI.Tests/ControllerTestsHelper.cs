@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using OnlineGameStore.DAL;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.UI.Tests.DataGenerators;
+using OnlineGameStore.UI.Tests.ServiceMockCreators;
 
 namespace OnlineGameStore.UI.Tests;
 
@@ -15,15 +19,14 @@ public class ControllerTestsHelper : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureServices(services =>
+        var gen = new GameDtoDataGenerator();
+        var data = gen.Generate(100);
+        var gameService = new GameServiceMockCreator(data).Create();
+
+        builder.ConfigureTestServices(services =>
         {
-            var dbContext = services
-                .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<OnlineGameStoreDbContext>));
-
-            if (dbContext != null)
-                services.Remove(dbContext);
-
-            services.AddDbContext<OnlineGameStoreDbContext>(options => { options.UseInMemoryDatabase("TestDb"); });
+            services.RemoveAll<IGameService>();
+            services.AddSingleton(gameService);
         });
     }
 }
