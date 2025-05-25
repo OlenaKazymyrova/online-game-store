@@ -19,17 +19,16 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
             LicenseId = Guid.NewGuid()
         };
 
-        var request1 = await Client.PostAsJsonAsync("/games", newGame);
-        Assert.Equal(HttpStatusCode.Created, request1.StatusCode);
-        var game = await request1.Content.ReadFromJsonAsync<GameDto>();
+        var postRequest = await Client.PostAsJsonAsync("/games", newGame);
+        Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
+
+        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
         var gameId = game!.Id;
 
-        var request2 = new HttpRequestMessage(HttpMethod.Get, $"/games/{gameId}");
-        var response = await Client.SendAsync(request2);
+        var getRequest = await Client.GetAsync($"games/{gameId}");
+        Assert.Equal(HttpStatusCode.OK, getRequest.StatusCode);
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var fetchedGame = await response.Content.ReadFromJsonAsync<GameDto>();
+        var fetchedGame = await getRequest.Content.ReadFromJsonAsync<GameDto>();
         Assert.NotNull(fetchedGame);
         Assert.Equal(gameId, fetchedGame.Id);
     }
@@ -38,10 +37,9 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
     public async Task GetGameById_ShouldReturnNotFound_WhenGameDoesNotExist()
     {
         var newId = Guid.NewGuid().ToString();
-        var request = new HttpRequestMessage(HttpMethod.Get, "/games/" + newId);
-        var response = await Client.SendAsync(request);
+        var request = await Client.GetAsync($"games/{newId}");
 
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, request.StatusCode);
     }
 
     [Fact]
@@ -58,6 +56,14 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
         };
 
         var request = await Client.PostAsJsonAsync("/games", newGame);
+        if (request.StatusCode == HttpStatusCode.InternalServerError)
+        {
+            var errorContent = await request.Content.ReadAsStringAsync();
+            throw new Exception($"Internal Server Error: {errorContent}");
+        }
+
+        Assert.Equal(HttpStatusCode.Created, request.StatusCode);
+
         var createdGame = await request.Content.ReadFromJsonAsync<GameDto>();
 
         Assert.NotNull(createdGame);
