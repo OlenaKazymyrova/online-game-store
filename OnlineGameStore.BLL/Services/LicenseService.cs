@@ -37,15 +37,6 @@ public class LicenseService: ILicenseService
         return _mapper.Map<LicenseResponseDto>(license);
     }
     
-    public async Task<LicenseResponseDto> GetByGameIdAsync(Guid gameId)
-    {
-        License license = await _licenseRepository.GetAsync(filter:l=>l.GameId == gameId).FirstOrDefaultAsync();
-        if (license == null) {
-            throw new NotFoundException($"Game with {gameId} was not found");
-        }
-
-        return _mapper.Map<LicenseResponseDto>(license);
-    }
 
     public async Task<LicenseResponseDto> CreateAsync(Guid gameId, LicenseDto licenseCreateDto)
     {
