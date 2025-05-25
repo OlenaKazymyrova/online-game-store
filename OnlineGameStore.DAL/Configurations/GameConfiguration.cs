@@ -37,6 +37,6 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.HasOne(g => g.License)
             .WithOne(l => l.Game)
             .HasForeignKey<License>(l => l.GameId)
-            .IsRequired();
+            .IsRequired(false);
     }
 }

@@ -1,0 +1,106 @@
+using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Interfaces;
+
+namespace OnlineGameStore.BLL.Services;
+
+public class LicenseService: ILicenseService
+{
+    private readonly ILicenseRepository _licenseRepository;
+    private readonly IGameRepository _gameRepository;
+    private readonly IMapper _mapper;
+
+    public LicenseService(ILicenseRepository licenseRepository, IGameRepository gameRepository, IMapper mapper)
+    {
+        _licenseRepository = licenseRepository;
+        _gameRepository = gameRepository;
+        _mapper = mapper;
+    }
+
+    public async Task<IEnumerable<LicenseResponseDto>> GetAllAsync()
+    {
+        IEnumerable<License> licenses = await _licenseRepository.GetAsync();
+        return _mapper.Map<IEnumerable<LicenseResponseDto>>(licenses);
+
+    }
+
+    public async Task<LicenseResponseDto> GetByIdAsync(Guid id)
+    {
+        License license = await _licenseRepository.GetByIdAsync(id);
+        if (license == null)
+        {
+            throw new NotFoundException($"License with {id} was not found");
+        }
+        return _mapper.Map<LicenseResponseDto>(license);
+    }
+    
+    public async Task<LicenseResponseDto> GetByGameIdAsync(Guid gameId)
+    {
+        License license = await _licenseRepository.GetAsync(filter:l=>l.GameId == gameId).FirstOrDefaultAsync();
+        if (license == null) {
+            throw new NotFoundException($"Game with {gameId} was not found");
+        }
+
+        return _mapper.Map<LicenseResponseDto>(license);
+    }
+
+    public async Task<LicenseResponseDto> CreateAsync(Guid gameId, LicenseDto licenseCreateDto)
+    {
+        if (licenseCreateDto == null)
+        {
+            throw new ValidationException("No License data is provided");
+        }
+
+        bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == gameId).AnyAsync();
+        
+        if (!gameExists)
+        {
+            throw new NotFoundException($"Game with {gameId} was not found");
+        }
+        
+        bool hasLicense = await _licenseRepository.GetByIdAsync(gameId) == null ? false : true;
+
+        if (hasLicense)
+        {
+            throw new ConflictException($"Game already has a licence");
+        }
+
+        License license = _mapper.Map<License>(licenseCreateDto);
+        license.Id = Guid.NewGuid();
+        license.GameId = gameId;
+
+        var createdLicense = await _licenseRepository.AddAsync(license);
+        return _mapper.Map<LicenseResponseDto>(createdLicense);
+
+    }
+
+    public async Task UpdateAsync(Guid id, LicenseDto licenceUpdateDto)
+    {
+        License? existingLicense = await _licenseRepository.GetByIdAsync(id);
+        if (existingLicense != null)
+        {
+            throw new NotFoundException($"License with {id} was not found");
+        }
+
+        _mapper.Map(licenceUpdateDto, existingLicense);
+        await _licenseRepository.UpdateAsync(existingLicense);
+    }
+
+
+    public async Task DeleteAsync(Guid id)
+    {
+        License license = await _licenseRepository.GetByIdAsync(id);
+        if (license != null)
+        {
+            throw new NotFoundException($"License {id} not found");
+        }
+
+        await _licenseRepository.DeleteByIdAsync(id);
+    }
+    
+    
+    
+}

@@ -27,8 +27,7 @@ public class LicenseConfiguration : IEntityTypeConfiguration<License>
 
         builder.HasOne(l => l.Game)
             .WithOne(g => g.License)
-            .HasForeignKey<License>(l => l.GameId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey<License>(l => l.GameId);
 
     }
 }
