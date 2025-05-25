@@ -1,8 +1,14 @@
+using OnlineGameStore.BLL;
+using OnlineGameStore.DAL;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddDalServices(builder.Configuration);
+builder.Services.AddBllServices();
 
 var app = builder.Build();
 
@@ -13,6 +19,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 var summaries = new[]
 {
@@ -40,4 +48,4 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 
-public partial class Program { } 
+public partial class Program { }
