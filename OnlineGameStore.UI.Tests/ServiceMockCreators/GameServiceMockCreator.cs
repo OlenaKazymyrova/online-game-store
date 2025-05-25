@@ -41,9 +41,9 @@ public class GameServiceMockCreator : IServiceMockCreator<IGameService>
             });
 
         repo.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((GameDto game) =>
+            .ReturnsAsync((Guid id) =>
             {
-                var index = _data.FindIndex(x => x.Id == game.Id);
+                var index = _data.FindIndex(x => x.Id == id);
                 if (index == -1) return false;
                 _data.RemoveAt(index);
                 return true;
