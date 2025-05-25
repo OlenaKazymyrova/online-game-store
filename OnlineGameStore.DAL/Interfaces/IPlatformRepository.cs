@@ -3,7 +3,7 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.DAL.Interfaces;
 
-public interface ILicenseRepository : IGenericRepository<License>
+public interface IPlatformRepository : IGenericRepository<Platform>
 {
 
 }

@@ -4,9 +4,9 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public class LicenseRepository : GenericRepository<License>, ILicenseRepository
+public class PlatformRepository : GenericRepository<Platform>, IPlatformRepository
 {
-    public LicenseRepository(OnlineGameStoreDbContext dbContext) : base(dbContext)
+    public PlatformRepository(OnlineGameStoreDbContext dbContext) : base(dbContext)
     {
 
     }
