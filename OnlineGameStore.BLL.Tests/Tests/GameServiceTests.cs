@@ -6,7 +6,7 @@ using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
 
-namespace OnlineGameStore.BLL.Tests;
+namespace OnlineGameStore.BLL.Tests.Tests;
 
 public class GameServiceTests
 {

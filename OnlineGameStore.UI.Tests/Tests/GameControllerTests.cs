@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using OnlineGameStore.BLL.DTOs;
 
-namespace OnlineGameStore.UI.Tests;
+namespace OnlineGameStore.UI.Tests.Tests;
 
 public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerTests(helper)
 {
