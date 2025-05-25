@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -26,20 +25,5 @@ public class ControllerTestsHelper : WebApplicationFactory<Program>
 
             services.AddDbContext<OnlineGameStoreDbContext>(options => { options.UseInMemoryDatabase("TestDb"); });
         });
-    }
-}
-
-public static class TestHelper
-{
-    public static async Task<T> CreateRecordAsync<T>(HttpClient client, string endpoint, object data)
-    {
-        var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
-        {
-            Content = JsonContent.Create(data),
-        };
-        var response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<T>()
-               ?? throw new InvalidOperationException("Unable to read created entity.");
     }
 }
