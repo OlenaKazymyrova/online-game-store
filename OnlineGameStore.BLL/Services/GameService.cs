@@ -1,6 +1,7 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Services;
@@ -29,7 +30,9 @@ public class GameService : IGameService
 
     public async Task<GameDto?> AddAsync(GameDto game)
     {
-        throw new NotImplementedException();
+        var gameEntity = _mapper.Map<Game>(game);
+        var createdGame = await _repository.AddAsync(gameEntity);
+        return createdGame == null ? null : _mapper.Map<GameDto>(createdGame);
     }
 
     public async Task<bool> UpdateAsync(GameDto game)
