@@ -12,5 +12,5 @@ public class Game
     public required string Description { get; set; } = string.Empty;
     public Guid? Publisher { get; set; }
     public Guid? Genre { get; set; }
-    public ICollection<License> Licenses { get; set; } = new List<License>();
+    public License License { get; set; } // change just to on-to-one relation
 }

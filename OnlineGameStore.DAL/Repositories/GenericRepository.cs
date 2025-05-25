@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using OnlineGameStore.DAL.Interaces;
+using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.DAL.Repositories;
 
@@ -17,7 +17,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
         _dbSet = dbContext.Set<TEntity>();
     }
 
-    public async Task<IEnumerable<TEntity>> Get(
+    public async Task<IEnumerable<TEntity>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
@@ -43,44 +43,46 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     }
 
 
-    public async Task<TEntity?> GetById(Guid id)
+    public async Task<TEntity?> GetByIdAsync(Guid id)
     {
         return await _dbSet.FindAsync(id);
     }
 
 
-    public async Task<TEntity> Add(TEntity entity)
+    public async Task<TEntity?> AddAsync(TEntity entity)
     {
         await _dbSet.AddAsync(entity);
         return entity;
     }
 
 
-    public void Update(TEntity entity)
+    public async Task UpdateAsync(TEntity entity)
     {
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
+        await Task.CompletedTask;
     }
 
 
-    public void DeleteById(Guid id)
+    public async Task DeleteByIdAsync(Guid id)
     {
-        TEntity entityToDelete = _dbSet.Find(id);
+        TEntity entityToDelete = await _dbSet.FindAsync(id);
 
         if (entityToDelete != null)
         {
-            Delete(entityToDelete);
+            await DeleteAsync(entityToDelete);
         }
     }
 
 
-    public void Delete(TEntity entityToDelete)
+    public async Task DeleteAsync(TEntity entityToDelete)
     {
         if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
         {
             _dbSet.Attach(entityToDelete);
         }
         _dbSet.Remove(entityToDelete);
+        await Task.CompletedTask;
 
     }
 

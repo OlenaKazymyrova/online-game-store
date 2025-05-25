@@ -25,9 +25,9 @@ public class LicenseConfiguration : IEntityTypeConfiguration<License>
 
         builder.HasCheckConstraint("CK_License_Cost", "Cost>=0");
 
-        builder.HasOne(l => l.Game).
-            WithMany(g => g.Licenses)
-            .HasForeignKey(l => l.GameId)
+        builder.HasOne(l => l.Game)
+            .WithOne(g => g.License)
+            .HasForeignKey<License>(l => l.GameId)
             .OnDelete(DeleteBehavior.Cascade);
 
     }

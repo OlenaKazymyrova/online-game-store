@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.DAL.Repositories;
 
@@ -17,7 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILicenseRepository, LicenseRepository>();
         //add other interfaces of repositories
 
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+      
 
 
 
