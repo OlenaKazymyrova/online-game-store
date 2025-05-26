@@ -6,7 +6,7 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public class PlatformRepository : GenericRepository<Platform>, IPlatformRepository
 {
-    public PlatformRepository(OnlineGameStoreDbContext dbContext) : base(dbContext)
+    public PlatformRepository(IOnlineGameStoreDbContextFactory dbContextFactory) : base(dbContextFactory)
     {
 
     }

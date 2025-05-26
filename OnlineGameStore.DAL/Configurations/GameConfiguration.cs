@@ -34,9 +34,9 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .HasColumnName("genre_id");
 
 
-        builder.HasOne(g => g.License)
-            .WithOne(l => l.Game)
-            .HasForeignKey<License>(l => l.GameId)
-            .IsRequired();
+        //builder.HasOne(g => g.License)
+        //   .WithOne(l => l.Game)
+        //   .HasForeignKey<License>(l => l.GameId)
+        //   .IsRequired();
     }
 }

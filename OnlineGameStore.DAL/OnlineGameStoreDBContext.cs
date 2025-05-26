@@ -14,9 +14,6 @@ public class OnlineGameStoreDbContext(DbContextOptions<OnlineGameStoreDbContext>
     public DbSet<GamePlatform> GamePlatforms { get; set; }
 
 
-    public DbSet<Genre> Genres { get; set; }
-    
-    public DbSet<License> Licenses { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
