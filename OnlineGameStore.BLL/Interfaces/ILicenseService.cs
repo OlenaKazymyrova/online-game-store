@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.JsonPatch;
 using OnlineGameStore.BLL.DTOs;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
 public interface ILicenseService
 {
-    Task<LicenseResponseDto> GetByGameIdAsync(Guid gameId);
+   
     Task<IEnumerable<LicenseResponseDto>> GetAllAsync();
     Task<LicenseResponseDto> GetByIdAsync(Guid id);
     Task<LicenseResponseDto> CreateAsync(LicenseDto licenseCreateDto);
