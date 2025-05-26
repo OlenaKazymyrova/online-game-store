@@ -91,6 +91,41 @@ public class PlatformService
         await _platformRepository.UpdateAsync(existingPlatform);
     }
 
+    public async Task PatchAsync(Guid id, JsonPatchDocument<PlatformDto> patchDocument)
+    {
+        
+        Platform? existingPlatform = (await _platformRepository.GetAsync(
+                filter: p => p.Id == id,
+                include: src => src.Include(p => p.GamePlatforms)))
+            .FirstOrDefault();
+
+        if (existingPlatform == null)
+        {
+            throw new KeyNotFoundException($"Platform with id {id} was not found");
+        }
+
+        
+        var platformToPatch = _mapper.Map<PlatformDto>(existingPlatform);
+        
+        patchDocument.ApplyTo(platformToPatch);
+    
+        await ValidateGameIdsExist(platformToPatch.GameIds);
+        
+        _mapper.Map(platformToPatch, existingPlatform);
+        
+        if (platformToPatch.GameIds != null)
+        {
+            existingPlatform.GamePlatforms.Clear();
+            foreach (var gameId in platformToPatch.GameIds)
+            {
+                existingPlatform.GamePlatforms.Add(new GamePlatform { GameId = gameId });
+            }
+        }
+
+        await _platformRepository.UpdateAsync(existingPlatform);
+    }
+    
+    
 
     public async Task DeleteAsync(Guid id)
     {
