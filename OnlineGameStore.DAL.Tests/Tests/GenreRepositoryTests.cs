@@ -26,7 +26,7 @@ public class GenreRepositoryTests
             Name = "my_cool_child_genre",
             Description = "cool_desc2",
             ParentId = _testParentGenre.Id,
-            ParentGenre = _testParentGenre
+            ParentGenre = null
         };
     }
 
@@ -71,6 +71,18 @@ public class GenreRepositoryTests
         var result = await repository.GetByIdAsync(Guid.NewGuid());
 
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_GenreParentIdIsSetButParentGenreIsNull_AutomaticallySetsParentGenreToEntity()
+    {
+        var repository = _creator.Create();
+
+        await repository.AddAsync(_testParentGenre);
+        var resutl = await repository.AddAsync(_testChildGenre);
+
+        Assert.NotNull(resutl);
+        Assert.NotNull(resutl.ParentGenre);
     }
 
     [Fact]
