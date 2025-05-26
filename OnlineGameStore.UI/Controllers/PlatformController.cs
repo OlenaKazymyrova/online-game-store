@@ -82,6 +82,27 @@ public class PlatformController : ControllerBase
         }
     }
     
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> PatchPlatform(Guid id, [FromBody] JsonPatchDocument<PlatformDto> patchDocument)
+    {
+        try
+        {
+            await _platformService.PatchAsync(id, patchDocument);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error occurred while processing your request.");
+        }
+    }
     
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePlatform(Guid id)
