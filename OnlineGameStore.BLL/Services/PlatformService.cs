@@ -178,9 +178,17 @@ public class PlatformService
             throw new KeyNotFoundException($"Platform with {id} was not found");
         }
 
-        int initialAmountGameIds = platform.GamePlatforms.Count;
-        platform.GamePlatforms.ToList().RemoveAll(gp => gameIds.Contains(gp.GameId));
-        if (initialAmountGameIds == platform.GamePlatforms.Count) return;
+        var itemsToRemove = platform.GamePlatforms
+            .Where(gp => gameIds.Contains(gp.GameId))
+            .ToList();
+
+        if (itemsToRemove.Count == 0) return;
+
+        foreach (var item in itemsToRemove)
+        {
+            platform.GamePlatforms.Remove(item);
+        }
+        
         await _platformRepository.UpdateAsync(platform);
 
     }
@@ -219,5 +227,8 @@ public class PlatformService
         }
         
     }
+    
+    
+    
     
 }
