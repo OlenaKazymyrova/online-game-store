@@ -8,10 +8,11 @@ public interface IPlatformService
     public Task<IEnumerable<PlatformResponseDto>> GetAllAsync();
     public Task<PlatformResponseDto> GetByIdAsync(Guid id);
     public Task UpdateAsync(Guid id, PlatformDto platformDto);
-
+    Task PatchAsync(Guid id, JsonPatchDocument<PlatformDto> patchDocument);
 
     public Task AddGamesToPlatform(Guid Id, IEnumerable<Guid> gameIdsToAdd);
     public Task RemoveGamesFromPlatform(Guid Id, IEnumerable<Guid> gameIdsToRemove);
     public Task ReplaceGamesInPlatform(Guid Id, IEnumerable<Guid> newGameIds);
+    
 
 }
