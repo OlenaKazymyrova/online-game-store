@@ -25,8 +25,4 @@
     <ProjectReference Include="..\OnlineGameStore.DAL\OnlineGameStore.DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tests\" />
-  </ItemGroup>
-
 </Project>
