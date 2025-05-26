@@ -51,7 +51,44 @@ public class PlatformService
 
     public async Task UpdateAsync(Guid id, PlatformDto updatePlatformDto)
     {
+        Platform? existingPlatform = (await _platformRepository.GetAsync(
+                filter: p => p.Id == id,
+                include: src => src.Include(p => p.GamePlatforms)))
+            .FirstOrDefault();
+
+        if (existingPlatform == null)
+        {
+            throw new KeyNotFoundException($"Platform with id {id} was not found");
+        }
+
+        _mapper.Map(updatePlatformDto, existingPlatform);
         
+        if (updatePlatformDto.GameIds != null)
+        {
+            await ValidateGameIdsExist(updatePlatformDto.GameIds);
+            
+            var existingGameIds = existingPlatform.GamePlatforms.Select(gp => gp.GameId).ToHashSet();
+        
+            var newGameIds = updatePlatformDto.GameIds.ToHashSet();
+
+            
+            var toRemove = existingPlatform.GamePlatforms
+                .Where(gp => !newGameIds.Contains(gp.GameId))
+                .ToList();
+        
+            foreach (var gamePlatform in toRemove)
+            {
+                existingPlatform.GamePlatforms.Remove(gamePlatform);
+            }
+
+           
+            foreach (var gameId in newGameIds.Where(id => !existingGameIds.Contains(id)))
+            {
+                existingPlatform.GamePlatforms.Add(new GamePlatform { GameId = gameId });
+            }
+        }
+
+        await _platformRepository.UpdateAsync(existingPlatform);
     }
 
 
