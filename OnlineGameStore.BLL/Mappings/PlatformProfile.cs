@@ -20,5 +20,9 @@ public class PlatformProfile : Profile
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.GameIds, opt => opt.MapFrom(src => src.GamePlatforms.Select(gp => gp.GameId)));
 
+        CreateMap<Platform, PlatformDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.GameIds, opt => opt.MapFrom(src => src.GamePlatforms.Select(gp => gp.GameId)));
+
     }
 }
