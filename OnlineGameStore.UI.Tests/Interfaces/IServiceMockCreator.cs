@@ -1,6 +1,6 @@
 namespace OnlineGameStore.UI.Tests.Interfaces;
 
-public interface IServiceMockCreator<out TRepository>
+public interface IServiceMockCreator<out TService>
 {
-    TRepository Create();
+    TService Create();
 }

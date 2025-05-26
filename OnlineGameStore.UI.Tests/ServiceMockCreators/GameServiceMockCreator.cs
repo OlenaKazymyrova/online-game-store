@@ -16,22 +16,22 @@ public class GameServiceMockCreator : IServiceMockCreator<IGameService>
 
     public IGameService Create()
     {
-        var repo = new Mock<IGameService>();
+        var service = new Mock<IGameService>();
 
-        repo.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+        service.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) => _data.FirstOrDefault(x => x.Id == id));
 
-        repo.Setup(x => x.GetAllAsync())
+        service.Setup(x => x.GetAllAsync())
             .ReturnsAsync(_data);
 
-        repo.Setup(x => x.AddAsync(It.IsAny<GameDto>()))
+        service.Setup(x => x.AddAsync(It.IsAny<GameDto>()))
             .ReturnsAsync((GameDto dto) =>
             {
                 _data.Add(dto);
                 return dto;
             });
 
-        repo.Setup(x => x.UpdateAsync(It.IsAny<GameDto>()))
+        service.Setup(x => x.UpdateAsync(It.IsAny<GameDto>()))
             .ReturnsAsync((GameDto game) =>
             {
                 var index = _data.FindIndex(x => x.Id == game.Id);
@@ -40,7 +40,7 @@ public class GameServiceMockCreator : IServiceMockCreator<IGameService>
                 return true;
             });
 
-        repo.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
+        service.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) =>
             {
                 var index = _data.FindIndex(x => x.Id == id);
@@ -49,6 +49,6 @@ public class GameServiceMockCreator : IServiceMockCreator<IGameService>
                 return true;
             });
 
-        return repo.Object;
+        return service.Object;
     }
 }
