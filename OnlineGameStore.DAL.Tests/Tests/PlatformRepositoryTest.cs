@@ -130,7 +130,7 @@ namespace OnlineGameStore.Tests.Repositories
             var result = await repo.GetAsync(include: include);
             var loadedPlatform = result.First();
 
-            
+
             Assert.Equal("Game 1", loadedPlatform.GamePlatforms.First().Game.Name);
         }
 
