@@ -62,7 +62,7 @@ public class LicenseService: ILicenseService
 
         License license = _mapper.Map<License>(licenseCreateDto);
         license.Id = Guid.NewGuid();
-        license.GameId = gameId;
+        license.GameId = licenseCreateDto.GameId;
 
         var createdLicense = await _licenseRepository.AddAsync(license);
         return _mapper.Map<LicenseResponseDto>(createdLicense);
@@ -82,6 +82,44 @@ public class LicenseService: ILicenseService
         await _licenseRepository.UpdateAsync(updatedLicense);
     }
 
+    public async Task<LicenseResponseDto> PatchAsync(Guid id, JsonPatchDocument<LicenseDto> patchDoc)
+    {
+
+        var existingLicense = await _licenseRepository.GetByIdAsync(id);
+        
+        if (existingLicense == null)
+        {
+            throw new NotFoundException($"License with id {id} not found");
+        }
+
+        LicenseDto licenseToPatch = _mapper.Map<LicenseDto>(existingLicense);
+        patchDoc.ApplyTo(licenseToPatch);
+
+        
+        if (licenseToPatch.GameId != existingLicense.GameId)
+        {
+            bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == licenseToPatch.GameId).AnyAsync();
+        
+            if (!gameExists)
+            {
+                throw new NotFoundException($"Game with {licenseCreateDto.GameId} was not found");
+            }
+        
+            bool hasLicense = await _licenseRepository.GetAsync(filter: l => l.GameId == licenseToPatch.GameId).AnyAsync() == null ? false : true;
+
+            if (hasLicense)
+            {
+                throw new ConflictException("Game already has a licence");
+            }
+
+           
+        }
+
+        License updatedLicense = _mapper.Map<License>(licenseToPatch);
+        await _licenseRepository.UpdateAsync(updatedLicense);
+        
+        return _mapper.Map<LicenseResponseDto>(updatedLicense);
+    }
 
     public async Task DeleteAsync(Guid id)
     {

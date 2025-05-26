@@ -15,8 +15,4 @@
     <ProjectReference Include="..\OnlineGameStore.BLL\OnlineGameStore.BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>
