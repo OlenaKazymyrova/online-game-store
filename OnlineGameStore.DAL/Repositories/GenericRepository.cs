@@ -12,7 +12,9 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     private readonly OnlineGameStoreDbContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
 
-    public GenericRepository(OnlineGameStoreDbContextFactory dbContextFactory)
+
+    public GenericRepository(IOnlineGameStoreDbContextFactory dbContextFactory)
+
     {
         _dbContext = dbContextFactory.CreateDbContext(Array.Empty<string>());
         _dbSet = _dbContext.Set<TEntity>();
