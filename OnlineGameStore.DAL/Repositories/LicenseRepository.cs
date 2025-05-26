@@ -6,7 +6,7 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public class LicenseRepository : GenericRepository<License>, ILicenseRepository
 {
-    public LicenseRepository(OnlineGameStoreDbContext dbContext) : base(dbContext)
+    public LicenseRepository(IOnlineGameStoreDbContextFactory dbContextFactory) : base(dbContextFactory)
     {
 
     }

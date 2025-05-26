@@ -1,20 +1,21 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.DAL.Repositories;
 
 public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
-
-    private readonly DbContext _dbContext;
+    
+    private readonly OnlineGameStoreDbContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
 
-    public GenericRepository(DbContext dbContext)
+    public GenericRepository(IOnlineGameStoreDbContextFactory dbContextFactory)
     {
-        _dbContext = dbContext;
-        _dbSet = dbContext.Set<TEntity>();
+        _dbContext = dbContextFactory.CreateDbContext(Array.Empty<string>());
+        _dbSet = _dbContext.Set<TEntity>();
     }
 
     public async Task<IEnumerable<TEntity>> GetAsync(
@@ -52,6 +53,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     public async Task<TEntity?> AddAsync(TEntity entity)
     {
         await _dbSet.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
         return entity;
     }
 
@@ -60,7 +62,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
     {
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
-        await Task.CompletedTask;
+        await _dbContext.SaveChangesAsync();
     }
 
 
@@ -82,7 +84,7 @@ public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> w
             _dbSet.Attach(entityToDelete);
         }
         _dbSet.Remove(entityToDelete);
-        await Task.CompletedTask;
+        await _dbContext.SaveChangesAsync();
 
     }
 
