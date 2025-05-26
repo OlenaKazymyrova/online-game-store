@@ -7,7 +7,9 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public class GameRepository : GenericRepository<Game>, IGameRepository
 {
-    public GameRepository(OnlineGameStoreDbContextFactory dbContextFactory) : base(dbContextFactory)
+
+    public GameRepository(IOnlineGameStoreDbContextFactory dbContextFactory) : base(dbContextFactory)
+
     {
 
     }
