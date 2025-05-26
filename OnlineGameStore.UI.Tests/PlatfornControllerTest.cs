@@ -23,16 +23,16 @@ public class PlatformControllerTests
     [Fact]
     public async Task GetAllPlatforms_ReturnsOkResult_WithPlatforms()
     {
-        
+
         var platforms = new List<PlatformResponseDto>
         {
             new PlatformResponseDto { Id = Guid.NewGuid(), Name = "Platform 1" },
             new PlatformResponseDto { Id = Guid.NewGuid(), Name = "Platform 2" }
         };
         _platformServiceMock.Setup(s => s.GetAllAsync()).ReturnsAsync(platforms);
-        
+
         var result = await _controller.GetAllPlatforms();
-        
+
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var returnPlatforms = Assert.IsAssignableFrom<IEnumerable<PlatformResponseDto>>(okResult.Value);
         Assert.Equal(2, ((List<PlatformResponseDto>)returnPlatforms).Count);

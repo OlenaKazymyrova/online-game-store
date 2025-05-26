@@ -14,6 +14,6 @@ public interface IPlatformService
     public Task AddGamesToPlatform(Guid Id, IEnumerable<Guid> gameIdsToAdd);
     public Task RemoveGamesFromPlatform(Guid Id, IEnumerable<Guid> gameIdsToRemove);
     public Task ReplaceGamesInPlatform(Guid Id, IEnumerable<Guid> newGameIds);
-    
+
 
 }

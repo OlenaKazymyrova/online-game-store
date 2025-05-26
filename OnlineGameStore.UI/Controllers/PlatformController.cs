@@ -14,7 +14,7 @@ public class PlatformController : ControllerBase
     {
         _platformService = platformService;
     }
-    
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PlatformResponseDto>>> GetAllPlatforms()
     {
@@ -28,7 +28,7 @@ public class PlatformController : ControllerBase
             return StatusCode(500, "Internal error.");
         }
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<PlatformResponseDto>> GetPlatformById(Guid id)
     {
@@ -46,7 +46,7 @@ public class PlatformController : ControllerBase
             return StatusCode(500, "Internal error.");
         }
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<PlatformResponseDto>> CreatePlatform([FromBody] PlatformDto platformDto)
     {
@@ -64,7 +64,7 @@ public class PlatformController : ControllerBase
             return StatusCode(500, "Internal error.");
         }
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdatePlatform(Guid id, [FromBody] PlatformDto platformDto)
     {
@@ -82,7 +82,7 @@ public class PlatformController : ControllerBase
             return StatusCode(500, "Internal error.");
         }
     }
-    
+
     [HttpPatch("{id}")]
     public async Task<IActionResult> PatchPlatform(Guid id, [FromBody] JsonPatchDocument<PlatformDto> patchDocument)
     {
@@ -104,7 +104,7 @@ public class PlatformController : ControllerBase
             return StatusCode(500, "Internal error");
         }
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePlatform(Guid id)
     {
@@ -118,7 +118,7 @@ public class PlatformController : ControllerBase
             return StatusCode(500, "Internal error.");
         }
     }
-    
+
     [HttpPost("{id}/games")]
     public async Task<IActionResult> AddGamesToPlatform(Guid id, [FromBody] List<Guid> gameIds)
     {
@@ -136,7 +136,7 @@ public class PlatformController : ControllerBase
             return StatusCode(500, "Internal error");
         }
     }
-    
+
     [HttpDelete("{id}/games")]
     public async Task<IActionResult> RemoveGamesFromPlatform(Guid id, [FromBody] List<Guid> gameIds)
     {
@@ -151,11 +151,11 @@ public class PlatformController : ControllerBase
         }
         catch (Exception ex)
         {
-           
+
             return StatusCode(500, "Internal error");
         }
     }
-    
+
     [HttpPut("{id}/games")]
     public async Task<IActionResult> ReplaceGamesInPlatform(Guid id, [FromBody] List<Guid> gameIds)
     {

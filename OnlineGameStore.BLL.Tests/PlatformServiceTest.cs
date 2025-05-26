@@ -25,7 +25,7 @@ namespace OnlineGameStore.BLL.Tests
 
         public PlatformServiceTests()
         {
-            
+
             var config = new MapperConfiguration(cfg => cfg.AddProfile<PlatformProfile>());
             _mapper = config.CreateMapper();
 
@@ -70,16 +70,16 @@ namespace OnlineGameStore.BLL.Tests
         [Fact]
         public async Task CreateAsync_Should_Create_And_Return_PlatformResponseDto()
         {
-            
+
             var gameIds = CreateGameIds();
             var dto = new PlatformDto { Name = "New Platform", GameIds = gameIds };
             SetupGameRepositoryForExistingGames(gameIds);
 
             _platformRepoMock.Setup(pr => pr.AddAsync(It.IsAny<Platform>()))
                 .ReturnsAsync((Platform p) => p);
-            
+
             var result = await _service.CreateAsync(dto);
-            
+
             Assert.NotNull(result);
             Assert.Equal(dto.Name, result.Name);
             Assert.Equal(dto.GameIds.Count, result.GameIds.Count);
@@ -89,7 +89,7 @@ namespace OnlineGameStore.BLL.Tests
         [Fact]
         public async Task GetAllAsync_Should_Return_All_Platforms()
         {
-            
+
             var platforms = new List<Platform>
             {
                 CreatePlatform(gameIds: CreateGameIds()),
@@ -102,9 +102,9 @@ namespace OnlineGameStore.BLL.Tests
                     It.IsAny<Func<IQueryable<Platform>, IIncludableQueryable<Platform, object>>>()
                 ))
                 .ReturnsAsync(platforms);
-            
+
             var results = await _service.GetAllAsync();
-            
+
             Assert.NotNull(results);
             Assert.Equal(platforms.Count, results.Count());
 
@@ -113,7 +113,7 @@ namespace OnlineGameStore.BLL.Tests
         [Fact]
         public async Task GetById_Should_Return_PlatformResponseDto_When_Found()
         {
-           
+
             var id = Guid.NewGuid();
             var platform = CreatePlatform(id, "Platform 1", CreateGameIds());
             _platformRepoMock.Setup(pr => pr.GetAsync(
@@ -123,10 +123,10 @@ namespace OnlineGameStore.BLL.Tests
                 ))
                 .ReturnsAsync(new[] { platform });
 
-            
+
             var result = await _service.GetById(id);
 
-            
+
             Assert.NotNull(result);
             Assert.Equal(id, result.Id);
             Assert.Equal(platform.Name, result.Name);
@@ -135,9 +135,9 @@ namespace OnlineGameStore.BLL.Tests
         [Fact]
         public async Task GetById_Should_Throw_KeyNotFoundException_When_Not_Found()
         {
-            
+
             var id = Guid.NewGuid();
-            
+
             _platformRepoMock.Setup(pr => pr.GetAsync(
                     It.IsAny<Expression<Func<Platform, bool>>>(),
                     null,
@@ -145,14 +145,14 @@ namespace OnlineGameStore.BLL.Tests
                 ))
                 .ReturnsAsync(Array.Empty<Platform>());
 
-            
+
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.GetById(id));
         }
 
         [Fact]
         public async Task UpdateAsync_Should_Update_Platform_When_Found()
         {
-           
+
             var id = Guid.NewGuid();
             var existingGameIds = CreateGameIds();
             var platform = CreatePlatform(id, "Old Name", existingGameIds);
@@ -163,28 +163,28 @@ namespace OnlineGameStore.BLL.Tests
                     It.IsAny<Func<IQueryable<Platform>, IIncludableQueryable<Platform, object>>>()
                 ))
                 .ReturnsAsync(new[] { platform });
-            
+
             var updatedGameIds = CreateGameIds();
             var dto = new PlatformDto { Name = "Updated Name", GameIds = updatedGameIds };
             SetupGameRepositoryForExistingGames(updatedGameIds);
 
             _platformRepoMock.Setup(pr => pr.UpdateAsync(platform)).Returns(Task.CompletedTask);
 
-            
+
             await _service.UpdateAsync(id, dto);
 
-            
+
             Assert.Equal(dto.Name, platform.Name);
             Assert.Equal(updatedGameIds.Count, platform.GamePlatforms.Count);
-            
+
         }
 
         [Fact]
         public async Task UpdateAsync_Should_Throw_KeyNotFoundException_When_Platform_Not_Found()
         {
-            
+
             var id = Guid.NewGuid();
-            
+
             _platformRepoMock.Setup(pr => pr.GetAsync(
                     It.IsAny<Expression<Func<Platform, bool>>>(),
                     null,
@@ -194,14 +194,14 @@ namespace OnlineGameStore.BLL.Tests
 
 
             var dto = new PlatformDto { Name = "Name" };
-            
+
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.UpdateAsync(id, dto));
         }
 
         [Fact]
         public async Task PatchAsync_Should_Apply_Patch_And_Update()
         {
-            
+
             var id = Guid.NewGuid();
             var gameIds = CreateGameIds();
             var platform = CreatePlatform(id, "Name", gameIds);
@@ -219,19 +219,19 @@ namespace OnlineGameStore.BLL.Tests
 
             var patchDoc = new JsonPatchDocument<PlatformDto>();
             patchDoc.Replace(p => p.Name, "Patched Name");
-            
+
             await _service.PatchAsync(id, patchDoc);
-            
+
             Assert.Equal("Patched Name", platform.Name);
-            
+
         }
 
         [Fact]
         public async Task PatchAsync_Should_Throw_KeyNotFoundException_When_Platform_Not_Found()
         {
-            
+
             var id = Guid.NewGuid();
-            
+
             _platformRepoMock.Setup(pr => pr.GetAsync(
                     It.IsAny<Expression<Func<Platform, bool>>>(),
                     null,
@@ -241,41 +241,41 @@ namespace OnlineGameStore.BLL.Tests
 
 
             var patchDoc = new JsonPatchDocument<PlatformDto>();
-            
+
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.PatchAsync(id, patchDoc));
         }
 
         [Fact]
         public async Task DeleteAsync_Should_Delete_When_Platform_Found()
         {
-           
+
             var id = Guid.NewGuid();
             var platform = CreatePlatform(id);
             _platformRepoMock.Setup(pr => pr.GetByIdAsync(id)).ReturnsAsync(platform);
             _platformRepoMock.Setup(pr => pr.DeleteAsync(platform)).Returns(Task.CompletedTask);
-            
+
             await _service.DeleteAsync(id);
 
-            
+
             _platformRepoMock.Verify(pr => pr.DeleteAsync(platform), Times.Once);
         }
 
         [Fact]
         public async Task DeleteAsync_Should_Not_Throw_When_Platform_Not_Found()
         {
-           
+
             var id = Guid.NewGuid();
             _platformRepoMock.Setup(pr => pr.GetByIdAsync(id)).ReturnsAsync((Platform?)null);
-            
+
             await _service.DeleteAsync(id);
-            
+
             _platformRepoMock.Verify(pr => pr.DeleteAsync(It.IsAny<Platform>()), Times.Never);
         }
 
         [Fact]
         public async Task AddGamesToPlatform_Should_Add_New_Games_And_Update()
         {
-            
+
             var id = Guid.NewGuid();
             var existingGameIds = CreateGameIds();
             var platform = CreatePlatform(id, "Platform", existingGameIds);
@@ -292,14 +292,14 @@ namespace OnlineGameStore.BLL.Tests
 
 
             _platformRepoMock.Setup(pr => pr.UpdateAsync(platform)).Returns(Task.CompletedTask);
-            
+
             await _service.AddGamesToPlatform(id, gamesToAdd);
-            
+
             foreach (var gameId in gamesToAdd)
             {
                 Assert.Contains(platform.GamePlatforms, gp => gp.GameId == gameId);
             }
-           
+
         }
 
         [Fact]
@@ -361,7 +361,7 @@ namespace OnlineGameStore.BLL.Tests
             {
                 Assert.DoesNotContain(platform.GamePlatforms, gp => gp.GameId == gameId);
             }
-            
+
         }
 
         [Fact]
@@ -396,11 +396,11 @@ namespace OnlineGameStore.BLL.Tests
 
             await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.RemoveGamesFromPlatform(id, gamesToRemove));
         }
-        
+
         [Fact]
         public async Task ReplaceGamesInPlatform_Should_Clear_And_Add_New_Games_And_Update()
         {
-        
+
             var platformId = Guid.NewGuid();
             var oldGameIds = CreateGameIds();
             var platform = CreatePlatform(platformId, "Test Platform", oldGameIds);
@@ -416,7 +416,7 @@ namespace OnlineGameStore.BLL.Tests
 
             _platformRepoMock.Setup(pr => pr.UpdateAsync(platform)).Returns(Task.CompletedTask);
 
-        
+
             await _service.ReplaceGamesInPlatform(platformId, newGameIds);
 
 
@@ -426,40 +426,40 @@ namespace OnlineGameStore.BLL.Tests
                 Assert.Contains(platform.GamePlatforms, gp => gp.GameId == newGameId);
             }
 
-       
+
         }
 
 
         [Fact]
         public async Task ReplaceGamesInPlatform_Should_Throw_KeyNotFoundException_If_Platform_Not_Found()
         {
-        
+
             var platformId = Guid.NewGuid();
             var newGameIds = CreateGameIds();
-        
+
             _platformRepoMock.Setup(pr => pr.GetAsync(
                 It.IsAny<Expression<Func<Platform, bool>>>(),
-                null, 
+                null,
                 It.IsAny<Func<IQueryable<Platform>, IIncludableQueryable<Platform, object>>>()  // include param
             )).ReturnsAsync(new List<Platform>());
 
-        
+
             await Assert.ThrowsAsync<KeyNotFoundException>(() =>
                 _service.ReplaceGamesInPlatform(platformId, newGameIds));
         }
-        
+
         [Fact]
         public async Task ReplaceGamesInPlatform_Should_Return_If_GameIds_Is_Null_Or_Empty()
         {
-           
+
             var platformId = Guid.NewGuid();
 
-            
+
             await _service.ReplaceGamesInPlatform(platformId, null);
-            
+
             await _service.ReplaceGamesInPlatform(platformId, new List<Guid>());
 
-           
+
             _platformRepoMock.Verify(pr => pr.GetAsync(
                     It.IsAny<Expression<Func<Platform, bool>>>(),
                     It.IsAny<Func<IQueryable<Platform>, IOrderedQueryable<Platform>>>(),
@@ -468,5 +468,5 @@ namespace OnlineGameStore.BLL.Tests
             _platformRepoMock.Verify(pr => pr.UpdateAsync(It.IsAny<Platform>()), Times.Never);
         }
     }
-    
+
 }
