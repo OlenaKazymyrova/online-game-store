@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
@@ -100,7 +101,7 @@ public class PlatformController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "Internal error");
         }
     }
     
@@ -132,7 +133,7 @@ public class PlatformController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "Internal error");
         }
     }
     
@@ -151,7 +152,7 @@ public class PlatformController : ControllerBase
         catch (Exception ex)
         {
            
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "Internal error");
         }
     }
     
@@ -169,7 +170,7 @@ public class PlatformController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "Internal error");
         }
     }
 }
