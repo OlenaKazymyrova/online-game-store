@@ -7,7 +7,7 @@ namespace OnlineGameStore.DAL.Interfaces;
 public interface IGenericRepository<TEntity> where TEntity : class
 {
 
-    Task<IEnumerable<TEntity>> GetAsync(
+    Task<IEnumerable<TEntity>?> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null
