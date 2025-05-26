@@ -38,21 +38,22 @@ public class LicenseService: ILicenseService
     }
     
 
-    public async Task<LicenseResponseDto> CreateAsync(Guid gameId, LicenseDto licenseCreateDto)
+    public async Task<LicenseResponseDto> CreateAsync( LicenseDto licenseCreateDto)
     {
         if (licenseCreateDto == null)
         {
             throw new ValidationException("No License data is provided");
         }
 
-        bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == gameId).AnyAsync();
+        
+        bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == licenseCreateDto.GameId).AnyAsync();
         
         if (!gameExists)
         {
-            throw new NotFoundException($"Game with {gameId} was not found");
+            throw new NotFoundException($"Game with {licenseCreateDto.GameId} was not found");
         }
         
-        bool hasLicense = await _licenseRepository.GetByIdAsync(gameId) == null ? false : true;
+        bool hasLicense = await _licenseRepository.GetAsync(filter: l => l.GameId == licenseCreateDto.GameId).AnyAsync() == null ? false : true;
 
         if (hasLicense)
         {
@@ -71,20 +72,21 @@ public class LicenseService: ILicenseService
     public async Task UpdateAsync(Guid id, LicenseDto licenceUpdateDto)
     {
         License? existingLicense = await _licenseRepository.GetByIdAsync(id);
-        if (existingLicense != null)
+        if (existingLicense == null)
         {
             throw new NotFoundException($"License with {id} was not found");
         }
 
-        _mapper.Map(licenceUpdateDto, existingLicense);
-        await _licenseRepository.UpdateAsync(existingLicense);
+        License updatedLicense = _mapper.Map<License>(licenceUpdateDto);
+        updatedLicense.Id = id;
+        await _licenseRepository.UpdateAsync(updatedLicense);
     }
 
 
     public async Task DeleteAsync(Guid id)
     {
-        License license = await _licenseRepository.GetByIdAsync(id);
-        if (license != null)
+        License? license = await _licenseRepository.GetByIdAsync(id);
+        if (license == null)
         {
             throw new NotFoundException($"License {id} not found");
         }
