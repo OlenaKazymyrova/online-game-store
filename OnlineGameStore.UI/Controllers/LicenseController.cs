@@ -17,7 +17,7 @@ public class LicenseController : ControllerBase
     {
         _licenseService = licenseService;
     }
-    
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<LicenseResponseDto>>> GetAll()
     {
@@ -31,8 +31,8 @@ public class LicenseController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
-    
-    
+
+
     [HttpGet("{id}")]
     public async Task<ActionResult<LicenseResponseDto>> GetLicenseById(Guid id)
     {
@@ -50,7 +50,7 @@ public class LicenseController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<LicenseResponseDto>> CreateLicense([FromBody] LicenseDto licenseDto)
     {
@@ -71,11 +71,12 @@ public class LicenseController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-        catch (Exception ex){
+        catch (Exception ex)
+        {
             return StatusCode(500, "Internal server error");
         }
     }
-    
+
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateLicense(Guid id, [FromBody] LicenseDto licenseDto)
     {
@@ -95,22 +96,22 @@ public class LicenseController : ControllerBase
     }
 
 
-   [ HttpPatch("{id}")]
+    [HttpPatch("{id}")]
     public async Task<IActionResult> PartialUpdateLicense(Guid id, [FromBody] JsonPatchDocument<LicenseDto> patchDoc)
     {
         try
         {
-           
+
             if (patchDoc == null)
             {
                 return BadRequest("Patch document cannot be null");
             }
-            
+
             var updatedLicense = await _licenseService.PatchAsync(id, patchDoc);
-            
+
             return Ok(updatedLicense);
         }
-       
+
         catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
@@ -124,7 +125,7 @@ public class LicenseController : ControllerBase
             return StatusCode(500, "An error occurred while updating the license");
         }
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteLicense(Guid id)
     {

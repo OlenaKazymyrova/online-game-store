@@ -121,8 +121,8 @@ namespace OnlineGameStore.Tests.Services
 
             _gameRepositoryMock
                 .Setup(r => r.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Game, bool>>>(), null, null))
-                .ReturnsAsync(new List<Game> { 
-                    new Game { Name = "Test Game", Description = "Test Description" } 
+                .ReturnsAsync(new List<Game> {
+                    new Game { Name = "Test Game", Description = "Test Description" }
                 });
 
             _licenseRepositoryMock

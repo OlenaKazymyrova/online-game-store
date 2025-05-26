@@ -26,15 +26,15 @@ namespace OnlineGameStore.Tests.Controllers
         [Fact]
         public async Task GetAll_ReturnsOk_WithListOfLicenses()
         {
-            var licenses = new List<LicenseResponseDto> 
-            { 
-                new LicenseResponseDto 
-                { 
-                    Id = Guid.NewGuid(), 
-                    GameId = Guid.NewGuid(), 
-                    Description = "Sample license", 
-                    Cost = 99.99m 
-                } 
+            var licenses = new List<LicenseResponseDto>
+            {
+                new LicenseResponseDto
+                {
+                    Id = Guid.NewGuid(),
+                    GameId = Guid.NewGuid(),
+                    Description = "Sample license",
+                    Cost = 99.99m
+                }
             };
             _licenseServiceMock.Setup(s => s.GetAllAsync()).ReturnsAsync(licenses);
 
@@ -61,12 +61,12 @@ namespace OnlineGameStore.Tests.Controllers
         public async Task GetLicenseById_ReturnsOk_WithLicense()
         {
             var id = Guid.NewGuid();
-            var license = new LicenseResponseDto 
-            { 
-                Id = id, 
+            var license = new LicenseResponseDto
+            {
+                Id = id,
                 GameId = Guid.NewGuid(),
-                Description = "Test License", 
-                Cost = 49.99m 
+                Description = "Test License",
+                Cost = 49.99m
             };
             _licenseServiceMock.Setup(s => s.GetByIdAsync(id)).ReturnsAsync(license);
 
@@ -92,18 +92,18 @@ namespace OnlineGameStore.Tests.Controllers
         [Fact]
         public async Task CreateLicense_ReturnsCreatedAtAction_WithCreatedLicense()
         {
-            var licenseDto = new LicenseDto 
-            { 
-                GameId = Guid.NewGuid(), 
-                Description = "New License", 
-                Cost = 29.99m 
+            var licenseDto = new LicenseDto
+            {
+                GameId = Guid.NewGuid(),
+                Description = "New License",
+                Cost = 29.99m
             };
-            var createdLicense = new LicenseResponseDto 
-            { 
-                Id = Guid.NewGuid(), 
-                GameId = licenseDto.GameId, 
-                Description = licenseDto.Description, 
-                Cost = licenseDto.Cost 
+            var createdLicense = new LicenseResponseDto
+            {
+                Id = Guid.NewGuid(),
+                GameId = licenseDto.GameId,
+                Description = licenseDto.Description,
+                Cost = licenseDto.Cost
             };
             _licenseServiceMock.Setup(s => s.CreateAsync(licenseDto)).ReturnsAsync(createdLicense);
 

@@ -8,7 +8,7 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class LicenseService: ILicenseService
+public class LicenseService : ILicenseService
 {
     private readonly ILicenseRepository _licenseRepository;
     private readonly IGameRepository _gameRepository;
@@ -37,23 +37,23 @@ public class LicenseService: ILicenseService
         }
         return _mapper.Map<LicenseResponseDto>(license);
     }
-    
 
-    public async Task<LicenseResponseDto> CreateAsync( LicenseDto licenseCreateDto)
+
+    public async Task<LicenseResponseDto> CreateAsync(LicenseDto licenseCreateDto)
     {
         if (licenseCreateDto == null)
         {
             throw new ValidationException("No License data is provided");
         }
 
-        
-        bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == licenseCreateDto.GameId) != null ;
-        
+
+        bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == licenseCreateDto.GameId) != null;
+
         if (!gameExists)
         {
             throw new KeyNotFoundException($"Game with {licenseCreateDto.GameId} was not found");
         }
-        
+
         var licenses = await _licenseRepository.GetAsync(filter: l => l.GameId == licenseCreateDto.GameId);
         bool hasLicense = licenses != null && licenses.Any();
 
@@ -88,7 +88,7 @@ public class LicenseService: ILicenseService
     {
 
         var existingLicense = await _licenseRepository.GetByIdAsync(id);
-        
+
         if (existingLicense == null)
         {
             throw new KeyNotFoundException($"License with id {id} not found");
@@ -97,29 +97,29 @@ public class LicenseService: ILicenseService
         LicenseDto licenseToPatch = _mapper.Map<LicenseDto>(existingLicense);
         patchDoc.ApplyTo(licenseToPatch);
 
-        
+
         if (licenseToPatch.GameId != existingLicense.GameId)
         {
-            bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == licenseToPatch.GameId)!= null ;
-        
+            bool gameExists = await _gameRepository.GetAsync(filter: g => g.Id == licenseToPatch.GameId) != null;
+
             if (!gameExists)
             {
                 throw new KeyNotFoundException($"Game with {licenseToPatch.GameId} was not found");
             }
-        
-            bool hasLicense = await _licenseRepository.GetAsync(filter: l => l.GameId == licenseToPatch.GameId) != null ;
+
+            bool hasLicense = await _licenseRepository.GetAsync(filter: l => l.GameId == licenseToPatch.GameId) != null;
 
             if (hasLicense)
             {
                 throw new ArgumentException("Game already has a licence");
             }
 
-           
+
         }
 
         License updatedLicense = _mapper.Map<License>(licenseToPatch);
         await _licenseRepository.UpdateAsync(updatedLicense);
-        
+
         return _mapper.Map<LicenseResponseDto>(updatedLicense);
     }
 
@@ -133,7 +133,7 @@ public class LicenseService: ILicenseService
 
         await _licenseRepository.DeleteByIdAsync(id);
     }
-    
-    
-    
+
+
+
 }

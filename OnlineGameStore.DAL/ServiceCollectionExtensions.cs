@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILicenseRepository, LicenseRepository>();
         //add other interfaces of repositories
 
-      
+
 
 
 
