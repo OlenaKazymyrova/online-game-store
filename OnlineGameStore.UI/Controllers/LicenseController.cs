@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
@@ -40,7 +41,7 @@ public class LicenseController : ControllerBase
             var license = await _licenseService.GetByIdAsync(id);
             return Ok(license);
         }
-        catch (NotFoundException ex)
+        catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
@@ -62,11 +63,11 @@ public class LicenseController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-        catch (NotFoundException ex)
+        catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
-        catch (ConflictException ex)
+        catch (ArgumentException ex)
         {
             return Conflict(ex.Message);
         }
@@ -83,7 +84,7 @@ public class LicenseController : ControllerBase
             await _licenseService.UpdateAsync(id, licenseDto);
             return NoContent();
         }
-        catch (NotFoundException ex)
+        catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
@@ -110,11 +111,11 @@ public class LicenseController : ControllerBase
             return Ok(updatedLicense);
         }
        
-        catch (NotFoundException ex)
+        catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
-        catch (ConflictException ex)
+        catch (ArgumentException ex)
         {
             return Conflict(ex.Message);
         }
@@ -132,7 +133,7 @@ public class LicenseController : ControllerBase
             await _licenseService.DeleteAsync(id);
             return NoContent();
         }
-        catch (NotFoundException ex)
+        catch (KeyNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
