@@ -23,14 +23,14 @@ public class LicenseService: ILicenseService
 
     public async Task<IEnumerable<LicenseResponseDto>> GetAllAsync()
     {
-        IEnumerable<License> licenses = await _licenseRepository.GetAsync();
+        IEnumerable<License>? licenses = await _licenseRepository.GetAsync();
         return _mapper.Map<IEnumerable<LicenseResponseDto>>(licenses);
 
     }
 
     public async Task<LicenseResponseDto> GetByIdAsync(Guid id)
     {
-        License license = await _licenseRepository.GetByIdAsync(id);
+        License? license = await _licenseRepository.GetByIdAsync(id);
         if (license == null)
         {
             throw new KeyNotFoundException($"License with {id} was not found");
@@ -54,7 +54,8 @@ public class LicenseService: ILicenseService
             throw new KeyNotFoundException($"Game with {licenseCreateDto.GameId} was not found");
         }
         
-        bool hasLicense = await _licenseRepository.GetAsync(filter: l => l.GameId == licenseCreateDto.GameId) != null ;
+        var licenses = await _licenseRepository.GetAsync(filter: l => l.GameId == licenseCreateDto.GameId);
+        bool hasLicense = licenses != null && licenses.Any();
 
         if (hasLicense)
         {
