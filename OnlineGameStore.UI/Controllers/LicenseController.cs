@@ -7,7 +7,7 @@ using OnlineGameStore.DAL.Entities;
 namespace OnlineGameStore.UI.Controllers;
 
 
-[Route("/license")]
+[Route("/licenses")]
 [ApiController]
 public class LicenseController : ControllerBase
 {
