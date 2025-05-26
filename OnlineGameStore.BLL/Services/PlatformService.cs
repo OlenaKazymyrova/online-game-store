@@ -3,6 +3,7 @@ using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace OnlineGameStore.BLL.Mappings;
 
@@ -178,7 +179,7 @@ public class PlatformService
         }
 
         int initialAmountGameIds = platform.GamePlatforms.Count;
-        platform.GamePlatforms.RemoveAll(gp => gameIds.Contains(gp.GameId));
+        platform.GamePlatforms.ToList().RemoveAll(gp => gameIds.Contains(gp.GameId));
         if (initialAmountGameIds == platform.GamePlatforms.Count) return;
         await _platformRepository.UpdateAsync(platform);
 
@@ -211,7 +212,7 @@ public class PlatformService
     {
         if (gameIds == null || gameIds.Count == 0) return;
         
-        var existingAmount = await _gameRepository.CountAsync(g => gameIds.Contains(g.Id));
+        var existingAmount = (await _gameRepository.GetAsync(g => gameIds.Contains(g.Id))).Count();
         if (existingAmount != gameIds.Count)
         {
             throw new KeyNotFoundException("Mismatch in gameIds");
