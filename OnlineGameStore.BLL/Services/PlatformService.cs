@@ -35,7 +35,7 @@ public class PlatformService
     public async Task<IEnumerable<PlatformResponseDto>> GetAllAsync()
     {
         IEnumerable<Platform> platforms = await _platformRepository.GetAsync(include: src => src.Include(p => p.GamePlatforms));
-        return  _mapper.Map<IEnumerable<PlatformResponseDto>>(platforms);
+        return _mapper.Map<IEnumerable<PlatformResponseDto>>(platforms);
     }
 
     public async Task<PlatformResponseDto> GetById(Guid id)
@@ -47,7 +47,7 @@ public class PlatformService
             throw new KeyNotFoundException($"Platform with {id} was not found");
         }
 
-        return  _mapper.Map<PlatformResponseDto>(platform);
+        return _mapper.Map<PlatformResponseDto>(platform);
     }
 
     public async Task UpdateAsync(Guid id, PlatformDto updatePlatformDto)
@@ -63,26 +63,26 @@ public class PlatformService
         }
 
         _mapper.Map(updatePlatformDto, existingPlatform);
-        
+
         if (updatePlatformDto.GameIds != null)
         {
             await ValidateGameIdsExist(updatePlatformDto.GameIds);
-            
+
             var existingGameIds = existingPlatform.GamePlatforms.Select(gp => gp.GameId).ToHashSet();
-        
+
             var newGameIds = updatePlatformDto.GameIds.ToHashSet();
 
-            
+
             var toRemove = existingPlatform.GamePlatforms
                 .Where(gp => !newGameIds.Contains(gp.GameId))
                 .ToList();
-        
+
             foreach (var gamePlatform in toRemove)
             {
                 existingPlatform.GamePlatforms.Remove(gamePlatform);
             }
 
-           
+
             foreach (var gameId in newGameIds.Where(id => !existingGameIds.Contains(id)))
             {
                 existingPlatform.GamePlatforms.Add(new GamePlatform { GameId = gameId });
@@ -94,7 +94,7 @@ public class PlatformService
 
     public async Task PatchAsync(Guid id, JsonPatchDocument<PlatformDto> patchDocument)
     {
-        
+
         Platform? existingPlatform = (await _platformRepository.GetAsync(
                 filter: p => p.Id == id,
                 include: src => src.Include(p => p.GamePlatforms)))
@@ -105,15 +105,15 @@ public class PlatformService
             throw new KeyNotFoundException($"Platform with id {id} was not found");
         }
 
-        
+
         var platformToPatch = _mapper.Map<PlatformDto>(existingPlatform);
-        
+
         patchDocument.ApplyTo(platformToPatch);
-    
+
         await ValidateGameIdsExist(platformToPatch.GameIds);
-        
+
         _mapper.Map(platformToPatch, existingPlatform);
-        
+
         if (platformToPatch.GameIds != null)
         {
             existingPlatform.GamePlatforms.Clear();
@@ -125,8 +125,8 @@ public class PlatformService
 
         await _platformRepository.UpdateAsync(existingPlatform);
     }
-    
-    
+
+
 
     public async Task DeleteAsync(Guid id)
     {
@@ -136,9 +136,9 @@ public class PlatformService
 
     }
 
-    
 
-    public async Task AddGamesToPlatform(Guid id,List<Guid> gameIds)
+
+    public async Task AddGamesToPlatform(Guid id, List<Guid> gameIds)
     {
         if (gameIds == null || gameIds.Count == 0) return;
         await ValidateGameIdsExist(gameIds);
@@ -154,7 +154,7 @@ public class PlatformService
 
         foreach (Guid gameId in gameIds)
         {
-            if(!existingGameIds.Contains(gameId))
+            if (!existingGameIds.Contains(gameId))
             {
                 platform.GamePlatforms.Add(new GamePlatform { GameId = gameId });
                 addedGameIds++;
@@ -171,7 +171,7 @@ public class PlatformService
     public async Task RemoveGamesFromPlatform(Guid id, List<Guid> gameIds)
     {
         if (gameIds == null || gameIds.Count == 0) return;
-        
+
         Platform? platform = (await _platformRepository.GetAsync(filter: p => p.Id == id, include: src => src.Include(p => p.GamePlatforms))).FirstOrDefault();
         if (platform == null)
         {
@@ -188,25 +188,25 @@ public class PlatformService
         {
             platform.GamePlatforms.Remove(item);
         }
-        
+
         await _platformRepository.UpdateAsync(platform);
 
     }
 
-    public async Task  ReplaceGamesInPlatform(Guid id, List<Guid> gameIds)
+    public async Task ReplaceGamesInPlatform(Guid id, List<Guid> gameIds)
     {
         if (gameIds == null || gameIds.Count == 0) return;
-        
+
         Platform? platform = (await _platformRepository.GetAsync(filter: p => p.Id == id, include: src => src.Include(p => p.GamePlatforms))).FirstOrDefault();
         if (platform == null)
         {
             throw new KeyNotFoundException($"Platform with {id} was not found");
         }
-        
+
         platform.GamePlatforms.Clear();
         foreach (Guid gameId in gameIds)
         {
-            platform.GamePlatforms.Add(new GamePlatform{GameId = gameId});
+            platform.GamePlatforms.Add(new GamePlatform { GameId = gameId });
         }
 
         await _platformRepository.UpdateAsync(platform);
@@ -214,21 +214,21 @@ public class PlatformService
 
 
 
-    
+
 
     private async Task ValidateGameIdsExist(List<Guid> gameIds)
     {
         if (gameIds == null || gameIds.Count == 0) return;
-        
+
         var existingAmount = (await _gameRepository.GetAsync(g => gameIds.Contains(g.Id))).Count();
         if (existingAmount != gameIds.Count)
         {
             throw new KeyNotFoundException("Mismatch in gameIds");
         }
-        
+
     }
-    
-    
-    
-    
+
+
+
+
 }

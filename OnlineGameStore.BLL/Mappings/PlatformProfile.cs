@@ -12,7 +12,7 @@ public class PlatformProfile : Profile
     {
         CreateMap<PlatformDto, Platform>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.GamePlatforms,opt => opt.MapFrom(src=> src.GameIds.Select(id => new GamePlatform { GameId = id})));
+            .ForMember(dest => dest.GamePlatforms, opt => opt.MapFrom(src => src.GameIds.Select(id => new GamePlatform { GameId = id })));
 
 
         CreateMap<Platform, PlatformResponseDto>()

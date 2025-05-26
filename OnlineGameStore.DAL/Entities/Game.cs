@@ -12,6 +12,6 @@ public class Game
     public required string Description { get; set; } = string.Empty;
     public Guid? Publisher { get; set; }
     public Guid? Genre { get; set; }
-    
+
     public List<GamePlatform> GamePlatforms { get; set; }
 }

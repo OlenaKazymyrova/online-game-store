@@ -8,7 +8,7 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
-    
+
     private readonly OnlineGameStoreDbContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
 
