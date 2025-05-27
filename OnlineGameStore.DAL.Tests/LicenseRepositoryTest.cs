@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Repositories;
-using OnlineGameStore.DAL.Interfaces;  // Make sure this namespace contains IOnlineGameStoreDbContextFactory
-using Xunit;
+using OnlineGameStore.DAL.Interfaces;
+
 
 namespace OnlineGameStore.Tests.Repositories
 {
