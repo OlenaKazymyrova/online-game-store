@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -10,7 +6,6 @@ using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.DAL.Repositories;
-using Xunit;
 
 namespace OnlineGameStore.Tests.Repositories
 {
