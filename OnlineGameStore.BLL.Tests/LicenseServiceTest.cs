@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Moq;
-using Xunit;
 using Microsoft.AspNetCore.JsonPatch;
 using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
@@ -19,7 +13,7 @@ namespace OnlineGameStore.Tests.Services
     {
         private readonly Mock<ILicenseRepository> _licenseRepositoryMock;
         private readonly Mock<IGameRepository> _gameRepositoryMock;
-        private readonly IMapper _mapper;
+        private readonly IMapper? _mapper;
         private readonly LicenseService _licenseService;
 
         public LicenseServiceTests()
