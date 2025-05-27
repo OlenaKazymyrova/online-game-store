@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace OnlineGameStore.BLL.DTOs;
 
 public class LicenseDto

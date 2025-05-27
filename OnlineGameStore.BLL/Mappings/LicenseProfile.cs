@@ -1,7 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using System.IO.Compression;
 using AutoMapper;
-using Microsoft.Data.SqlClient;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.DAL.Entities;
 
