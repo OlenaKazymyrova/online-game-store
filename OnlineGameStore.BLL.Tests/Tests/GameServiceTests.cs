@@ -30,7 +30,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_ShouldReturnGame_WhenGameExists()
+    public async Task GetByIdAsync_GameExists_ReturnsGame()
     {
         var game = _data[0];
 
@@ -41,7 +41,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_ShouldReturnNull_WhenGameDoesNotExist()
+    public async Task GetByIdAsync_GameDoesNotExist_ReturnsNull()
     {
         var result = await _gameService.GetByIdAsync(Guid.NewGuid());
 
@@ -49,7 +49,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task AddAsync_ShouldReturnGame()
+    public async Task AddAsync_ReturnsGame()
     {
         var newGame = new GameDto
         {

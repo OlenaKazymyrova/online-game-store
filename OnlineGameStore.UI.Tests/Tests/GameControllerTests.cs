@@ -7,7 +7,7 @@ namespace OnlineGameStore.UI.Tests.Tests;
 public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerTests(helper)
 {
     [Fact]
-    public async Task GetGameById_ShouldReturnGame_WhenExists()
+    public async Task GetByIdAsync_GameValid_ReturnsGame()
     {
         var newGame = new GameDto
         {
@@ -34,7 +34,7 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
     }
 
     [Fact]
-    public async Task GetGameById_ShouldReturnNotFound_WhenGameDoesNotExist()
+    public async Task GetByIdAsync_GameDoesNotExist_ReturnsNotFound()
     {
         var newId = Guid.NewGuid().ToString();
         var request = await Client.GetAsync($"games/{newId}");
@@ -43,7 +43,7 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
     }
 
     [Fact]
-    public async Task CreateGame_ShouldReturnCreated_WhenGameIsValid()
+    public async Task CreateAsync_GameIsValid_ReturnsCreatedGame()
     {
         var newGame = new GameDto
         {
@@ -56,11 +56,6 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
         };
 
         var request = await Client.PostAsJsonAsync("/games", newGame);
-        if (request.StatusCode == HttpStatusCode.InternalServerError)
-        {
-            var errorContent = await request.Content.ReadAsStringAsync();
-            throw new Exception($"Internal Server Error: {errorContent}");
-        }
 
         Assert.Equal(HttpStatusCode.Created, request.StatusCode);
 
@@ -68,5 +63,15 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
 
         Assert.NotNull(createdGame);
         Assert.Equal(newGame.Id, createdGame.Id);
+    }
+
+    [Fact]
+    public async Task CreateAsync_GameNotValid_ReturnsError()
+    {
+        var notAGame = new List<GameDto>();
+
+        var request = await Client.PostAsJsonAsync("/games", notAGame);
+
+        Assert.Equal(HttpStatusCode.BadRequest, request.StatusCode);
     }
 }
