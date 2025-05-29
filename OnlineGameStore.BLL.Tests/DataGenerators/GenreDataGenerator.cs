@@ -5,8 +5,8 @@ using System.Security.Cryptography;
 namespace OnlineGameStore.BLL.Tests.DataGenerators;
 
 
-public class GenreDataGenerator : IDataGenerator<Genre> 
-{ 
+public class GenreDataGenerator : IDataGenerator<Genre>
+{
     public List<Genre> Generate(int count)
     {
         var parentGenreList = new List<Genre>();
@@ -38,6 +38,6 @@ public class GenreDataGenerator : IDataGenerator<Genre>
             });
         }
 
-        return [..parentGenreList, ..childGenreList];
+        return [.. parentGenreList, .. childGenreList];
     }
 }

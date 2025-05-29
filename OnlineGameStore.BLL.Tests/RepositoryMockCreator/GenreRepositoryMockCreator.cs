@@ -39,10 +39,10 @@ public class GenreRepositoryMockCreator(List<Genre> data) : IRepositoryMockCreat
                 {
                     return false;
                 }
-                if (genre.ParentId is Guid parentId 
+                if (genre.ParentId is Guid parentId
                     && data.Find(g => g.Id == genre.ParentId) is null)
                 {
-                    return false;   
+                    return false;
                 }
 
                 data[index] = genre;
@@ -59,15 +59,15 @@ public class GenreRepositoryMockCreator(List<Genre> data) : IRepositoryMockCreat
                 }
 
                 data.RemoveAt(index);
-                
-                var parentRefToRemove = id; 
 
-                foreach(var item in data.Where(g => g.ParentId == parentRefToRemove))
+                var parentRefToRemove = id;
+
+                foreach (var item in data.Where(g => g.ParentId == parentRefToRemove))
                 {
                     item.ParentGenre = null;
                     item.ParentId = null;
                 }
-                
+
                 return true;
             });
 

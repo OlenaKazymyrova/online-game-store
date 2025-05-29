@@ -17,7 +17,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.LicenseId, opt => opt.MapFrom(src => src.License));
 
 
-        CreateMap<Genre, GenreDto>().ReverseMap()  
+        CreateMap<Genre, GenreDto>().ReverseMap()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))

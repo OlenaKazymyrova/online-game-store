@@ -54,7 +54,7 @@ public class GenreServiceTests
     {
         var result = await _genreService.GetByIdAsync(Guid.NewGuid());
 
-        Assert.Null(result);    
+        Assert.Null(result);
     }
 
     [Fact]
@@ -87,12 +87,12 @@ public class GenreServiceTests
         Assert.True(result);
     }
 
-    [Fact] 
+    [Fact]
     public async Task GetAll_ReturnsAll()
     {
         var result = await _genreService.GetAllAsync();
 
-        Assert.Equal(_data, _mapper.Map<List<Genre>>(result)); 
+        Assert.Equal(_data, _mapper.Map<List<Genre>>(result));
     }
 
     [Fact]

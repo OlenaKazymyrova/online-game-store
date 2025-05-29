@@ -51,7 +51,7 @@ namespace OnlineGameStore.BLL.Services
 
             return _mapper.Map<GenreDto>(entity);
         }
-        
+
         public async Task<bool> UpdateAsync(GenreDto dto)
         {
             var entity = _mapper.Map<Genre>(dto);
@@ -66,7 +66,7 @@ namespace OnlineGameStore.BLL.Services
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            return await _repository.DeleteAsync(id); 
+            return await _repository.DeleteAsync(id);
         }
     }
 }
