@@ -34,27 +34,27 @@ public class GameServiceTests
     {
         var game = _data[0];
 
-        var result = await _gameService.GetByIdAsync(game.Id);
+        var returnedGame = await _gameService.GetByIdAsync(game.Id);
 
-        Assert.NotNull(result);
-        Assert.Equal(game.Id, result.Id);
+        Assert.NotNull(returnedGame);
+        Assert.Equal(game.Id, returnedGame.Id);
     }
 
     [Fact]
     public async Task GetByIdAsync_GameDoesNotExist_ReturnsNull()
     {
-        var result = await _gameService.GetByIdAsync(Guid.NewGuid());
+        var emptyGame = await _gameService.GetByIdAsync(Guid.NewGuid());
 
-        Assert.Null(result);
+        Assert.Null(emptyGame);
     }
 
     [Fact]
     public async Task GetAllAsync_GamesExist_ReturnsAllGames()
     {
-        var result = await _gameService.GetAllAsync();
+        var allGames = await _gameService.GetAllAsync();
 
-        Assert.NotNull(result);
-        Assert.Equal(EntityCount, result.Count());
+        Assert.NotNull(allGames);
+        Assert.Equal(EntityCount, allGames.Count());
     }
 
     [Fact]
@@ -70,10 +70,10 @@ public class GameServiceTests
             LicenseId = Guid.NewGuid()
         };
 
-        var result = await _gameService.AddAsync(newGame);
+        var created = await _gameService.AddAsync(newGame);
 
-        Assert.NotNull(result);
-        Assert.Equal(newGame.Id, result.Id);
+        Assert.NotNull(created);
+        Assert.Equal(newGame.Id, created.Id);
     }
 
     [Fact]
