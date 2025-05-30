@@ -50,4 +50,16 @@ public class GameController : ControllerBase
 
         return Created($"/games/{createdGame.Id}", createdGame);
     }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteAsync(Guid id)
+    {
+        var result = await _service.DeleteAsync(id);
+        if (!result)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }

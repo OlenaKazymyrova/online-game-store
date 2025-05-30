@@ -41,7 +41,7 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
 
         Assert.Equal(HttpStatusCode.NotFound, request.StatusCode);
     }
-    
+
     [Fact]
     public async Task GetAllAsync_GamesExist_ReturnsGamesList()
     {
@@ -86,5 +86,61 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
         var request = await Client.PostAsJsonAsync("/games", notAGame);
 
         Assert.Equal(HttpStatusCode.BadRequest, request.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_GameExists_ReturnsNoContent()
+    {
+        var newGame = new GameDto
+        {
+            Id = Guid.NewGuid(),
+            Name = "Game to Delete",
+            Description = "Game Description",
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid()
+        };
+
+        var postRequest = await Client.PostAsJsonAsync("/games", newGame);
+        Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
+
+        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
+        var gameId = game!.Id;
+
+        var deleteRequest = await Client.DeleteAsync($"games/{gameId}");
+        Assert.Equal(HttpStatusCode.NoContent, deleteRequest.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_GameDoesNotExist_ReturnsNotFound()
+    {
+        var newId = Guid.NewGuid().ToString();
+        var request = await Client.DeleteAsync($"games/{newId}");
+
+        Assert.Equal(HttpStatusCode.NotFound, request.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_GameAlreadyDeleted_ReturnsNotFound()
+    {
+        var newGame = new GameDto
+        {
+            Id = Guid.NewGuid(),
+            Name = "Game to Delete",
+            Description = "Game Description",
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid()
+        };
+
+        var postRequest = await Client.PostAsJsonAsync("/games", newGame);
+        Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
+
+        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
+        var gameId = game!.Id;
+
+        _ = await Client.DeleteAsync($"games/{gameId}");
+        var secondDeleteRequest = await Client.DeleteAsync($"games/{gameId}");
+        Assert.Equal(HttpStatusCode.NotFound, secondDeleteRequest.StatusCode);
     }
 }
