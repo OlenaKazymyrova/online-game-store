@@ -34,9 +34,9 @@ public class GameRepositoryMockCreator(List<Game> data) : IRepositoryMockCreator
             });
 
         repo.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Game game) =>
+            .ReturnsAsync((Guid id) =>
             {
-                var index = data.FindIndex(x => x.Id == game.Id);
+                var index = data.FindIndex(g => g.Id == id);
                 if (index == -1) return false;
                 data.RemoveAt(index);
                 return true;
