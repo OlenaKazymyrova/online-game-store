@@ -112,7 +112,9 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
         Assert.Equal(HttpStatusCode.NotFound, secondDeleteRequest.StatusCode);
     }
 
-    private GameDto GetGameDto(string name = "Test Game", string description = "Test Description",
+    private GameDto GetGameDto(
+        string name = "Test Game",
+        string description = "Test Description",
         decimal price = 59.99m,
         DateTime releaseDate = default)
     {

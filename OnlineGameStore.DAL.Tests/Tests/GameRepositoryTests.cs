@@ -78,7 +78,10 @@ public class GameRepositoryTests
         Assert.True(result);
     }
 
-    private Game GetGame(string name = "Test Game", string description = "Test Description", decimal price = 59.99m,
+    private Game GetGame(
+        string name = "Test Game",
+        string description = "Test Description",
+        decimal price = 59.99m,
         DateTime releaseDate = default)
     {
         return new Game

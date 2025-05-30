@@ -95,8 +95,11 @@ public class GameServiceTests
 
         Assert.False(result);
     }
-    
-    private GameDto GetGameDto(string name = "Test Game", string description = "Test Description", decimal price = 59.99m,
+
+    private GameDto GetGameDto(
+        string name = "Test Game",
+        string description = "Test Description",
+        decimal price = 59.99m,
         DateTime releaseDate = default)
     {
         return new GameDto
