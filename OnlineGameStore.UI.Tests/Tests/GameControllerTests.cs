@@ -41,6 +41,19 @@ public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerT
 
         Assert.Equal(HttpStatusCode.NotFound, request.StatusCode);
     }
+    
+    [Fact]
+    public async Task GetAllAsync_GamesExist_ReturnsGamesList()
+    {
+        var request = await Client.GetAsync("/games");
+
+        Assert.Equal(HttpStatusCode.OK, request.StatusCode);
+
+        var games = await request.Content.ReadFromJsonAsync<IEnumerable<GameDto>>();
+
+        Assert.NotNull(games);
+        Assert.NotEmpty(games);
+    }
 
     [Fact]
     public async Task CreateAsync_GameIsValid_ReturnsCreatedGame()

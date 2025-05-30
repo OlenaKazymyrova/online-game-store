@@ -27,6 +27,13 @@ public class GameController : ControllerBase
         return Ok(game);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        var games = await _service.GetAllAsync();
+        return Ok(games);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] GameDto? gameDto)
     {
