@@ -37,7 +37,7 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
     [Fact]
     public async Task GetAllAsync_GamesExist_ReturnsGamesList()
     {
-        var getRequest = await Client.GetAsync("/api/Games");
+        var getRequest = await Client.GetAsync("api/Games");
 
         Assert.Equal(HttpStatusCode.OK, getRequest.StatusCode);
 
@@ -52,7 +52,7 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
     {
         var newGame = GetGameDto();
 
-        var postRequest = await Client.PostAsJsonAsync("/api/Games", newGame);
+        var postRequest = await Client.PostAsJsonAsync("api/Games", newGame);
 
         Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
 
