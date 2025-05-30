@@ -49,6 +49,15 @@ public class GameServiceTests
     }
 
     [Fact]
+    public async Task GetAllAsync_GamesExist_ReturnsAllGames()
+    {
+        var result = await _gameService.GetAllAsync();
+
+        Assert.NotNull(result);
+        Assert.Equal(EntityCount, result.Count());
+    }
+
+    [Fact]
     public async Task AddAsync_ReturnsGame()
     {
         var newGame = new GameDto
