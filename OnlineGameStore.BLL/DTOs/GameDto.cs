@@ -8,4 +8,6 @@ public class GameDto
     public Guid? PublisherId { get; set; }
     public Guid? GenreId { get; set; }
     public Guid? LicenseId { get; set; }
+    public required decimal Price { get; set; }
+    public required DateTime ReleaseDate { get; set; }
 }
