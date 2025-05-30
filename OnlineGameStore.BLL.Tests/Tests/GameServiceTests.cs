@@ -60,15 +60,7 @@ public class GameServiceTests
     [Fact]
     public async Task AddAsync_ReturnsGame()
     {
-        var newGame = new GameDto
-        {
-            Id = Guid.NewGuid(),
-            Name = "New Game",
-            Description = "Action",
-            PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
-            LicenseId = Guid.NewGuid()
-        };
+        var newGame = GetGameDto();
 
         var created = await _gameService.AddAsync(newGame);
 
@@ -102,5 +94,20 @@ public class GameServiceTests
         var result = await _gameService.DeleteAsync(game.Id);
 
         Assert.False(result);
+    }
+    
+    private GameDto GetGameDto(string name = "Test Game", string description = "Test Description", decimal price = 59.99m,
+        DateTime releaseDate = default)
+    {
+        return new GameDto
+        {
+            Name = name,
+            Description = description,
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid(),
+            Price = price,
+            ReleaseDate = releaseDate
+        };
     }
 }
