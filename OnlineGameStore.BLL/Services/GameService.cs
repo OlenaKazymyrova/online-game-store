@@ -43,6 +43,6 @@ public class GameService : IGameService
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _repository.DeleteAsync(id);
     }
 }

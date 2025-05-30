@@ -75,4 +75,32 @@ public class GameServiceTests
         Assert.NotNull(result);
         Assert.Equal(newGame.Id, result.Id);
     }
+
+    [Fact]
+    public async Task DeleteAsync_GameExists_ReturnsTrue()
+    {
+        var game = _data[0];
+        var result = await _gameService.DeleteAsync(game.Id);
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_GameDoesNotExist_ReturnsFalse()
+    {
+        var result = await _gameService.DeleteAsync(Guid.NewGuid());
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_GameAlreadyDeleted_ReturnsFalse()
+    {
+        var game = _data[0];
+        await _gameService.DeleteAsync(game.Id);
+
+        var result = await _gameService.DeleteAsync(game.Id);
+
+        Assert.False(result);
+    }
 }
