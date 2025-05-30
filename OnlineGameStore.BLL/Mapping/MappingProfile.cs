@@ -15,7 +15,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.PublisherId, opt => opt.MapFrom(src => src.Publisher))
             .ForMember(dest => dest.GenreId, opt => opt.MapFrom(src => src.Genre))
             .ForMember(dest => dest.LicenseId, opt => opt.MapFrom(src => src.License));
-            
+
         CreateMap<GameDto, Game>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
