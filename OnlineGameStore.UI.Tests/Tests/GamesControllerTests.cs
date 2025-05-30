@@ -4,7 +4,7 @@ using OnlineGameStore.BLL.DTOs;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
-public class GameControllerTests(ControllerTestsHelper helper) : BaseControllerTests(helper)
+public class GamesControllerTests(ControllerTestsHelper helper) : BaseControllerTests(helper)
 {
     [Fact]
     public async Task GetByIdAsync_GameValid_ReturnsGame()

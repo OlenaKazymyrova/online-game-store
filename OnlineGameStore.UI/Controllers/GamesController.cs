@@ -4,15 +4,15 @@ using OnlineGameStore.BLL.Interfaces;
 
 namespace OnlineGameStore.UI.Controllers;
 
-[Route("games")]
 [ApiController]
-public class GameController : ControllerBase
+[Route("api/[controller]")]
+public class GamesController : ControllerBase
 {
     private readonly IGameService _service;
 
-    public GameController(IGameService service)
+    public GamesController(IGameService service)
     {
-        _service = service;
+        _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
     [HttpGet("{id:guid}")]
