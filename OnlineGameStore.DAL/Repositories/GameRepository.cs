@@ -26,8 +26,8 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 
         try
         {
-            await context.Games.AddAsync(entity);  
-            await context.SaveChangesAsync();  
+            await context.Games.AddAsync(entity);
+            await context.SaveChangesAsync();
             return entity;
         }
         catch (DbUpdateException ex)
@@ -37,7 +37,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
         catch (OperationCanceledException ex)
         {
             Console.WriteLine($"Error adding game: {ex.Message}");
-        }   
+        }
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
@@ -48,11 +48,11 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 
     public async Task<bool> UpdateAsync(Game entity)
     {
-        if (entity is null)  
+        if (entity is null)
         {
             return false;
         }
-        
+
         var game = await context.Games.FindAsync(entity.Id);
 
         if (game == null)
@@ -106,7 +106,7 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
         {
             Console.WriteLine($"Error deleting game: {ex.Message}");
         }
-        
+
         return false;
     }
 }
