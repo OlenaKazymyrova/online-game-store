@@ -9,26 +9,21 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
     [Fact]
     public async Task GetByIdAsync_GameValid_ReturnsGame()
     {
-        var newGame = new GameDto
-        {
-            Id = Guid.NewGuid(),
-            Name = "Game",
-            Description = "Game Description",
-            PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
-            LicenseId = Guid.NewGuid()
-        };
+        var newGame = GetGameDto();
 
         var postRequest = await Client.PostAsJsonAsync("api/Games", newGame);
+
         Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
 
         var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
         var gameId = game!.Id;
 
         var getRequest = await Client.GetAsync($"api/Games/{gameId}");
+
         Assert.Equal(HttpStatusCode.OK, getRequest.StatusCode);
 
         var fetchedGame = await getRequest.Content.ReadFromJsonAsync<GameDto>();
+
         Assert.NotNull(fetchedGame);
         Assert.Equal(gameId, fetchedGame.Id);
     }
@@ -58,15 +53,7 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
     [Fact]
     public async Task CreateAsync_GameIsValid_ReturnsCreatedGame()
     {
-        var newGame = new GameDto
-        {
-            Id = Guid.NewGuid(),
-            Name = "New Game",
-            Description = "Action",
-            PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
-            LicenseId = Guid.NewGuid()
-        };
+        var newGame = GetGameDto();
 
         var postRequest = await Client.PostAsJsonAsync("api/Games", newGame);
 
@@ -76,6 +63,16 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
 
         Assert.NotNull(createdGame);
         Assert.Equal(newGame.Id, createdGame.Id);
+    }
+
+    [Fact]
+    public async Task CreateAsync_PriceIsNegative_ReturnsError()
+    {
+        var newGame = GetGameDto(price: -1.0m);
+
+        var postRequest = await Client.PostAsJsonAsync("api/Games", newGame);
+
+        Assert.Equal(HttpStatusCode.BadRequest, postRequest.StatusCode);
     }
 
     [Fact]
@@ -91,23 +88,17 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
     [Fact]
     public async Task DeleteAsync_GameExists_ReturnsNoContent()
     {
-        var newGame = new GameDto
-        {
-            Id = Guid.NewGuid(),
-            Name = "Game to Delete",
-            Description = "Game Description",
-            PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
-            LicenseId = Guid.NewGuid()
-        };
+        var newGame = GetGameDto();
 
         var postRequest = await Client.PostAsJsonAsync("api/Games", newGame);
+
         Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
 
         var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
         var gameId = game!.Id;
 
         var deleteRequest = await Client.DeleteAsync($"api/Games/{gameId}");
+
         Assert.Equal(HttpStatusCode.NoContent, deleteRequest.StatusCode);
     }
 
@@ -123,24 +114,37 @@ public class GamesControllerTests(ControllerTestsHelper helper) : BaseController
     [Fact]
     public async Task DeleteAsync_GameAlreadyDeleted_ReturnsNotFound()
     {
-        var newGame = new GameDto
-        {
-            Id = Guid.NewGuid(),
-            Name = "Game to Delete",
-            Description = "Game Description",
-            PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
-            LicenseId = Guid.NewGuid()
-        };
+        var newGame = GetGameDto();
 
         var postRequest = await Client.PostAsJsonAsync("api/Games", newGame);
+
         Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
 
         var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
         var gameId = game!.Id;
 
-        _ = await Client.DeleteAsync($"api/Games/{gameId}"); // First delete request
+        var firstDeleteRequest = await Client.DeleteAsync($"api/Games/{gameId}");
         var secondDeleteRequest = await Client.DeleteAsync($"api/Games/{gameId}");
+
         Assert.Equal(HttpStatusCode.NotFound, secondDeleteRequest.StatusCode);
+    }
+
+    private GameDto GetGameDto(
+        string name = "Test Game",
+        string description = "Test Description",
+        decimal price = 59.99m,
+        DateTime releaseDate = default)
+    {
+        return new GameDto
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Description = description,
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid(),
+            Price = price,
+            ReleaseDate = releaseDate
+        };
     }
 }

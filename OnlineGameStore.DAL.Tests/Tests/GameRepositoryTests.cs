@@ -11,14 +11,7 @@ public class GameRepositoryTests
     public async Task AddAsync_AddsGame()
     {
         var repository = _creator.Create();
-        var game = new Game
-        {
-            Name = "Test Game",
-            Description = "Test Description",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
-        };
+        var game = GetGame();
         var result = await repository.AddAsync(game);
 
         Assert.NotNull(result);
@@ -34,14 +27,7 @@ public class GameRepositoryTests
     public async Task GetByIdAsync_ReturnsGame()
     {
         var repository = _creator.Create();
-        var game = new Game
-        {
-            Name = "Test Game",
-            Description = "Test Description",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
-        };
+        var game = GetGame();
         var addedGame = await repository.AddAsync(game);
         var result = await repository.GetByIdAsync(addedGame!.Id);
 
@@ -58,22 +44,8 @@ public class GameRepositoryTests
     public async Task GetAllAsync_ReturnsAllGames()
     {
         var repository = _creator.Create();
-        var game1 = new Game
-        {
-            Name = "Test Game 1",
-            Description = "Test Description 1",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
-        };
-        var game2 = new Game
-        {
-            Name = "Test Game 2",
-            Description = "Test Description 2",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
-        };
+        var game1 = GetGame();
+        var game2 = GetGame();
         await repository.AddAsync(game1);
         await repository.AddAsync(game2);
 
@@ -87,14 +59,7 @@ public class GameRepositoryTests
     public async Task UpdateAsync_UpdatesGame()
     {
         var repository = _creator.Create();
-        var game = new Game
-        {
-            Name = "Test Game",
-            Description = "Test Description",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
-        };
+        var game = GetGame();
         var addedGame = await repository.AddAsync(game);
         addedGame!.Name = "Updated Game";
         var result = await repository.UpdateAsync(addedGame);
@@ -106,17 +71,29 @@ public class GameRepositoryTests
     public async Task DeleteAsync_DeletesGame()
     {
         var repository = _creator.Create();
-        var game = new Game
-        {
-            Name = "Test Game",
-            Description = "Test Description",
-            Publisher = Guid.NewGuid(),
-            Genre = Guid.NewGuid(),
-            License = Guid.NewGuid()
-        };
+        var game = GetGame();
         var addedGame = await repository.AddAsync(game);
         var result = await repository.DeleteAsync(addedGame!.Id);
 
         Assert.True(result);
+    }
+
+    private Game GetGame(
+        string name = "Test Game",
+        string description = "Test Description",
+        decimal price = 59.99m,
+        DateTime releaseDate = default)
+    {
+        return new Game
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Description = description,
+            Publisher = Guid.NewGuid(),
+            Genre = Guid.NewGuid(),
+            License = Guid.NewGuid(),
+            Price = price,
+            ReleaseDate = releaseDate
+        };
     }
 }
