@@ -86,6 +86,7 @@ public class GameRepositoryTests
     {
         return new Game
         {
+            Id = Guid.NewGuid(),
             Name = name,
             Description = description,
             Publisher = Guid.NewGuid(),

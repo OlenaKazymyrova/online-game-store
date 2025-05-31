@@ -104,6 +104,7 @@ public class GameServiceTests
     {
         return new GameDto
         {
+            Id = Guid.NewGuid(),
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
