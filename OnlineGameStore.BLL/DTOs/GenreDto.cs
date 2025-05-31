@@ -1,6 +1,4 @@
-﻿using OnlineGameStore.DAL.Entities;
-
-namespace OnlineGameStore.BLL.DTOs;
+﻿namespace OnlineGameStore.BLL.DTOs;
 
 public class GenreDto
 {
@@ -8,7 +6,6 @@ public class GenreDto
     public required string Name { get; set; }
     public required string Description { get; set; }
     public Guid? ParentId { get; set; }
-
 
     public override bool Equals(object? obj) =>
         Equals(obj as GenreDto);

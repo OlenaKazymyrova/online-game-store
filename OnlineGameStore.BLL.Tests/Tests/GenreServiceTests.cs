@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.DAL.Migrations;
-using System.Xml.XPath;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 

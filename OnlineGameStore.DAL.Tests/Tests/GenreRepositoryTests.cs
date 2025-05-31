@@ -79,10 +79,10 @@ public class GenreRepositoryTests
         var repository = _creator.Create();
 
         await repository.AddAsync(_testParentGenre);
-        var resutl = await repository.AddAsync(_testChildGenre);
+        var result = await repository.AddAsync(_testChildGenre);
 
-        Assert.NotNull(resutl);
-        Assert.NotNull(resutl.ParentGenre);
+        Assert.NotNull(result);
+        Assert.NotNull(result.ParentGenre);
     }
 
     [Fact]

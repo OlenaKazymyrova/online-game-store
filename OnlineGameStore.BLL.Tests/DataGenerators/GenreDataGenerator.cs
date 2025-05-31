@@ -4,7 +4,6 @@ using System.Security.Cryptography;
 
 namespace OnlineGameStore.BLL.Tests.DataGenerators;
 
-
 public class GenreDataGenerator : IDataGenerator<Genre>
 {
     public List<Genre> Generate(int count)
@@ -14,7 +13,6 @@ public class GenreDataGenerator : IDataGenerator<Genre>
 
         int parentCount = count / 2;
         int childCount = count - parentCount;
-
 
         for (var i = 0; i < parentCount; i++)
         {

@@ -1,11 +1,10 @@
-﻿
-using FluentAssertions;
-using Moq;
+﻿using Moq;
 using OnlineGameStore.BLL.Tests.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Tests.RepositoryMockCreator;
+
 public class GenreRepositoryMockCreator(List<Genre> data) : IRepositoryMockCreator<IGenreRepository>
 {
     public IGenreRepository Create()
