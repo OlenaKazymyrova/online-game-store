@@ -97,13 +97,11 @@ public class GenreServiceTests
     {
         var genre = _data[0];
 
-        var resultBeforeDeletion = await _genreService.DeleteAsync(genre.Id);
+        var isDeletedFirstTime = await _genreService.DeleteAsync(genre.Id);
+        var isDeletedSecondTime = await _genreService.DeleteAsync(genre.Id);
 
-        var resultAfterDeletion = await _genreService.DeleteAsync(genre.Id);
-
-
-        Assert.True(resultBeforeDeletion);
-        Assert.False(resultAfterDeletion);
+        Assert.True(isDeletedFirstTime);
+        Assert.False(isDeletedSecondTime);
     }
 }
 
