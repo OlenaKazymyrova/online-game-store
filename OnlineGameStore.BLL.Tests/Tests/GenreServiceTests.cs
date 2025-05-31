@@ -93,7 +93,7 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_GenreExists_Deletes()
+    public async Task DeleteAsync_GenreExists_DeletesOnlyOnce()
     {
         var genre = _data[0];
 
