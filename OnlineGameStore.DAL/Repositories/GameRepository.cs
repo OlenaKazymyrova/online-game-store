@@ -19,27 +19,42 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
 
     public async Task<Game?> AddAsync(Game entity)
     {
+        if (entity is null)
+        {
+            return null;
+        }
+
         try
         {
-            await context.Games.AddAsync(entity);
-            await context.SaveChangesAsync();
+            await context.Games.AddAsync(entity);  
+            await context.SaveChangesAsync();  
             return entity;
         }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine($"Error adding game: {ex.Message}");
-            return null;
+            Console.WriteLine($"Error adding a game: {ex.Message}");
         }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error adding game: {ex.Message}");
+        }   
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
-            return null;
         }
+
+        return null;
     }
 
     public async Task<bool> UpdateAsync(Game entity)
     {
+        if (entity is null)  
+        {
+            return false;
+        }
+        
         var game = await context.Games.FindAsync(entity.Id);
+
         if (game == null)
         {
             return false;
@@ -51,8 +66,21 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
         game.Genre = entity.Genre;
         game.License = entity.License;
 
-        await context.SaveChangesAsync();
-        return true;
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"Error updating game: {ex.Message}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error updating game: {ex.Message}");
+        }
+
+        return false;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
@@ -64,7 +92,21 @@ public class GameRepository(OnlineGameStoreDbContext context) : IGameRepository
         }
 
         context.Games.Remove(game);
-        await context.SaveChangesAsync();
-        return true;
+
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"Error deleting game: {ex.Message}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error deleting game: {ex.Message}");
+        }
+        
+        return false;
     }
 }

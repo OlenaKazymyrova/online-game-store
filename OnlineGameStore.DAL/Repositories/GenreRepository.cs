@@ -3,14 +3,13 @@ using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.DBContext;
 
-
 namespace OnlineGameStore.DAL.Repositories;
 
 public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepository
 {
     public async Task<Genre?> GetByIdAsync(Guid id)
     {
-        return await context.Genres.FindAsync(id);
+        return await context.Genres.FindAsync(id); // what if id is null? 
     }
 
     public async Task<IEnumerable<Genre>> GetAllAsync()
@@ -36,13 +35,17 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error adding genre: {ex.Message}");
-            return null;
+        }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error adding genre: {ex.Message}");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
-            return null;
         }
+
+        return null;
     }
 
     public async Task<bool> UpdateAsync(Genre entity)
@@ -61,8 +64,21 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
 
         context.Entry(genre).CurrentValues.SetValues(entity);
 
-        await context.SaveChangesAsync();
-        return true;
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"Error updating genre: {ex.Message}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error updating genre: {ex.Message}");
+        }
+
+        return false;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
@@ -73,10 +89,22 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
         }
 
         context.Genres.Remove(genre);
-        await context.SaveChangesAsync();
-        return true;
+
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"Error deleting genre: {ex.Message}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error deleting genre: {ex.Message}");
+        }
+
+        return false;
     }
-
-
 
 }
