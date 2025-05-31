@@ -1,13 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace OnlineGameStore.BLL.DTOs;
 
 public class GameDto
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public Guid Id { get; set; }
+    [Required]
+    public string Name { get; set; }
+    public string Description { get; set; }
     public Guid? PublisherId { get; set; }
     public Guid? GenreId { get; set; }
     public Guid? LicenseId { get; set; }
-    public required decimal Price { get; set; }
-    public required DateTime ReleaseDate { get; set; }
+    [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "Price cannot be negative.")]
+    public decimal Price { get; set; }
+    [Required]
+    public DateTime ReleaseDate { get; set; }
 }

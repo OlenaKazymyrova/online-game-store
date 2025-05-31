@@ -42,11 +42,6 @@ public class GamesController : ControllerBase
             return BadRequest("Game data is required.");
         }
 
-        if (gameDto.Price < 0)
-        {
-            return BadRequest("Price cannot be negative.");
-        }
-
         var createdGame = await _service.AddAsync(gameDto);
         if (createdGame == null)
         {
