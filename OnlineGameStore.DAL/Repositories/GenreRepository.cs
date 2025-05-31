@@ -9,7 +9,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
 {
     public async Task<Genre?> GetByIdAsync(Guid id)
     {
-        return await context.Genres.FindAsync(id); // what if id is null? 
+        return await context.Genres.FindAsync(id); 
     }
 
     public async Task<IEnumerable<Genre>> GetAllAsync()
