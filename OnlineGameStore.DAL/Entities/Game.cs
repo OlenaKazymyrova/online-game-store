@@ -1,4 +1,3 @@
-
 namespace OnlineGameStore.DAL.Entities;
 
 public class Game
@@ -9,4 +8,6 @@ public class Game
     public Guid? Publisher { get; set; }
     public Guid? Genre { get; set; }
     public Guid? License { get; set; }
+    public required decimal Price { get; set; }
+    public required DateTime ReleaseDate { get; set; }
 }

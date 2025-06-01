@@ -18,7 +18,9 @@ public class GameDataGenerator : IDataGenerator<Game>
                 Description = $"Description {i}",
                 Publisher = Guid.NewGuid(),
                 Genre = Guid.NewGuid(),
-                License = Guid.NewGuid()
+                License = Guid.NewGuid(),
+                Price = new decimal(i + 1) * 10,
+                ReleaseDate = DateTime.Now.AddDays(-i)
             });
         }
 
