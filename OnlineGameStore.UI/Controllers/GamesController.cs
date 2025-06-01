@@ -48,7 +48,7 @@ public class GamesController : ControllerBase
             return BadRequest("Failed to create the game.");
         }
 
-        return Created($"/games/{createdGame.Id}", createdGame);
+        return Created($"api/Games/{createdGame.Id}", createdGame);
     }
 
     [HttpDelete("{id:guid}")]
