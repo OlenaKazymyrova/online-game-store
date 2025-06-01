@@ -40,10 +40,10 @@ public class GamesController : ControllerBase
     /// <returns>Game with specified ID if exists</returns>
     /// <response code="200">Returns the Game entity</response>
     /// <response code="404">If the Game with specified ID does not exist</response>
-    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(GameDto), 200)]
-    [Produces("application/json")]
     [ProducesResponseType(typeof(void), 404)]
+    [Produces("application/json")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var game = await _service.GetByIdAsync(id);
@@ -89,15 +89,65 @@ public class GamesController : ControllerBase
     ///     ]
     /// </remarks>
     /// <returns>List of all Game entities</returns>
-    [HttpGet]
+    /// <response code="200">Returns list of all Game entities</response>
     [ProducesResponseType(typeof(IEnumerable<GameDto>), 200)]
     [Produces("application/json")]
+    [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
         var games = await _service.GetAllAsync();
         return Ok(games);
     }
 
+    /// <summary>
+    /// Creates a new Game entity.
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     POST api/Games/
+    ///
+    ///     {
+    ///        "name": "string",
+    ///        "description": "string",
+    ///        "publisherId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///        "genreId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///        "licenseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///        "price": 33,
+    ///        "releaseDate": "2025-06-01T17:02:14.791Z"
+    ///     }
+    /// 
+    /// Returns:
+    /// 
+    ///     {
+    ///        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+    ///        "name": "string",
+    ///        "description": "string",
+    ///        "publisherId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///        "genreId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///        "licenseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///        "price": 33,
+    ///        "releaseDate": "2025-06-01T17:02:14.791Z"
+    ///     }
+    /// </remarks>
+    /// <param name="gameDto">
+    ///     GameDto object with required fiels
+    ///     <param>Name of the game
+    ///         <name>name</name>
+    ///     </param>
+    ///     <param>Game's price
+    ///         <name>price</name>
+    ///     </param>
+    ///     <param>Date of game's release
+    ///         <name>releaseDate</name>
+    ///     </param>
+    /// </param>
+    /// <returns>Game with specified ID if exists</returns>
+    /// <response code="201">Returns created Game entity</response>
+    /// <response code="400">Returns when request does not contain required data</response>
+    [ProducesResponseType(typeof(GameDto), 201)]
+    [ProducesResponseType(typeof(string), 400)]
+    [Produces("application/json")]
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] GameDto? gameDto)
     {
@@ -115,6 +165,20 @@ public class GamesController : ControllerBase
         return Created($"api/Games/{createdGame.Id}", createdGame);
     }
 
+    /// <summary>
+    /// Deletes a Game entity by its ID.
+    /// </summary>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     DELETE api/Games/3fa85f64-5717-4562-b3fc-2c963f66afa8
+    ///
+    /// </remarks>
+    /// <param name="id">ID of the Game to delete</param>
+    /// <response code="204">Returns when Game with specified ID has been successfully deleted</response>
+    /// <response code="404">Returns when Game with specified ID is not found</response>
+    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(void), 404)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
