@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 
 namespace OnlineGameStore.UI.Controllers;
 
 
-[Route("[Controller]")]
+[Route("api/[Controller]")]
 [ApiController]
 public class GenresController : ControllerBase
 {
@@ -52,7 +51,7 @@ public class GenresController : ControllerBase
 
         if (createdGenre is null)
         {
-            return StatusCode(500);  // or should I throw a BadRequest() ?
+            return StatusCode(500);
         }
 
         return CreatedAtAction(
