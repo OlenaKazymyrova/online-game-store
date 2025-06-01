@@ -6,6 +6,7 @@ namespace OnlineGameStore.UI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
 public class GamesController : ControllerBase
 {
     private readonly IGameService _service;
@@ -40,9 +41,8 @@ public class GamesController : ControllerBase
     /// <returns>The requested <see cref="GameDto"/> if found.</returns>
     /// <response code="200">Returns the game with the specified ID.</response>
     /// <response code="404">If the game is not found.</response>
-    [ProducesResponseType(typeof(GameDto), 200)]
-    [ProducesResponseType(typeof(void), 404)]
-    [Produces("application/json")]
+    [ProducesResponseType(typeof(GameDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
@@ -90,8 +90,7 @@ public class GamesController : ControllerBase
     /// </remarks>
     /// <returns>A list of all <see cref="GameDto"/> records.</returns>
     /// <response code="200">Returns a list of all games.</response>
-    [ProducesResponseType(typeof(IEnumerable<GameDto>), 200)]
-    [Produces("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<GameDto>), StatusCodes.Status200OK)]
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
@@ -134,9 +133,8 @@ public class GamesController : ControllerBase
     /// <returns>The created <see cref="GameDto"/> entity.</returns>
     /// <response code="201">Successfully created the game.</response>
     /// <response code="400">If the game data is invalid or missing.</response>
-    [ProducesResponseType(typeof(GameDto), 201)]
-    [ProducesResponseType(typeof(string), 400)]
-    [Produces("application/json")]
+    [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] GameDto? gameDto)
     {
@@ -165,8 +163,8 @@ public class GamesController : ControllerBase
     /// <param name="id">The ID of the game to delete.</param>
     /// <response code="204">Game was successfully deleted.</response>
     /// <response code="404">Game with the specified ID was not found.</response>
-    [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(void), 404)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
