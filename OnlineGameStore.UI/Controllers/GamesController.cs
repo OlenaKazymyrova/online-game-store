@@ -16,17 +16,17 @@ public class GamesController : ControllerBase
     }
 
     /// <summary>
-    /// Returns a Game entity by its ID.
+    /// Retrieves a game by its unique ID.
     /// </summary>
     /// <remarks>
     /// Sample request:
     ///
-    ///     GET api/Games/fd5f3b67-0187-48ee-a50e-afdfd1ce5830
+    ///     GET /api/Games/fd5f3b67-0187-48ee-a50e-afdfd1ce5830
     ///
-    /// Returns:
-    /// 
+    /// Sample response:
+    ///
     ///     {
-    ///         "id": fd5f3b67-0187-48ee-a50e-afdfd1ce5830,
+    ///         "id": "fd5f3b67-0187-48ee-a50e-afdfd1ce5830",
     ///         "name": "Sample Game",
     ///         "description": "This is a sample game description.",
     ///         "publisherId": "05de777a-05fb-4792-bab5-0b171b6e5be4",
@@ -36,10 +36,10 @@ public class GamesController : ControllerBase
     ///         "releaseDate": "2023-10-01T00:00:00"
     ///     }
     /// </remarks>
-    /// <param name="id">ID of a Game entity to get</param>
-    /// <returns>Game with specified ID if exists</returns>
-    /// <response code="200">Returns the Game entity</response>
-    /// <response code="404">If the Game with specified ID does not exist</response>
+    /// <param name="id">The ID of the game to retrieve.</param>
+    /// <returns>The requested <see cref="GameDto"/> if found.</returns>
+    /// <response code="200">Returns the game with the specified ID.</response>
+    /// <response code="404">If the game is not found.</response>
     [ProducesResponseType(typeof(GameDto), 200)]
     [ProducesResponseType(typeof(void), 404)]
     [Produces("application/json")]
@@ -56,15 +56,15 @@ public class GamesController : ControllerBase
     }
 
     /// <summary>
-    /// Returns list of all Game entities.
+    /// Retrieves a list of all games.
     /// </summary>
     /// <remarks>
     /// Sample request:
     ///
-    ///     GET api/Games
+    ///     GET /api/Games
     ///
-    /// Returns:
-    /// 
+    /// Sample response:
+    ///
     ///     [
     ///         {
     ///             "id": "fd5f3b67-0187-48ee-a50e-afdfd1ce5830",
@@ -88,8 +88,8 @@ public class GamesController : ControllerBase
     ///         }
     ///     ]
     /// </remarks>
-    /// <returns>List of all Game entities</returns>
-    /// <response code="200">Returns list of all Game entities</response>
+    /// <returns>A list of all <see cref="GameDto"/> records.</returns>
+    /// <response code="200">Returns a list of all games.</response>
     [ProducesResponseType(typeof(IEnumerable<GameDto>), 200)]
     [Produces("application/json")]
     [HttpGet]
@@ -100,51 +100,40 @@ public class GamesController : ControllerBase
     }
 
     /// <summary>
-    /// Creates a new Game entity.
+    /// Creates a new game.
     /// </summary>
     /// <remarks>
     /// Sample request:
-    /// 
-    ///     POST api/Games/
+    ///
+    ///     POST /api/Games
     ///
     ///     {
-    ///        "name": "string",
-    ///        "description": "string",
-    ///        "publisherId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    ///        "genreId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    ///        "licenseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    ///        "price": 33,
-    ///        "releaseDate": "2025-06-01T17:02:14.791Z"
+    ///         "name": "Sample Game",
+    ///         "description": "An awesome new game.",
+    ///         "publisherId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///         "genreId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///         "licenseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///         "price": 33.0,
+    ///         "releaseDate": "2025-06-01T17:02:14.791Z"
     ///     }
-    /// 
-    /// Returns:
-    /// 
+    ///
+    /// Sample response:
+    ///
     ///     {
-    ///        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
-    ///        "name": "string",
-    ///        "description": "string",
-    ///        "publisherId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    ///        "genreId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    ///        "licenseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    ///        "price": 33,
-    ///        "releaseDate": "2025-06-01T17:02:14.791Z"
+    ///         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+    ///         "name": "Sample Game",
+    ///         "description": "An awesome new game.",
+    ///         "publisherId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///         "genreId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///         "licenseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///         "price": 33.0,
+    ///         "releaseDate": "2025-06-01T17:02:14.791Z"
     ///     }
     /// </remarks>
-    /// <param name="gameDto">
-    ///     GameDto object with required fiels
-    ///     <param>Name of the game
-    ///         <name>name</name>
-    ///     </param>
-    ///     <param>Game's price
-    ///         <name>price</name>
-    ///     </param>
-    ///     <param>Date of game's release
-    ///         <name>releaseDate</name>
-    ///     </param>
-    /// </param>
-    /// <returns>Game with specified ID if exists</returns>
-    /// <response code="201">Returns created Game entity</response>
-    /// <response code="400">Returns when request does not contain required data</response>
+    /// <param name="gameDto">The game data to create.</param>
+    /// <returns>The created <see cref="GameDto"/> entity.</returns>
+    /// <response code="201">Successfully created the game.</response>
+    /// <response code="400">If the game data is invalid or missing.</response>
     [ProducesResponseType(typeof(GameDto), 201)]
     [ProducesResponseType(typeof(string), 400)]
     [Produces("application/json")]
@@ -166,17 +155,16 @@ public class GamesController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes a Game entity by its ID.
+    /// Deletes a game by its ID.
     /// </summary>
     /// <remarks>
     /// Sample request:
-    /// 
-    ///     DELETE api/Games/3fa85f64-5717-4562-b3fc-2c963f66afa8
     ///
+    ///     DELETE /api/Games/3fa85f64-5717-4562-b3fc-2c963f66afa8
     /// </remarks>
-    /// <param name="id">ID of the Game to delete</param>
-    /// <response code="204">Returns when Game with specified ID has been successfully deleted</response>
-    /// <response code="404">Returns when Game with specified ID is not found</response>
+    /// <param name="id">The ID of the game to delete.</param>
+    /// <response code="204">Game was successfully deleted.</response>
+    /// <response code="404">Game with the specified ID was not found.</response>
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 404)]
     [HttpDelete("{id:guid}")]
