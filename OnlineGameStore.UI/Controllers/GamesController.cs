@@ -6,7 +6,6 @@ namespace OnlineGameStore.UI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Produces("application/json")]
 public class GamesController : ControllerBase
 {
     private readonly IGameService _service;
@@ -43,6 +42,7 @@ public class GamesController : ControllerBase
     /// <response code="404">If the game is not found.</response>
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [Produces("application/json")]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
@@ -91,6 +91,7 @@ public class GamesController : ControllerBase
     /// <returns>A list of all <see cref="GameDto"/> records.</returns>
     /// <response code="200">Returns a list of all games.</response>
     [ProducesResponseType(typeof(IEnumerable<GameDto>), StatusCodes.Status200OK)]
+    [Produces("application/json")]
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
@@ -135,6 +136,7 @@ public class GamesController : ControllerBase
     /// <response code="400">If the game data is invalid or missing.</response>
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [Produces("application/json")]
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] GameDto? gameDto)
     {
