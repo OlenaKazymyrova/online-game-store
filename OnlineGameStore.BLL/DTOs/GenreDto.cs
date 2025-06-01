@@ -2,7 +2,7 @@
 
 public class GenreDto
 {
-    public required Guid Id { get; set; }
+    public Guid? Id { get; set; }
     public required string Name { get; set; }
     public required string Description { get; set; }
     public Guid? ParentId { get; set; }
@@ -22,10 +22,9 @@ public class GenreDto
     private bool Equals(GenreDto? other)
     {
         if (other is null) return false;
-        if (ReferenceEquals(this, other)) return true;
+        if (ReferenceEquals(this, other) || Id == other.Id) return true;
 
-        return Id == other.Id &&
-            Name == other.Name &&
+        return Name == other.Name &&
             Description == other.Description &&
             ParentId == other.ParentId;
     }
