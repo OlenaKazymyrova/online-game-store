@@ -1,7 +1,21 @@
+using Microsoft.OpenApi.Models;
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
 
+const string apiVersion = "1.0.0";
+const string documentName = "online-game-store-api";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc(documentName, new OpenApiInfo
+    {
+        Version = apiVersion,
+        Title = "Online Game Store API",
+        Description = "Swagger documentation for the Online Game Store API"
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddDalServices(builder.Configuration);
@@ -9,9 +23,13 @@ builder.Services.AddBllServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint($"/swagger/{documentName}/swagger.json", $"OGS API v{apiVersion}");
+    });
 }
 
 app.UseHttpsRedirection();
