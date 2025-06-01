@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
@@ -15,6 +16,9 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Online Game Store API",
         Description = "Swagger documentation for the Online Game Store API"
     });
+    
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddControllers();
