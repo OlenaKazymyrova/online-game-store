@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
-public class GenreControllerTests(ControllerTestsHelper factory) : BaseControllerTests(factory)
+public class GenresControllerTests(ControllerTestsHelper factory) : BaseControllerTests(factory)
 {
     private const int _dtoAmountToGenerate = 1;
 
@@ -19,7 +19,7 @@ public class GenreControllerTests(ControllerTestsHelper factory) : BaseControlle
     public async Task Create_GenreNotExist_ReturnsLocationUri()
     {
         var newGenreDto = GenGenreDto();
-        var postResponse = await Client.PostAsJsonAsync("/genres", newGenreDto);
+        var postResponse = await Client.PostAsJsonAsync("api/genres", newGenreDto);
 
         postResponse.EnsureSuccessStatusCode();
 
@@ -30,19 +30,19 @@ public class GenreControllerTests(ControllerTestsHelper factory) : BaseControlle
         Assert.NotNull(createdGenre);
         Assert.NotNull(location);
         Assert.NotNull(createdGenre);
-        Assert.EndsWith($"/Genres/{createdGenre.Id}", location.ToString());
+        Assert.EndsWith($"api/Genres/{createdGenre.Id}", location.ToString());
         Assert.Equal(newGenreDto, createdGenre);
     }
 
     [Fact]
-    public async Task Create_GenreAlreadyExists_ReturnsBadRequest()
+    public async Task Create_GenreAlreadyExists_ReturnsConflict()
     {
         var newGenreDto = GenGenreDto();
-        var postResponse1 = await Client.PostAsJsonAsync("/genres", newGenreDto);
+        var postResponse1 = await Client.PostAsJsonAsync("api/genres", newGenreDto);
 
         postResponse1.EnsureSuccessStatusCode();
 
-        var postReponse2 = await Client.PostAsJsonAsync("/genres", newGenreDto);
+        var postReponse2 = await Client.PostAsJsonAsync("api/genres", newGenreDto);
 
         Assert.Equal(HttpStatusCode.Conflict, postReponse2.StatusCode);
     }
@@ -51,14 +51,16 @@ public class GenreControllerTests(ControllerTestsHelper factory) : BaseControlle
     public async Task GetGenre_GenreExists_ReturnsGenre()
     {
         var newGenreDto = GenGenreDto();
+        var postResponse = await Client.PostAsJsonAsync("api/genres", newGenreDto);
 
-        var postResponse = await Client.PostAsJsonAsync("/genres", newGenreDto);
         postResponse.EnsureSuccessStatusCode();
 
         var createdGenre = await postResponse.Content.ReadFromJsonAsync<GenreDto>();
+
         Assert.NotNull(createdGenre);
 
-        var getResponse = await Client.GetAsync($"/genres/{createdGenre!.Id}");
+        var getResponse = await Client.GetAsync($"api/genres/{createdGenre!.Id}");
+
         getResponse.EnsureSuccessStatusCode();
 
         var fetchedGenre = await getResponse.Content.ReadFromJsonAsync<GenreDto>();
@@ -71,7 +73,7 @@ public class GenreControllerTests(ControllerTestsHelper factory) : BaseControlle
     public async Task GetGenre_GenreNotExists_ReturnsNotFound()
     {
         var id = Guid.NewGuid();
-        var getResponse = await Client.GetAsync($"/genres/{id}");
+        var getResponse = await Client.GetAsync($"api/genres/{id}");
 
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
