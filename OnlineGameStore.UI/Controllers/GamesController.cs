@@ -4,15 +4,15 @@ using OnlineGameStore.BLL.Interfaces;
 
 namespace OnlineGameStore.UI.Controllers;
 
-[Route("games")]
 [ApiController]
-public class GameController : ControllerBase
+[Route("api/[controller]")]
+public class GamesController : ControllerBase
 {
     private readonly IGameService _service;
 
-    public GameController(IGameService service)
+    public GamesController(IGameService service)
     {
-        _service = service;
+        _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
     [HttpGet("{id:guid}")]
@@ -25,6 +25,13 @@ public class GameController : ControllerBase
         }
 
         return Ok(game);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        var games = await _service.GetAllAsync();
+        return Ok(games);
     }
 
     [HttpPost]
@@ -41,6 +48,18 @@ public class GameController : ControllerBase
             return BadRequest("Failed to create the game.");
         }
 
-        return Created($"/games/{createdGame.Id}", createdGame);
+        return Created($"api/Games/{createdGame.Id}", createdGame);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteAsync(Guid id)
+    {
+        var result = await _service.DeleteAsync(id);
+        if (!result)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }
