@@ -40,13 +40,13 @@ public class GenreRepository : IGenreRepository
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error adding genre: {ex.Message}");
+            throw;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
+            throw;
         }
-
-        return null;
     }
 
     public async Task<bool> UpdateAsync(Genre entity)
@@ -73,9 +73,8 @@ public class GenreRepository : IGenreRepository
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error updating genre: {ex.Message}");
+            throw;
         }
-
-        return false;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
@@ -95,9 +94,8 @@ public class GenreRepository : IGenreRepository
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error deleting genre: {ex.Message}");
+            throw;
         }
-
-        return false;
     }
 
     private async Task<bool> IfGenreParentRelationConsistentAsync(Genre entity)
