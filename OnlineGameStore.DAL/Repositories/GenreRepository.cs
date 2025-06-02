@@ -25,7 +25,7 @@ public class GenreRepository : IGenreRepository
     }
 
     public async Task<Genre?> AddAsync(Genre entity)
-    {        
+    {
         if (!await IfGenreParentRelationConsistentAsync(entity))
         {
             return null;
@@ -102,10 +102,10 @@ public class GenreRepository : IGenreRepository
 
     private async Task<bool> IfGenreParentRelationConsistentAsync(Genre entity)
     {
-        return entity is not null 
+        return entity is not null
             && ((entity.ParentId is not null
             && entity.ParentId != Guid.Empty
-            && await _context.Genres.FindAsync(entity.ParentId) is not null) 
+            && await _context.Genres.FindAsync(entity.ParentId) is not null)
             || entity.ParentId is null);
     }
 
