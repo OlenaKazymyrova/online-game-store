@@ -83,7 +83,7 @@ public class GenreRepository : IGenreRepository
         {
             return false;
         }
-        
+
         _context.Genres.Remove(genre);
 
         try

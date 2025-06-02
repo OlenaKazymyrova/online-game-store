@@ -206,7 +206,7 @@ public class GenreRepositoryTests
         var repository = _creator.Create();
 
         var firstAddResult = await repository.AddAsync(_testParentGenre);
-        
+
         Assert.NotNull(firstAddResult);
 
         // Second addition should throw (due to PK constraint violation)
