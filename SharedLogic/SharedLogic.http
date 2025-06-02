@@ -1,0 +1,6 @@
+@SharedLogic_HostAddress = http://localhost:5014
+
+GET {{SharedLogic_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
