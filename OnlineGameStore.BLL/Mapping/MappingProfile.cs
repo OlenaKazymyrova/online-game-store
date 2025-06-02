@@ -15,5 +15,23 @@ public class BllMappingProfile : Profile
             .ReverseMap()
             .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.PublisherId))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.GenreId))
-            .ForMember(dest => dest.License, opt => opt.MapFrom(src => src.LicenseId));}
+            .ForMember(dest => dest.License, opt => opt.MapFrom(src => src.LicenseId));
+        
+        CreateMap<PlatformDto, Platform>()
+            .ForMember(dest => dest.Id, opt =>
+            {
+                opt.PreCondition(src => src.Id != Guid.Empty);
+                opt.MapFrom(src => src.Id);
+            })
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.GamePlatforms, opt => opt.Ignore());
+        
+        
+        CreateMap<Platform, PlatformDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+
+    }
+    
+    
 }
