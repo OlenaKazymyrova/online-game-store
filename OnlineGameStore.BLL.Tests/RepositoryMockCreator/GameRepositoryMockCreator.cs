@@ -5,5 +5,5 @@ namespace OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 
 public class GameRepositoryMockCreator : RepositoryMockCreator<Game, IGameRepository>
 {
-    public GameRepositoryMockCreator(List<Game> data) : base(data) {}
+    public GameRepositoryMockCreator(List<Game> data) : base(data) { }
 }

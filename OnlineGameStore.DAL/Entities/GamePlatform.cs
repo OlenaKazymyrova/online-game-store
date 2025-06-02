@@ -8,5 +8,5 @@ public class GamePlatform
 
     public Guid PlatformId { get; set; }
     public Platform Platform { get; set; }
-    
+
 }
