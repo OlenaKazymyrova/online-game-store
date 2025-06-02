@@ -2,7 +2,6 @@
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.BLL.Services;
-using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.DataGenerators.DataEntityGenerators;
