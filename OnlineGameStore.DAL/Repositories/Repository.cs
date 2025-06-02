@@ -18,6 +18,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         DbSet = DbContext.Set<TEntity>();
     }
 
+    //approved
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
@@ -44,6 +45,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     }
 
 
+    //approved
     public virtual async Task<TEntity?> GetByIdAsync(Guid id)
     {
         return await DbSet.FindAsync(id);
@@ -52,26 +54,56 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<TEntity?> AddAsync(TEntity entity)
     {
-        await DbSet.AddAsync(entity);
-        await DbContext.SaveChangesAsync();
-        return entity;
+        var entityTypeName = typeof(TEntity).Name;
+
+        if (entity is null) return null;
+
+        try
+        {
+            await DbSet.AddAsync(entity);
+            await DbContext.SaveChangesAsync();
+            return entity;
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"Error adding {entityTypeName}: {ex.Message}");
+        }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error adding {entityTypeName}: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error adding {entityTypeName}: {ex.Message}");
+        }
+
+        return null;
     }
-
-
+    
+    
+    
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
+        var entityTypeName = typeof(TEntity).Name; 
+        
         DbSet.Attach(entity);
         DbContext.Entry(entity).State = EntityState.Modified;
 
         try
         {
             int affected = await DbContext.SaveChangesAsync();
-            return affected >= 0;
+            return affected > 0; 
         }
-        catch
+        catch (DbUpdateException ex)
         {
-            return false;
+            Console.WriteLine($"Error updating {entityTypeName}: {ex.Message}");
         }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error updating {entityTypeName}: {ex.Message}");
+        }
+
+        return false;
     }
 
 
@@ -85,10 +117,16 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
             DbSet.Remove(entity);
             return await DbContext.SaveChangesAsync() > 0;
         }
-        catch
+        catch (DbUpdateException ex)
         {
-            return false;
+            Console.WriteLine($"Error deleting game: {ex.Message}");
         }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine($"Error deleting game: {ex.Message}");
+        }
+
+        return false;
     }
 
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineGameStore.DAL.Constants;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Constants;
 
 namespace OnlineGameStore.DAL.Configurations;
 

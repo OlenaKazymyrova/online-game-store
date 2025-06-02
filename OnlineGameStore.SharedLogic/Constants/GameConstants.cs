@@ -1,4 +1,4 @@
-namespace OnlineGameStore.DAL.Constants;
+namespace OnlineGameStore.SharedLogic.Constants;
 
 public static class GameConstants
 {

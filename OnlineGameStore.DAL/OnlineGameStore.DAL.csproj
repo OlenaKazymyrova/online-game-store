@@ -27,4 +27,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OnlineGameStore.SharedLogic\OnlineGameStore.SharedLogic.csproj" />
+  </ItemGroup>
+
 </Project>

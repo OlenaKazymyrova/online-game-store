@@ -36,6 +36,8 @@ public abstract class Service<TEntity, TDto> : IService<TEntity, TDto>
 
     public virtual async Task<TDto?> AddAsync(TDto dto)
     {
+        if (dto is null) return null;
+        
         var entity = Mapper.Map<TEntity>(dto);
         var addedEntity = await Repository.AddAsync(entity);
         return addedEntity == null ? null : Mapper.Map<TDto>(addedEntity);
@@ -43,6 +45,7 @@ public abstract class Service<TEntity, TDto> : IService<TEntity, TDto>
 
     public virtual async Task<bool> UpdateAsync(TDto dto)
     {
+        if (dto is null) return false;
         var entity = Mapper.Map<TEntity>(dto);
         return await Repository.UpdateAsync(entity);
     }
