@@ -16,7 +16,7 @@ public class GameServiceTests
 
     public GameServiceTests()
     {
-        var config = new MapperConfiguration(cfg => { cfg.AddProfile<MappingProfile>(); });
+        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
         var mapper = config.CreateMapper();
 
         var gen = new GameDataGenerator();
