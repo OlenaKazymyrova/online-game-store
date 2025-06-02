@@ -9,7 +9,7 @@ using OnlineGameStore.DAL.Entities;
 namespace OnlineGameStore.BLL.Tests.Tests;
 
 public class PlatformServiceTests
-{ 
+{
     private const int EntityCount = 100;
     private readonly PlatformService _platformService;
     private readonly List<Platform> _data;
@@ -20,10 +20,10 @@ public class PlatformServiceTests
         var mapper = config.CreateMapper();
 
         var gen = new PlatformGenerator();
-        
+
         _data = gen.Generate(EntityCount);
         var repMock = new PlatformRepositoryMockCreator(_data);
-            
+
         var mockRepository = repMock.Create();
 
         _platformService = new PlatformService(mockRepository, mapper);
@@ -31,9 +31,9 @@ public class PlatformServiceTests
 
     [Fact]
     public async Task GetByIdAsync_PlatformExists_ReturnsPlatform()
-    { 
+    {
         var platform = _data[0];
-        
+
         var result = await _platformService.GetByIdAsync(platform.Id);
 
         Assert.NotNull(result);
@@ -42,7 +42,7 @@ public class PlatformServiceTests
 
     [Fact]
     public async Task GetByIdAsync_PlatformDoesNotExist_ReturnsNull()
-    { 
+    {
         var result = await _platformService.GetByIdAsync(Guid.NewGuid());
 
         Assert.Null(result);
@@ -52,14 +52,14 @@ public class PlatformServiceTests
     public async Task GetAllAsync_ReturnsAllPlatforms()
     {
         var result = await _platformService.GetAllAsync();
-        
-        Assert.NotNull(result); 
+
+        Assert.NotNull(result);
         Assert.Equal(EntityCount, result.Count());
     }
 
-    [Fact] 
-    public async Task AddAsync_ValidPlatform_ReturnsCreatedPlatform() 
-    { 
+    [Fact]
+    public async Task AddAsync_ValidPlatform_ReturnsCreatedPlatform()
+    {
         var newPlatform = new PlatformDto
         {
             Name = "New Platform"
@@ -68,25 +68,25 @@ public class PlatformServiceTests
         var result = await _platformService.AddAsync(newPlatform);
 
         Assert.NotNull(result);
-        Assert.NotEqual(Guid.Empty, result.Id); 
-        Assert.Equal(101,_data.Count);
+        Assert.NotEqual(Guid.Empty, result.Id);
+        Assert.Equal(101, _data.Count);
     }
 
     [Fact]
     public async Task UpdateAsync_PlatformExists_ReturnsUpdatedPlatform()
     {
-       
+
         var existingPlatform = _data[0];
         var updateDto = new PlatformDto()
         {
             Id = existingPlatform.Id,
             Name = "Updated Platform"
         };
-        
+
         var result = await _platformService.UpdateAsync(updateDto);
-        
+
         var updatedPlatform = await _platformService.GetByIdAsync(existingPlatform.Id);
-        
+
         Assert.True(result);
         Assert.NotNull(updatedPlatform);
         Assert.Equal("Updated Platform", updatedPlatform.Name);
@@ -120,7 +120,7 @@ public class PlatformServiceTests
     public async Task DeleteAsync_PlatformDoesNotExist_ReturnsFalse()
     {
         var result = await _platformService.DeleteAsync(Guid.NewGuid());
-        
+
         Assert.False(result);
     }
 }

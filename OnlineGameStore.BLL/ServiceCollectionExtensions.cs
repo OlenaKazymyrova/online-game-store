@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IPlatformService, PlatformService>();
         services.AddAutoMapper(typeof(BllMappingProfile));
-        
+
         return services;
     }
 }

@@ -3,4 +3,4 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IPlatformService :  IService<Platform, PlatformDto> { }
+public interface IPlatformService : IService<Platform, PlatformDto> { }
