@@ -33,7 +33,7 @@ public class GenreRepositoryTests
     private static readonly int _testGenreAmount = 2;
 
     [Fact]
-    public async Task AddAsync_AddsGame()
+    public async Task AddAsync_AddsGenre()
     {
         var repository = _creator.Create();
 
