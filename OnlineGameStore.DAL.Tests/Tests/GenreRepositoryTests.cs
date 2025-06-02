@@ -1,4 +1,5 @@
-﻿using OnlineGameStore.DAL.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
 namespace OnlineGameStore.DAL.Tests.Tests;
@@ -205,10 +206,14 @@ public class GenreRepositoryTests
         var repository = _creator.Create();
 
         var firstAddResult = await repository.AddAsync(_testParentGenre);
-        var secondAddResult = await repository.AddAsync(firstAddResult!);
-
+        
         Assert.NotNull(firstAddResult);
-        Assert.Null(secondAddResult);
+
+        // Second addition should throw (due to PK constraint violation)
+        await Assert.ThrowsAsync<System.ArgumentException>(async () =>
+        {
+            await repository.AddAsync(_testParentGenre);
+        });
     }
 
     [Fact]
