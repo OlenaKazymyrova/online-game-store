@@ -1,5 +1,6 @@
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
+using OnlineGameStore.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddDalServices(builder.Configuration);
 builder.Services.AddBllServices();
+builder.Services.AddUiServices();
 
 var app = builder.Build();
 
