@@ -18,7 +18,7 @@ public class GamesControllerTests
         var factory = new ControllerTestsHelper<IGameService>(mockCreator);
         _client = factory.CreateClient();
     }
-    
+
     [Fact]
     public async Task GetByIdAsync_GameValid_ReturnsGame()
     {

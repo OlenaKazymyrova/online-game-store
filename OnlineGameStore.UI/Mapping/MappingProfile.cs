@@ -6,6 +6,6 @@ public class UiMappingProfile : Profile
 {
     public UiMappingProfile()
     {
-       
+
     }
 }

@@ -6,10 +6,10 @@ using OnlineGameStore.DAL.DBContext;
 namespace OnlineGameStore.DAL.Repositories;
 
 public class GenreRepository : Repository<Genre>, IGenreRepository
-{ 
-    public GenreRepository(OnlineGameStoreDbContext context) : base(context) {}
-    
-    
+{
+    public GenreRepository(OnlineGameStoreDbContext context) : base(context) { }
+
+
     public override async Task<Genre?> AddAsync(Genre entity)
     {
         if (entity.ParentId is not null
@@ -37,19 +37,19 @@ public class GenreRepository : Repository<Genre>, IGenreRepository
         }
     }
 
-    
-    
-    
+
+
+
     public override async Task<bool> UpdateAsync(Genre entity)
     {
-        
+
         var existingGenre = await DbSet.FindAsync(entity.Id);
-        
+
         if (existingGenre == null)
         {
             return false;
         }
-        
+
         if (entity.ParentId.HasValue)
         {
             var parentExists = await DbSet.AnyAsync(g => g.Id == entity.ParentId.Value);
@@ -58,11 +58,11 @@ public class GenreRepository : Repository<Genre>, IGenreRepository
                 return false;
             }
         }
-        
+
         DbContext.Entry(existingGenre).CurrentValues.SetValues(entity);
-    
-        return  await DbContext.SaveChangesAsync() > 0;;
+
+        return await DbContext.SaveChangesAsync() > 0; ;
     }
-    
-    
+
+
 }

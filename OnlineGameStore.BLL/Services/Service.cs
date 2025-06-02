@@ -52,5 +52,5 @@ public abstract class Service<TEntity, TDto> : IService<TEntity, TDto>
         return await Repository.DeleteAsync(id);
     }
 
-   
+
 }

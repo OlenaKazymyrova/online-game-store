@@ -8,7 +8,7 @@ namespace OnlineGameStore.BLL.Services;
 
 public class PlatformService : Service<Platform, PlatformDto>, IPlatformService
 {
-    public PlatformService(IPlatformRepository repository, IMapper mapper) 
-        : base(repository, mapper) {}
-    
+    public PlatformService(IPlatformRepository repository, IMapper mapper)
+        : base(repository, mapper) { }
+
 }

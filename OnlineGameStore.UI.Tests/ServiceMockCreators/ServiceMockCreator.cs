@@ -16,12 +16,12 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
 {
     protected readonly List<TDto> Data;
     protected readonly IMapper Mapper;
-    
+
     protected ServiceMockCreator(List<TDto> data)
     {
         Data = data;
         Mapper = CreateMapperFromProfiles();
-       
+
     }
     private static IMapper CreateMapperFromProfiles()
     {
@@ -30,11 +30,11 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
             cfg.AddProfile<BllMappingProfile>();
             cfg.AddProfile<UiMappingProfile>();
         });
-        
+
         configuration.AssertConfigurationIsValid();
         return configuration.CreateMapper();
     }
-    
+
     public virtual TService Create()
     {
         var mock = new Mock<TService>();
@@ -45,16 +45,16 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
         SetupDelete(mock);
         return mock.Object;
     }
-    
+
     protected virtual void SetupGetById(Mock<TService> mock)
     {
         mock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => Data.FirstOrDefault(d => 
+            .ReturnsAsync((Guid id) => Data.FirstOrDefault(d =>
                 (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id));
     }
-    
-    
-    
+
+
+
     protected virtual void SetupGetAll(Mock<TService> mock)
     {
         mock.Setup(x => x.GetAllAsync(
@@ -66,23 +66,23 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
                 Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include) =>
             {
-                
+
                 var entities = Data.Select(d => Mapper.Map<TEntity>(d)).AsQueryable();
-                
+
                 if (filter != null) entities = entities.Where(filter);
                 if (orderBy != null) entities = orderBy(entities);
                 // enhance or override in future for including parameter
-                
+
                 return Mapper.Map<IEnumerable<TDto>>(entities.ToList());
             });
     }
-    
+
     protected virtual void SetupAdd(Mock<TService> mock)
     {
         mock.Setup(x => x.AddAsync(It.IsAny<TDto>()))
             .ReturnsAsync((TDto newDto) =>
             {
-                
+
                 var idProp = newDto.GetType().GetProperty("Id");
                 if (idProp != null && (Guid)idProp.GetValue(newDto)! == Guid.Empty)
                 {
@@ -93,37 +93,37 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
                 return newDto;
             });
     }
-    
+
     protected virtual void SetupUpdate(Mock<TService> mock)
     {
         mock.Setup(x => x.UpdateAsync(It.IsAny<TDto>()))
             .ReturnsAsync((TDto dto) =>
             {
                 var id = (Guid)dto.GetType().GetProperty("Id")?.GetValue(dto)!;
-                var index = Data.FindIndex(d => 
+                var index = Data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
-                
+
                 if (index == -1) return false;
-                
+
                 Data[index] = dto;
                 return true;
             });
     }
-    
+
     protected virtual void SetupDelete(Mock<TService> mock)
     {
         mock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) =>
             {
-                var index = Data.FindIndex(d => 
+                var index = Data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
-                
+
                 if (index == -1) return false;
-                
+
                 Data.RemoveAt(index);
                 return true;
             });
     }
-    
-    
+
+
 }
