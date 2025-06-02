@@ -24,6 +24,6 @@ public class BllMappingProfile : Profile
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId));
-        
+
     }
 }

@@ -5,10 +5,10 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 
-public class GenreRepositoryMockCreator: RepositoryMockCreator<Genre, IGenreRepository>
+public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRepository>
 {
-    public GenreRepositoryMockCreator(List<Genre> data) : base(data) {} 
-    
+    public GenreRepositoryMockCreator(List<Genre> data) : base(data) { }
+
     protected override void SetupAdd(Mock<IGenreRepository> mock)
     {
         mock.Setup(x => x.AddAsync(It.IsAny<Genre>()))
@@ -71,7 +71,7 @@ public class GenreRepositoryMockCreator: RepositoryMockCreator<Genre, IGenreRepo
 
                 return true;
             });
-        
+
 
     }
 }

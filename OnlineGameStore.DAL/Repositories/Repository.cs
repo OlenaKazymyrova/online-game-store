@@ -79,20 +79,20 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
         return null;
     }
-    
-    
-    
+
+
+
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
-        var entityTypeName = typeof(TEntity).Name; 
-        
+        var entityTypeName = typeof(TEntity).Name;
+
         DbSet.Attach(entity);
         DbContext.Entry(entity).State = EntityState.Modified;
 
         try
         {
             int affected = await DbContext.SaveChangesAsync();
-            return affected > 0; 
+            return affected > 0;
         }
         catch (DbUpdateException ex)
         {
