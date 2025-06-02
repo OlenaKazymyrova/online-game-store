@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineGameStore.DAL.DBContext;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.DAL.Repositories;
 
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
+        
 
         return services;
     }

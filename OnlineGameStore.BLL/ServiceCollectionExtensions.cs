@@ -10,7 +10,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddBllServices(this IServiceCollection services)
     {
         services.AddScoped<IGameService, GameService>();
-        services.AddAutoMapper(typeof(MappingProfile));
+        services.AddAutoMapper(typeof(BllMappingProfile));
+       
+
 
         return services;
     }

@@ -1,10 +1,19 @@
-﻿namespace OnlineGameStore.BLL.Interfaces;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 
-public interface IService<T>
+namespace OnlineGameStore.BLL.Interfaces;
+
+public interface IService<TEntity, TDto>
+    where TEntity : class
+    where TDto : class
 {
-    Task<T?> GetByIdAsync(Guid id);
-    Task<IEnumerable<T>> GetAllAsync();
-    Task<T?> AddAsync(T dto);
-    Task<bool> UpdateAsync(T dto);
+    Task<TDto?> GetByIdAsync(Guid id);
+    Task<IEnumerable<TDto>> GetAllAsync(
+        Expression<Func<TEntity, bool>>? filter = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+    Task<TDto?> AddAsync(TDto dto);
+    Task<bool> UpdateAsync(TDto dto);
     Task<bool> DeleteAsync(Guid id);
+    
 }

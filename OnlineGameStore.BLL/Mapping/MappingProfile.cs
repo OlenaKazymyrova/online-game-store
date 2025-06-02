@@ -4,9 +4,9 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Mapping;
 
-public class MappingProfile : Profile
+public class BllMappingProfile : Profile
 {
-    public MappingProfile()
+    public BllMappingProfile()
     {
         CreateMap<Game, GameDto>().ReverseMap()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

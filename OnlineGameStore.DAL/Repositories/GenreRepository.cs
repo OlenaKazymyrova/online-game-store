@@ -3,34 +3,26 @@ using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.DBContext;
 
-
 namespace OnlineGameStore.DAL.Repositories;
 
-public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepository
-{
-    public async Task<Genre?> GetByIdAsync(Guid id)
-    {
-        return await context.Genres.FindAsync(id);
-    }
-
-    public async Task<IEnumerable<Genre>> GetAllAsync()
-    {
-        return await context.Genres.ToListAsync();
-    }
-
-    public async Task<Genre?> AddAsync(Genre entity)
+public class GenreRepository : Repository<Genre>, IGenreRepository
+{ 
+    public GenreRepository(OnlineGameStoreDbContext context) : base(context) {}
+    
+    
+    public override async Task<Genre?> AddAsync(Genre entity)
     {
         if (entity.ParentId is not null
             && entity.ParentId != Guid.Empty
-            && await context.Genres.FindAsync(entity.ParentId) is null)
+            && await DbSet.FindAsync(entity.ParentId) is null)
         {
             return null;
         }
 
         try
         {
-            await context.Genres.AddAsync(entity);
-            await context.SaveChangesAsync();
+            await DbSet.AddAsync(entity);
+            await DbContext.SaveChangesAsync();
             return entity;
         }
         catch (DbUpdateException ex)
@@ -45,38 +37,32 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
         }
     }
 
-    public async Task<bool> UpdateAsync(Genre entity)
+    
+    
+    
+    public override async Task<bool> UpdateAsync(Genre entity)
     {
-
-        if (await context.Genres.FindAsync(entity.Id) is not Genre genre)
+        
+        var existingGenre = await DbSet.FindAsync(entity.Id);
+        
+        if (existingGenre == null)
         {
             return false;
         }
-
-        if (entity.ParentId is Guid parentId
-            && await context.Genres.FindAsync(parentId) is null)
+        
+        if (entity.ParentId.HasValue)
         {
-            return false;
+            var parentExists = await DbSet.AnyAsync(g => g.Id == entity.ParentId.Value);
+            if (!parentExists)
+            {
+                return false;
+            }
         }
-
-        context.Entry(genre).CurrentValues.SetValues(entity);
-
-        await context.SaveChangesAsync();
-        return true;
+        
+        DbContext.Entry(existingGenre).CurrentValues.SetValues(entity);
+    
+        return  await DbContext.SaveChangesAsync() > 0;;
     }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        if (await context.Genres.FindAsync(id) is not Genre genre)
-        {
-            return false;
-        }
-
-        context.Genres.Remove(genre);
-        await context.SaveChangesAsync();
-        return true;
-    }
-
-
-
+    
+    
 }
