@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.SharedLogic.DataGenerators.DataEntityGenerators;
+using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 
 namespace OnlineGameStore.UI.Tests.Tests;
