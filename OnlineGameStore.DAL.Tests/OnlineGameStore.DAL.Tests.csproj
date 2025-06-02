@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OnlineGameStore.DAL\OnlineGameStore.DAL.csproj" />
+    <ProjectReference Include="..\SharedLogic\SharedLogic.csproj" />
   </ItemGroup>
 
 </Project>
