@@ -72,7 +72,7 @@ public class GenreRepository : IGenreRepository
 
         var isParentGenreValid = await IsParentGenreValidAsync(entity.ParentId);
 
-        if (isParentGenreValid)
+        if (!isParentGenreValid)
         {
             return false;
         }
@@ -116,8 +116,8 @@ public class GenreRepository : IGenreRepository
 
     private async Task<bool> IsParentGenreValidAsync(Guid? parentId)
     {
-        if (parentId is null) 
-            return true; 
+        if (parentId is null)
+            return true;
         if (parentId == Guid.Empty)
             return false;
 
