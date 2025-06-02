@@ -26,7 +26,14 @@ public class GenreRepository : IGenreRepository
 
     public async Task<Genre?> AddAsync(Genre entity)
     {
-        if (!await IfGenreParentRelationConsistentAsync(entity))
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        var isParentGenreValid = await IsParentGenreValidAsync(entity.ParentId);
+
+        if (!isParentGenreValid)
         {
             return null;
         }
@@ -51,19 +58,26 @@ public class GenreRepository : IGenreRepository
 
     public async Task<bool> UpdateAsync(Genre entity)
     {
-        if (entity is null
-            || await _context.Genres.FindAsync(entity.Id) is not Genre genre)
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        var existingGenre = await _context.Genres.FindAsync(entity.Id);
+
+        if (existingGenre is null)
         {
             return false;
         }
 
-        if (entity.ParentId is Guid parentId
-            && await _context.Genres.FindAsync(parentId) is null)
+        var isParentGenreValid = await IsParentGenreValidAsync(entity.ParentId);
+
+        if (isParentGenreValid)
         {
             return false;
         }
 
-        _context.Entry(genre).CurrentValues.SetValues(entity);
+        _context.Entry(existingGenre).CurrentValues.SetValues(entity);
 
         try
         {
@@ -79,12 +93,14 @@ public class GenreRepository : IGenreRepository
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        if (await _context.Genres.FindAsync(id) is not Genre genre)
+        var existingGenre = await _context.Genres.FindAsync(id);
+
+        if (existingGenre is null)
         {
             return false;
         }
 
-        _context.Genres.Remove(genre);
+        _context.Genres.Remove(existingGenre);
 
         try
         {
@@ -98,13 +114,13 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    private async Task<bool> IfGenreParentRelationConsistentAsync(Genre entity)
+    private async Task<bool> IsParentGenreValidAsync(Guid? parentId)
     {
-        return entity is not null
-            && ((entity.ParentId is not null
-            && entity.ParentId != Guid.Empty
-            && await _context.Genres.FindAsync(entity.ParentId) is not null)
-            || entity.ParentId is null);
-    }
+        if (parentId is null) 
+            return true; 
+        if (parentId == Guid.Empty)
+            return false;
 
+        return await _context.Genres.FindAsync(parentId) is not null;
+    }
 }
