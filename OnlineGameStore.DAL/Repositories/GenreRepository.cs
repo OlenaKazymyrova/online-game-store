@@ -5,38 +5,39 @@ using OnlineGameStore.DAL.DBContext;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepository
+public class GenreRepository : IGenreRepository
 {
+    private readonly OnlineGameStoreDbContext _context;
+
+    public GenreRepository(OnlineGameStoreDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
     public async Task<Genre?> GetByIdAsync(Guid id)
     {
-        return await context.Genres.FindAsync(id);
+        return await _context.Genres.FindAsync(id);
     }
 
     public async Task<IEnumerable<Genre>> GetAllAsync()
     {
-        return await context.Genres.ToListAsync();
+        return await _context.Genres.ToListAsync();
     }
 
     public async Task<Genre?> AddAsync(Genre entity)
-    {
-        if (entity.ParentId is not null
-            && entity.ParentId != Guid.Empty
-            && await context.Genres.FindAsync(entity.ParentId) is null)
+    {        
+        if (!await IfGenreParentRelationConsistentAsync(entity))
         {
             return null;
         }
 
         try
         {
-            await context.Genres.AddAsync(entity);
-            await context.SaveChangesAsync();
+            await _context.Genres.AddAsync(entity);
+            await _context.SaveChangesAsync();
             return entity;
         }
         catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error adding genre: {ex.Message}");
-        }
-        catch (OperationCanceledException ex)
         {
             Console.WriteLine($"Error adding genre: {ex.Message}");
         }
@@ -50,30 +51,26 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
 
     public async Task<bool> UpdateAsync(Genre entity)
     {
-
-        if (await context.Genres.FindAsync(entity.Id) is not Genre genre)
+        if (entity is null
+            || await _context.Genres.FindAsync(entity.Id) is not Genre genre)
         {
             return false;
         }
 
         if (entity.ParentId is Guid parentId
-            && await context.Genres.FindAsync(parentId) is null)
+            && await _context.Genres.FindAsync(parentId) is null)
         {
             return false;
         }
 
-        context.Entry(genre).CurrentValues.SetValues(entity);
+        _context.Entry(genre).CurrentValues.SetValues(entity);
 
         try
         {
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error updating genre: {ex.Message}");
-        }
-        catch (OperationCanceledException ex)
         {
             Console.WriteLine($"Error updating genre: {ex.Message}");
         }
@@ -83,28 +80,33 @@ public class GenreRepository(OnlineGameStoreDbContext context) : IGenreRepositor
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        if (await context.Genres.FindAsync(id) is not Genre genre)
+        if (await _context.Genres.FindAsync(id) is not Genre genre)
         {
             return false;
         }
 
-        context.Genres.Remove(genre);
+        _context.Genres.Remove(genre);
 
         try
         {
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error deleting genre: {ex.Message}");
         }
-        catch (OperationCanceledException ex)
-        {
-            Console.WriteLine($"Error deleting genre: {ex.Message}");
-        }
 
         return false;
+    }
+
+    private async Task<bool> IfGenreParentRelationConsistentAsync(Genre entity)
+    {
+        return entity is not null 
+            && ((entity.ParentId is not null
+            && entity.ParentId != Guid.Empty
+            && await _context.Genres.FindAsync(entity.ParentId) is not null) 
+            || entity.ParentId is null);
     }
 
 }
