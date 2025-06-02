@@ -5,6 +5,7 @@ using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.DataGenerators.DataEntityGenerators;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
@@ -19,7 +20,7 @@ public class GameServiceTests
         var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
         var mapper = config.CreateMapper();
 
-        var gen = new GameDataGenerator();
+        var gen = new GameGenerator();
 
         _data = gen.Generate(EntityCount);
         var repMock = new GameRepositoryMockCreator(_data);
