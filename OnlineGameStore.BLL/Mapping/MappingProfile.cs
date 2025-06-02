@@ -15,5 +15,6 @@ public class BllMappingProfile : Profile
             .ReverseMap()
             .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.PublisherId))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.GenreId))
-            .ForMember(dest => dest.License, opt => opt.MapFrom(src => src.LicenseId));}
+            .ForMember(dest => dest.License, opt => opt.MapFrom(src => src.LicenseId));
+    }
 }

@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
-        
+
 
         return services;
     }

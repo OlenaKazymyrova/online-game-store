@@ -62,11 +62,11 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     {
         DbSet.Attach(entity);
         DbContext.Entry(entity).State = EntityState.Modified;
-    
+
         try
         {
             int affected = await DbContext.SaveChangesAsync();
-            return affected >= 0; 
+            return affected >= 0;
         }
         catch
         {
