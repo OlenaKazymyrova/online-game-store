@@ -93,15 +93,17 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_GenreExists_DeletesOnlyOnce()
+    public async Task DeleteAsync_GenreExists_Deletes()
     {
         var genre = _data[0];
 
-        var isDeletedFirstTime = await _genreService.DeleteAsync(genre.Id);
-        var isDeletedSecondTime = await _genreService.DeleteAsync(genre.Id);
+        var resultBeforeDeletion = await _genreService.DeleteAsync(genre.Id);
 
-        Assert.True(isDeletedFirstTime);
-        Assert.False(isDeletedSecondTime);
+        var resultAfterDeletion = await _genreService.DeleteAsync(genre.Id);
+
+
+        Assert.True(resultBeforeDeletion);
+        Assert.False(resultAfterDeletion);
     }
 }
 

@@ -5,47 +5,40 @@ using OnlineGameStore.UI.Tests.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public class GameServiceMockCreator : IServiceMockCreator<IGameService>
+public class GameServiceMockCreator(List<GameDto> data) : IServiceMockCreator<IGameService>
 {
-    private readonly List<GameDto> _data;
-
-    public GameServiceMockCreator(List<GameDto> data)
-    {
-        _data = data;
-    }
-
     public IGameService Create()
     {
         var service = new Mock<IGameService>();
 
         service.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => _data.FirstOrDefault(x => x.Id == id));
+            .ReturnsAsync((Guid id) => data.FirstOrDefault(x => x.Id == id));
 
         service.Setup(x => x.GetAllAsync())
-            .ReturnsAsync(_data);
+            .ReturnsAsync(data);
 
         service.Setup(x => x.AddAsync(It.IsAny<GameDto>()))
             .ReturnsAsync((GameDto dto) =>
             {
-                _data.Add(dto);
+                data.Add(dto);
                 return dto;
             });
 
         service.Setup(x => x.UpdateAsync(It.IsAny<GameDto>()))
             .ReturnsAsync((GameDto game) =>
             {
-                var index = _data.FindIndex(x => x.Id == game.Id);
+                var index = data.FindIndex(x => x.Id == game.Id);
                 if (index == -1) return false;
-                _data[index] = game;
+                data[index] = game;
                 return true;
             });
 
         service.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) =>
             {
-                var index = _data.FindIndex(x => x.Id == id);
+                var index = data.FindIndex(x => x.Id == id);
                 if (index == -1) return false;
-                _data.RemoveAt(index);
+                data.RemoveAt(index);
                 return true;
             });
 
