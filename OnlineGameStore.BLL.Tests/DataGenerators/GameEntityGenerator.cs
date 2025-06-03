@@ -4,7 +4,7 @@ using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.SharedLogic.DataGenerators.DataEntityGenerators;
 
-public class GameGenerator : IDataGenerator<Game>
+public class GameEntityGenerator : IDataGenerator<Game>
 {
     public List<Game> Generate(int count)
     {

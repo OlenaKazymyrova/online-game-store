@@ -21,7 +21,7 @@ public class GenreServiceTests
 
         _mapper = config.CreateMapper();
 
-        var gen = new GenreDataGenerator();
+        var gen = new GenreEntityGenerator();
 
         _data = gen.Generate(EntityCount);
         var repMock = new GenreRepositoryMockCreator(_data);

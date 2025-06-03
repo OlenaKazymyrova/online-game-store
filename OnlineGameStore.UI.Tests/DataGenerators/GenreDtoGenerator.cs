@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace OnlineGameStore.UI.Tests.DataGenerators;
 
-public class GenreDtoDataGenerator : IDataGenerator<GenreDto>
+public class GenreDtoGenerator : IDataGenerator<GenreDto>
 {
     public List<GenreDto> Generate(int count)
     {

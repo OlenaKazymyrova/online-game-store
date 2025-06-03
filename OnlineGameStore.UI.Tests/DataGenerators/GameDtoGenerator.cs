@@ -3,7 +3,7 @@ using OnlineGameStore.UI.Tests.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.DataGenerators;
 
-public class GameDtoDataGenerator : IDataGenerator<GameDto>
+public class GameDtoGenerator : IDataGenerator<GameDto>
 {
     public List<GameDto> Generate(int count)
     {

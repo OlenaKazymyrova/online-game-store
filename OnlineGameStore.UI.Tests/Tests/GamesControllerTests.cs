@@ -13,7 +13,7 @@ public class GamesControllerTests
 
     public GamesControllerTests()
     {
-        var data = new GameDtoDataGenerator().Generate(100);
+        var data = new GameDtoGenerator().Generate(100);
         var mockCreator = new GameServiceMockCreator(data);
         var factory = new ControllerTestsHelper<IGameService>(mockCreator);
         _client = factory.CreateClient();

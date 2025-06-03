@@ -4,13 +4,12 @@ using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.BLL.Tests.DataGenerators;
 
-public class GenreDataGenerator : IDataGenerator<Genre>
+public class GenreEntityGenerator : IDataGenerator<Genre>
 {
     public List<Genre> Generate(int count)
     {
         var parentGenreList = new List<Genre>();
         var childGenreList = new List<Genre>();
-
         int parentCount = count / 2;
         int childCount = count - parentCount;
 
