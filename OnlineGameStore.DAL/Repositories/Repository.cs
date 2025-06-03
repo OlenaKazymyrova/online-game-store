@@ -8,23 +8,21 @@ namespace OnlineGameStore.DAL.Repositories;
 
 public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
-
-    protected readonly OnlineGameStoreDbContext DbContext;
-    protected readonly DbSet<TEntity> DbSet;
+    protected readonly OnlineGameStoreDbContext _dbContext;
+    protected readonly DbSet<TEntity> _dbSet;
 
     public Repository(OnlineGameStoreDbContext context)
     {
-        DbContext = context;
-        DbSet = DbContext.Set<TEntity>();
+        _dbContext = context ?? throw new ArgumentNullException(nameof(context));
+        _dbSet = _dbContext.Set<TEntity>();
     }
 
-    //approved
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
+    public virtual async Task<IEnumerable<TEntity>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
     {
-        IQueryable<TEntity> query = DbSet;
+        IQueryable<TEntity> query = _dbSet;
 
         if (include != null)
         {
@@ -44,89 +42,86 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         return await query.ToListAsync();
     }
 
-
-    //approved
     public virtual async Task<TEntity?> GetByIdAsync(Guid id)
     {
-        return await DbSet.FindAsync(id);
+        return await _dbSet.FindAsync(id);
     }
-
 
     public virtual async Task<TEntity?> AddAsync(TEntity entity)
     {
-        var entityTypeName = typeof(TEntity).Name;
-
-        if (entity is null) return null;
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
 
         try
         {
-            await DbSet.AddAsync(entity);
-            await DbContext.SaveChangesAsync();
+            await _dbSet.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
             return entity;
         }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine($"Error adding {entityTypeName}: {ex.Message}");
-        }
-        catch (OperationCanceledException ex)
-        {
-            Console.WriteLine($"Error adding {entityTypeName}: {ex.Message}");
+            Console.WriteLine($"Error adding {typeof(TEntity).Name}: {ex.Message}");
+            throw;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unexpected error adding {entityTypeName}: {ex.Message}");
+            Console.WriteLine($"Unexpected error adding {typeof(TEntity).Name}: {ex.Message}");
+            throw;
         }
-
-        return null;
     }
-
-
 
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
-        var entityTypeName = typeof(TEntity).Name;
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
 
-        DbSet.Attach(entity);
-        DbContext.Entry(entity).State = EntityState.Modified;
+        _dbSet.Attach(entity);
+        _dbContext.Entry(entity).State = EntityState.Modified;
 
         try
         {
-            int affected = await DbContext.SaveChangesAsync();
+            int affected = await _dbContext.SaveChangesAsync();
             return affected > 0;
         }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine($"Error updating {entityTypeName}: {ex.Message}");
+            Console.WriteLine($"Error updating {typeof(TEntity).Name}: {ex.Message}");
+            throw;
         }
-        catch (OperationCanceledException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error updating {entityTypeName}: {ex.Message}");
+            Console.WriteLine($"Unexpected error adding {typeof(TEntity).Name}: {ex.Message}");
+            throw;
         }
-
-        return false;
     }
-
 
     public virtual async Task<bool> DeleteAsync(Guid id)
     {
-        var entity = await DbSet.FindAsync(id);
-        if (entity == null) return false;
+        var entity = await _dbSet.FindAsync(id);
+
+        if (entity is null)
+        {
+            return false;
+        }
 
         try
         {
-            DbSet.Remove(entity);
-            return await DbContext.SaveChangesAsync() > 0;
+            _dbSet.Remove(entity);
+            return await _dbContext.SaveChangesAsync() > 0;
         }
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error deleting game: {ex.Message}");
+            throw;
         }
-        catch (OperationCanceledException ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Error deleting game: {ex.Message}");
+            throw;
         }
-
-        return false;
     }
-
 }

@@ -5,71 +5,88 @@ using OnlineGameStore.DAL.DBContext;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public class GenreRepository : Repository<Genre>, IGenreRepository
+public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genre>(context), IGenreRepository
 {
-    public GenreRepository(OnlineGameStoreDbContext context) : base(context) { }
     public override async Task<Genre?> AddAsync(Genre entity)
     {
-        if (entity.ParentId is not null
-            && entity.ParentId != Guid.Empty
-            && await DbSet.FindAsync(entity.ParentId) is null)
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        var isParentGenreValid = await IsParentGenreValidAsync(entity.ParentId);
+
+        if (!isParentGenreValid)
         {
             return null;
         }
 
         try
         {
-            await DbSet.AddAsync(entity);
-            await DbContext.SaveChangesAsync();
+            await _dbSet.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
             return entity;
         }
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error adding genre: {ex.Message}");
-        }
-        catch (OperationCanceledException ex)
-        {
-            Console.WriteLine($"Error adding genre: {ex.Message}");
+            throw;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
+            throw;
         }
-
-        return null;
     }
 
     public override async Task<bool> UpdateAsync(Genre entity)
     {
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
 
-        if (await DbSet.FindAsync(entity.Id) is not Genre genre)
+        var existingGenre = await _dbSet.FindAsync(entity.Id);
+
+        if (existingGenre is null)
         {
             return false;
         }
 
-        if (entity.ParentId is Guid parentId
-            && await DbSet.FindAsync(parentId) is null)
+        var isParentGenreValid = await IsParentGenreValidAsync(entity.ParentId);
+
+        if (!isParentGenreValid)
         {
             return false;
         }
 
-        DbContext.Entry(genre).CurrentValues.SetValues(entity);
+        _dbContext.Entry(existingGenre).CurrentValues.SetValues(entity);
 
         try
         {
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return true;
         }
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error updating genre: {ex.Message}");
+            throw;
         }
-        catch (OperationCanceledException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error updating genre: {ex.Message}");
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+            throw;
         }
+    }
 
-        return false;
+    private async Task<bool> IsParentGenreValidAsync(Guid? parentId)
+    {
+        if (parentId is null)
+            return true;
+        if (parentId == Guid.Empty)
+            return false;
+
+        return await _dbContext.Genres.FindAsync(parentId) is not null;
     }
 }
 
