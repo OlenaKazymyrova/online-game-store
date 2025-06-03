@@ -15,6 +15,12 @@ public class GamesController : ControllerBase
         _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
+    /// <summary>
+    /// Retrieves a game by its unique ID.
+    /// </summary>
+    /// <param name="id">The ID of the game to retrieve.</param>
+    [ProducesResponseType(typeof(GameDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
@@ -27,6 +33,10 @@ public class GamesController : ControllerBase
         return Ok(game);
     }
 
+    /// <summary>
+    /// Retrieves a list of all games.
+    /// </summary>
+    [ProducesResponseType(typeof(IEnumerable<GameDto>), StatusCodes.Status200OK)]
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
@@ -34,6 +44,12 @@ public class GamesController : ControllerBase
         return Ok(games);
     }
 
+    /// <summary>
+    /// Creates a new game.
+    /// </summary>
+    /// <param name="gameDto">The game data to create.</param>
+    [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] GameDto? gameDto)
     {
@@ -51,6 +67,12 @@ public class GamesController : ControllerBase
         return Created($"api/Games/{createdGame.Id}", createdGame);
     }
 
+    /// <summary>
+    /// Deletes a game by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the game to delete.</param>
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
