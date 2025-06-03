@@ -1,4 +1,5 @@
-﻿using OnlineGameStore.DAL.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
 namespace OnlineGameStore.DAL.Tests.Tests;

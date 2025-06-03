@@ -20,6 +20,5 @@ public class BllMappingProfile : Profile
             .ForMember(dest => dest.ReleaseDate, opt => opt.MapFrom(src => src.ReleaseDate));
 
         CreateMap<Genre, GenreDto>().ReverseMap();
-
     }
 }
