@@ -30,7 +30,7 @@ public abstract class Service<TEntity, TDto> : IService<TEntity, TDto>
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
     {
-        var entities = await Repository.GetAllAsync(filter, orderBy, include);
+        var entities = await Repository.GetAsync(filter, orderBy, include);
         return Mapper.Map<IEnumerable<TDto>>(entities);
     }
 

@@ -41,7 +41,7 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
 
     protected virtual void SetupGetAll(Mock<TRepository> mock)
     {
-        mock.Setup(x => x.GetAllAsync(
+        mock.Setup(x => x.GetAsync(
                 It.IsAny<Expression<Func<TEntity, bool>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>()))

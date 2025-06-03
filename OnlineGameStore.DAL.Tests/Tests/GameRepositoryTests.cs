@@ -49,7 +49,7 @@ public class GameRepositoryTests
         await repository.AddAsync(game1);
         await repository.AddAsync(game2);
 
-        var result = await repository.GetAllAsync();
+        var result = await repository.GetAsync();
 
         Assert.NotNull(result);
         Assert.Equal(2, result.Count());
