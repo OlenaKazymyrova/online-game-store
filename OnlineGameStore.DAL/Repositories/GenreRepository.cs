@@ -59,7 +59,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         {
             return false;
         }
-        
+
         _dbContext.Entry(existingGenre).CurrentValues.SetValues(entity);
 
         try
