@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.DAL.Constants;
+using OnlineGameStore.SharedLogic.Constants;
 
 
 namespace OnlineGameStore.DAL.Configurations;
@@ -32,6 +32,5 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
             .WithMany()
             .HasForeignKey(g => g.ParentId)
             .OnDelete(DeleteBehavior.SetNull);
-
     }
 }

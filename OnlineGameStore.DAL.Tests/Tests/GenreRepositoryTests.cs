@@ -60,7 +60,6 @@ public class GenreRepositoryTests
         Assert.NotNull(genre);
         Assert.Equal(result, _testParentGenre);
         Assert.Equal(result, genre);
-
     }
 
     [Fact]

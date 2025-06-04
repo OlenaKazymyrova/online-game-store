@@ -24,6 +24,7 @@ public class GenreDtoGenerator : IDataGenerator<GenreDto>
                 ParentId = null
             });
         }
+
         for (var i = 0; i < childCount; i++)
         {
             childGenreList.Add(new GenreDto

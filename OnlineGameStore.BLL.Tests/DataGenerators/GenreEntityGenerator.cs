@@ -24,6 +24,7 @@ public class GenreEntityGenerator : IDataGenerator<Genre>
                 ParentId = null
             });
         }
+
         for (var i = 0; i < childCount; i++)
         {
             childGenreList.Add(new Genre

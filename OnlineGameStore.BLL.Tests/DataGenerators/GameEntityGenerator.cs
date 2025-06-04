@@ -1,8 +1,7 @@
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Interfaces;
 
-
-namespace OnlineGameStore.SharedLogic.DataGenerators.DataEntityGenerators;
+namespace OnlineGameStore.BLL.Tests.DataGenerators;
 
 public class GameEntityGenerator : IDataGenerator<Game>
 {

@@ -4,7 +4,6 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.DAL.DBContext;
 
-
 public class OnlineGameStoreDbContext(DbContextOptions<OnlineGameStoreDbContext> options) : DbContext(options)
 {
     public DbSet<Game> Games { get; set; }

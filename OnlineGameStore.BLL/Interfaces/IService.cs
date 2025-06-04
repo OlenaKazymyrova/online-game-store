@@ -15,5 +15,4 @@ public interface IService<TEntity, TDto>
     Task<TDto?> AddAsync(TDto dto);
     Task<bool> UpdateAsync(TDto dto);
     Task<bool> DeleteAsync(Guid id);
-
 }

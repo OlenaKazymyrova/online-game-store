@@ -71,7 +71,5 @@ public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRep
 
                 return true;
             });
-
-
     }
 }

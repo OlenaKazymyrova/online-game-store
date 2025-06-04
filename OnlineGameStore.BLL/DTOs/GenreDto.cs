@@ -25,7 +25,7 @@ public class GenreDto
         if (ReferenceEquals(this, other) || Id == other.Id) return true;
 
         return Name == other.Name &&
-            Description == other.Description &&
-            ParentId == other.ParentId;
+               Description == other.Description &&
+               ParentId == other.ParentId;
     }
 }

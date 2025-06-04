@@ -20,14 +20,11 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
     {
         Data = data;
         Mapper = CreateMapperFromProfiles();
-
     }
+
     private static IMapper CreateMapperFromProfiles()
     {
-        var configuration = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<BllMappingProfile>();
-        });
+        var configuration = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
 
         configuration.AssertConfigurationIsValid();
         return configuration.CreateMapper();
@@ -52,7 +49,6 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
     }
 
 
-
     protected virtual void SetupGetAll(Mock<TService> mock)
     {
         mock.Setup(x => x.GetAllAsync(
@@ -64,7 +60,6 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
                 Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include) =>
             {
-
                 var entities = Data.Select(d => Mapper.Map<TEntity>(d)).AsQueryable();
 
                 if (filter != null) entities = entities.Where(filter);
@@ -80,7 +75,6 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
         mock.Setup(x => x.AddAsync(It.IsAny<TDto>()))
             .ReturnsAsync((TDto newDto) =>
             {
-
                 var idProp = newDto.GetType().GetProperty("Id");
                 if (idProp != null && (Guid)idProp.GetValue(newDto)! == Guid.Empty)
                 {
@@ -122,6 +116,4 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
                 return true;
             });
     }
-
-
 }

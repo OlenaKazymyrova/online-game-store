@@ -103,4 +103,3 @@ public class GenreServiceTests
         Assert.False(resultAfterDeletion);
     }
 }
-

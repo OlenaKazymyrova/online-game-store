@@ -1,5 +1,4 @@
-﻿
-namespace OnlineGameStore.DAL.Entities;
+﻿namespace OnlineGameStore.DAL.Entities;
 
 public class Genre
 {
@@ -27,8 +26,8 @@ public class Genre
         if (ReferenceEquals(this, other)) return true;
 
         return Id == other.Id
-            && Name == other.Name
-            && Description == other.Description
-            && ParentId == other.ParentId;
+               && Name == other.Name
+               && Description == other.Description
+               && ParentId == other.ParentId;
     }
 }

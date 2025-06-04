@@ -89,4 +89,3 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         return await _dbContext.Genres.FindAsync(parentId) is not null;
     }
 }
-

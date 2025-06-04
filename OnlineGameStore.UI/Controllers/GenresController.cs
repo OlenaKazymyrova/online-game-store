@@ -4,7 +4,6 @@ using OnlineGameStore.BLL.Interfaces;
 
 namespace OnlineGameStore.UI.Controllers;
 
-
 [Route("api/[Controller]")]
 [ApiController]
 public class GenresController : ControllerBase
