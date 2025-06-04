@@ -9,13 +9,19 @@ namespace OnlineGameStore.UI.Controllers;
 [ApiController]
 public class GenresController : ControllerBase
 {
-    private readonly IGenreService _service;
-
     public GenresController(IGenreService service)
     {
         _service = service;
     }
 
+    private readonly IGenreService _service;
+
+    /// <summary>
+    /// Retrieves a genre by its unique ID.
+    /// </summary>
+    /// <param name="id">The id of the genre to retrieve.</param>
+    [ProducesResponseType(typeof(GenreDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -24,6 +30,14 @@ public class GenresController : ControllerBase
         return (dto is null) ? NotFound() : Ok(dto);
     }
 
+    /// <summary>
+    /// Creates a new genre.
+    /// </summary>
+    /// <param name="dto">The genre data to create from.</param>
+    [ProducesResponseType(typeof(GenreDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GenreDto dto)
     {
