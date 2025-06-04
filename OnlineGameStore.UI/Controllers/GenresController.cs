@@ -61,7 +61,10 @@ public class GenresController : ControllerBase
         );
     }
 
-
+    /// <summary>
+    /// Deletes a genre by its unique ID.
+    /// </summary>
+    /// <param name="id">The ID of the genre to delete.</param>
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [HttpDelete("{id:guid}")]
