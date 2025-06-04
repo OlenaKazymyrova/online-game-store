@@ -116,15 +116,15 @@ public class GenresControllerTests(ControllerTestsHelper factory) : BaseControll
             ParentId = parentGenre.Id
         };
 
-        var postResponse1 = await Client.PostAsJsonAsync("api/genres", parentGenre);
-        var postResponse2 = await Client.PostAsJsonAsync("api/genres", childGenre);
+        var postParentResponse = await Client.PostAsJsonAsync("api/genres", parentGenre);
+        var postChildResponse = await Client.PostAsJsonAsync("api/genres", childGenre);
 
-        postResponse1.EnsureSuccessStatusCode();
-        postResponse2.EnsureSuccessStatusCode();
+        postParentResponse.EnsureSuccessStatusCode();
+        postChildResponse.EnsureSuccessStatusCode();
 
-        var deleteResponse = await Client.DeleteAsync($"api/genres/{parentGenre.Id}");
+        var deleteParentResponse = await Client.DeleteAsync($"api/genres/{parentGenre.Id}");
 
-        deleteResponse.EnsureSuccessStatusCode();
+        deleteParentResponse.EnsureSuccessStatusCode();
 
         var getChildResponse = await Client.GetAsync($"api/genres/{childGenre.Id}");
 
@@ -148,15 +148,15 @@ public class GenresControllerTests(ControllerTestsHelper factory) : BaseControll
             ParentId = parentGenre.Id
         };
 
-        var postResponse1 = await Client.PostAsJsonAsync("api/genres", parentGenre);
-        var postResponse2 = await Client.PostAsJsonAsync("api/genres", childGenre);
+        var parentResponse = await Client.PostAsJsonAsync("api/genres", parentGenre);
+        var childResponse = await Client.PostAsJsonAsync("api/genres", childGenre);
 
-        postResponse1.EnsureSuccessStatusCode();
-        postResponse2.EnsureSuccessStatusCode();
+        parentResponse.EnsureSuccessStatusCode();
+        childResponse.EnsureSuccessStatusCode();
 
-        var deleteResponse = await Client.DeleteAsync($"api/genres/{childGenre.Id}");
+        var deleteChildResponse = await Client.DeleteAsync($"api/genres/{childGenre.Id}");
 
-        deleteResponse.EnsureSuccessStatusCode();
+        deleteChildResponse.EnsureSuccessStatusCode();
 
         var getParentResponse = await Client.GetAsync($"api/genres/{parentGenre.Id}");
 
