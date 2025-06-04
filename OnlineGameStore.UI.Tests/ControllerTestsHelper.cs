@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OnlineGameStore.SharedLogic.Interfaces;
 
-
 namespace OnlineGameStore.UI.Tests;
 
 public class ControllerTestsHelper<TService> : WebApplicationFactory<Program>

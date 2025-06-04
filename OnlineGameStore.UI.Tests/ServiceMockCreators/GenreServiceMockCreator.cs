@@ -2,7 +2,6 @@
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.UI.Tests.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 

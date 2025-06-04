@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Constants;
 
-
 namespace OnlineGameStore.DAL.Configurations;
 
 public class GenreConfiguration : IEntityTypeConfiguration<Genre>

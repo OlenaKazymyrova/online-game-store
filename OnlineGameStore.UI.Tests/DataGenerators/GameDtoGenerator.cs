@@ -1,5 +1,5 @@
 using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.UI.Tests.Interfaces;
+using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.DataGenerators;
 

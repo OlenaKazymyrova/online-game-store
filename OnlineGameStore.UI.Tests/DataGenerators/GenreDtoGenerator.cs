@@ -1,6 +1,6 @@
 ﻿using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.UI.Tests.Interfaces;
 using System.Security.Cryptography;
+using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.DataGenerators;
 
