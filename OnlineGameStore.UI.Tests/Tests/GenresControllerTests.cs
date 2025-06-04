@@ -22,7 +22,7 @@ public class GenresControllerTests
 
 
 
-    private static GenreDto GenGenreDto()
+    private static GenreDto GenGenreDto(int count = _dtoAmountToGenerate)
     {
         var genreGen = new GenreDtoGenerator();
         return genreGen.Generate(_dtoAmountToGenerate).First();
@@ -89,5 +89,94 @@ public class GenresControllerTests
         var getResponse = await _client.GetAsync($"api/genres/{id}");
 
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Delete_GenreExists_ReturnsNoContent()
+    {
+        var newGenreDto = GenGenreDto();
+        var postResponse = await Client.PostAsJsonAsync("api/genres", newGenreDto);
+
+        postResponse.EnsureSuccessStatusCode();
+
+        var createdGenre = await postResponse.Content.ReadFromJsonAsync<GenreDto>();
+
+        Assert.NotNull(createdGenre);
+
+        var deleteResponse = await Client.DeleteAsync($"api/genres/{createdGenre!.Id}");
+
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Delete_GenreNotExists_ReturnsNotFound()
+    {
+        var id = Guid.NewGuid();
+        var deleteResponse = await Client.DeleteAsync($"api/genres/{id}");
+
+        Assert.Equal(HttpStatusCode.NotFound, deleteResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Delete_DeleteParent_SetsChildReferenceToNull()
+    {
+        var parentGenre = GenGenreDto();
+        var childGenre = new GenreDto
+        {
+            Id = Guid.NewGuid(),
+            Name = "Child Genre",
+            Description = "Child Description",
+            ParentId = parentGenre.Id
+        };
+
+        var postParentResponse = await Client.PostAsJsonAsync("api/genres", parentGenre);
+        var postChildResponse = await Client.PostAsJsonAsync("api/genres", childGenre);
+
+        postParentResponse.EnsureSuccessStatusCode();
+        postChildResponse.EnsureSuccessStatusCode();
+
+        var deleteParentResponse = await Client.DeleteAsync($"api/genres/{parentGenre.Id}");
+
+        deleteParentResponse.EnsureSuccessStatusCode();
+
+        var getChildResponse = await Client.GetAsync($"api/genres/{childGenre.Id}");
+
+        getChildResponse.EnsureSuccessStatusCode();
+
+        var fetchedChildGenre = await getChildResponse.Content.ReadFromJsonAsync<GenreDto>();
+
+        Assert.NotNull(fetchedChildGenre);
+        Assert.Null(fetchedChildGenre.ParentId);
+    }
+
+    [Fact]
+    public async Task Delete_DeleteChild_ParentNotChanged()
+    {
+        var parentGenre = GenGenreDto();
+        var childGenre = new GenreDto
+        {
+            Id = Guid.NewGuid(),
+            Name = "Child Genre",
+            Description = "Child Description",
+            ParentId = parentGenre.Id
+        };
+
+        var parentResponse = await Client.PostAsJsonAsync("api/genres", parentGenre);
+        var childResponse = await Client.PostAsJsonAsync("api/genres", childGenre);
+
+        parentResponse.EnsureSuccessStatusCode();
+        childResponse.EnsureSuccessStatusCode();
+
+        var deleteChildResponse = await Client.DeleteAsync($"api/genres/{childGenre.Id}");
+
+        deleteChildResponse.EnsureSuccessStatusCode();
+
+        var getParentResponse = await Client.GetAsync($"api/genres/{parentGenre.Id}");
+
+        getParentResponse.EnsureSuccessStatusCode();
+
+        var fetchedParentGenre = await getParentResponse.Content.ReadFromJsonAsync<GenreDto>();
+
+        Assert.Equal(fetchedParentGenre, parentGenre);
     }
 }
