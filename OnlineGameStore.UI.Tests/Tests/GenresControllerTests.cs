@@ -21,7 +21,6 @@ public class GenresControllerTests
     }
 
 
-
     private static GenreDto GenGenreDto(int count = _dtoAmountToGenerate)
     {
         var genreGen = new GenreDtoGenerator();
@@ -95,7 +94,7 @@ public class GenresControllerTests
     public async Task Delete_GenreExists_ReturnsNoContent()
     {
         var newGenreDto = GenGenreDto();
-        var postResponse = await Client.PostAsJsonAsync("api/genres", newGenreDto);
+        var postResponse = await _client.PostAsJsonAsync("api/genres", newGenreDto);
 
         postResponse.EnsureSuccessStatusCode();
 
@@ -103,7 +102,7 @@ public class GenresControllerTests
 
         Assert.NotNull(createdGenre);
 
-        var deleteResponse = await Client.DeleteAsync($"api/genres/{createdGenre!.Id}");
+        var deleteResponse = await _client.DeleteAsync($"api/genres/{createdGenre!.Id}");
 
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
     }
@@ -112,7 +111,7 @@ public class GenresControllerTests
     public async Task Delete_GenreNotExists_ReturnsNotFound()
     {
         var id = Guid.NewGuid();
-        var deleteResponse = await Client.DeleteAsync($"api/genres/{id}");
+        var deleteResponse = await _client.DeleteAsync($"api/genres/{id}");
 
         Assert.Equal(HttpStatusCode.NotFound, deleteResponse.StatusCode);
     }
@@ -129,17 +128,17 @@ public class GenresControllerTests
             ParentId = parentGenre.Id
         };
 
-        var postParentResponse = await Client.PostAsJsonAsync("api/genres", parentGenre);
-        var postChildResponse = await Client.PostAsJsonAsync("api/genres", childGenre);
+        var postParentResponse = await _client.PostAsJsonAsync("api/genres", parentGenre);
+        var postChildResponse = await _client.PostAsJsonAsync("api/genres", childGenre);
 
         postParentResponse.EnsureSuccessStatusCode();
         postChildResponse.EnsureSuccessStatusCode();
 
-        var deleteParentResponse = await Client.DeleteAsync($"api/genres/{parentGenre.Id}");
+        var deleteParentResponse = await _client.DeleteAsync($"api/genres/{parentGenre.Id}");
 
         deleteParentResponse.EnsureSuccessStatusCode();
 
-        var getChildResponse = await Client.GetAsync($"api/genres/{childGenre.Id}");
+        var getChildResponse = await _client.GetAsync($"api/genres/{childGenre.Id}");
 
         getChildResponse.EnsureSuccessStatusCode();
 
@@ -161,17 +160,17 @@ public class GenresControllerTests
             ParentId = parentGenre.Id
         };
 
-        var parentResponse = await Client.PostAsJsonAsync("api/genres", parentGenre);
-        var childResponse = await Client.PostAsJsonAsync("api/genres", childGenre);
+        var parentResponse = await _client.PostAsJsonAsync("api/genres", parentGenre);
+        var childResponse = await _client.PostAsJsonAsync("api/genres", childGenre);
 
         parentResponse.EnsureSuccessStatusCode();
         childResponse.EnsureSuccessStatusCode();
 
-        var deleteChildResponse = await Client.DeleteAsync($"api/genres/{childGenre.Id}");
+        var deleteChildResponse = await _client.DeleteAsync($"api/genres/{childGenre.Id}");
 
         deleteChildResponse.EnsureSuccessStatusCode();
 
-        var getParentResponse = await Client.GetAsync($"api/genres/{parentGenre.Id}");
+        var getParentResponse = await _client.GetAsync($"api/genres/{parentGenre.Id}");
 
         getParentResponse.EnsureSuccessStatusCode();
 
