@@ -5,7 +5,6 @@ using Moq;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.SharedLogic.Interfaces;
-using OnlineGameStore.UI.Mapping;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
@@ -28,7 +27,6 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
         var configuration = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<BllMappingProfile>();
-            cfg.AddProfile<UiMappingProfile>();
         });
 
         configuration.AssertConfigurationIsValid();
