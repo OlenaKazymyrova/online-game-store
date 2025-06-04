@@ -60,4 +60,20 @@ public class GenresController : ControllerBase
             createdGenre
         );
     }
+
+
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var isDeleted = await _service.DeleteAsync(id);
+
+        if (!isDeleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }
