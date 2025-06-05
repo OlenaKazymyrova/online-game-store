@@ -1,9 +1,9 @@
-using OnlineGameStore.BLL.Tests.Interfaces;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.BLL.Tests.DataGenerators;
 
-public class GameDataGenerator : IDataGenerator<Game>
+public class GameEntityGenerator : IDataGenerator<Game>
 {
     public List<Game> Generate(int count)
     {
@@ -19,8 +19,8 @@ public class GameDataGenerator : IDataGenerator<Game>
                 Publisher = Guid.NewGuid(),
                 Genre = Guid.NewGuid(),
                 License = Guid.NewGuid(),
-                Price = new decimal(i + 1) * 10,
-                ReleaseDate = DateTime.Now.AddDays(-i)
+                Price = 10m + i,
+                ReleaseDate = DateTime.Today.AddDays(-i)
             });
         }
 

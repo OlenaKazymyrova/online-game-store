@@ -1,10 +1,10 @@
 ﻿using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.UI.Tests.Interfaces;
 using System.Security.Cryptography;
+using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.DataGenerators;
 
-public class GenreDtoDataGenerator : IDataGenerator<GenreDto>
+public class GenreDtoGenerator : IDataGenerator<GenreDto>
 {
     public List<GenreDto> Generate(int count)
     {
@@ -24,6 +24,7 @@ public class GenreDtoDataGenerator : IDataGenerator<GenreDto>
                 ParentId = null
             });
         }
+
         for (var i = 0; i < childCount; i++)
         {
             childGenreList.Add(new GenreDto

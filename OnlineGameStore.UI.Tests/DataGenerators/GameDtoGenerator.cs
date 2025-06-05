@@ -1,9 +1,9 @@
 using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.UI.Tests.Interfaces;
+using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.DataGenerators;
 
-public class GameDtoDataGenerator : IDataGenerator<GameDto>
+public class GameDtoGenerator : IDataGenerator<GameDto>
 {
     public List<GameDto> Generate(int count)
     {

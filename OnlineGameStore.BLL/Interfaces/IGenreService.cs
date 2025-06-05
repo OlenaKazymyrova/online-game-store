@@ -1,5 +1,6 @@
 ﻿using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IGenreService : IService<GenreDto> { }
+public interface IGenreService : IService<Genre, GenreDto> { }

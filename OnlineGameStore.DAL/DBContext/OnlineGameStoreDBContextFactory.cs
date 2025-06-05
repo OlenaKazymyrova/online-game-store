@@ -6,7 +6,6 @@ namespace OnlineGameStore.DAL.DBContext;
 
 public class OnlineGameStoreDbContextFactory : IDesignTimeDbContextFactory<OnlineGameStoreDbContext>
 {
-
     public OnlineGameStoreDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<OnlineGameStoreDbContext>();

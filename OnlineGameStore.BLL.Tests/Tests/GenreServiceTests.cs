@@ -17,14 +17,11 @@ public class GenreServiceTests
 
     public GenreServiceTests()
     {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<MappingProfile>();
-        });
+        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
 
         _mapper = config.CreateMapper();
 
-        var gen = new GenreDataGenerator();
+        var gen = new GenreEntityGenerator();
 
         _data = gen.Generate(EntityCount);
         var repMock = new GenreRepositoryMockCreator(_data);
@@ -106,4 +103,3 @@ public class GenreServiceTests
         Assert.False(resultAfterDeletion);
     }
 }
-

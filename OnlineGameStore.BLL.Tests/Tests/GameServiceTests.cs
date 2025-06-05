@@ -16,10 +16,10 @@ public class GameServiceTests
 
     public GameServiceTests()
     {
-        var config = new MapperConfiguration(cfg => { cfg.AddProfile<MappingProfile>(); });
+        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
         var mapper = config.CreateMapper();
 
-        var gen = new GameDataGenerator();
+        var gen = new GameEntityGenerator();
 
         _data = gen.Generate(EntityCount);
         var repMock = new GameRepositoryMockCreator(_data);

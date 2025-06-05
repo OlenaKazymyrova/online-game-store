@@ -1,4 +1,4 @@
-namespace OnlineGameStore.BLL.Tests.Interfaces;
+namespace OnlineGameStore.SharedLogic.Interfaces;
 
 public interface IDataGenerator<T>
 {
