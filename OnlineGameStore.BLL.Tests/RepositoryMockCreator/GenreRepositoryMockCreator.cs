@@ -15,12 +15,12 @@ public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRep
             {
                 if (genre.ParentId is not null
                     && genre.ParentId != Guid.Empty
-                    && Data.Find(g => g.Id == genre.ParentId) is null)
+                    && _data.Find(g => g.Id == genre.ParentId) is null)
                 {
                     return null;
                 }
 
-                Data.Add(genre);
+                _data.Add(genre);
                 return genre;
             });
     }
@@ -30,19 +30,19 @@ public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRep
         mock.Setup(x => x.UpdateAsync(It.IsAny<Genre>()))
             .ReturnsAsync((Genre genre) =>
             {
-                var index = Data.FindIndex(x => x.Id == genre.Id);
+                var index = _data.FindIndex(x => x.Id == genre.Id);
                 if (index == -1)
                 {
                     return false;
                 }
 
                 if (genre.ParentId is Guid parentId
-                    && Data.Find(g => g.Id == genre.ParentId) is null)
+                    && _data.Find(g => g.Id == genre.ParentId) is null)
                 {
                     return false;
                 }
 
-                Data[index] = genre;
+                _data[index] = genre;
                 return true;
             });
     }
@@ -52,17 +52,17 @@ public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRep
         mock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) =>
             {
-                var index = Data.FindIndex(x => x.Id == id);
+                var index = _data.FindIndex(x => x.Id == id);
                 if (index == -1)
                 {
                     return false;
                 }
 
-                Data.RemoveAt(index);
+                _data.RemoveAt(index);
 
                 var parentRefToRemove = id;
 
-                foreach (var item in Data.Where(g => g.ParentId == parentRefToRemove))
+                foreach (var item in _data.Where(g => g.ParentId == parentRefToRemove))
                 {
                     item.ParentGenre = null;
                     item.ParentId = null;

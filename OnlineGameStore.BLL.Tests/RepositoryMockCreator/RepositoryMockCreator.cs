@@ -10,11 +10,11 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
     where TEntity : class
     where TRepository : class, IRepository<TEntity>
 {
-    protected readonly List<TEntity> Data;
+    protected readonly List<TEntity> _data;
 
     protected RepositoryMockCreator(List<TEntity> data)
     {
-        Data = data;
+        _data = data;
     }
 
     public virtual TRepository Create()
@@ -35,7 +35,7 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
             {
                 var property = typeof(TEntity).GetProperty("Id");
                 if (property == null) return null;
-                return Data.FirstOrDefault(x => (Guid)property.GetValue(x)! == id);
+                return _data.FirstOrDefault(x => (Guid)property.GetValue(x)! == id);
             });
     }
 
@@ -50,7 +50,7 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
                 Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include) =>
             {
-                IQueryable<TEntity> query = Data.AsQueryable();
+                IQueryable<TEntity> query = _data.AsQueryable();
 
                 if (include != null) query = include(query);
                 if (filter != null) query = query.Where(filter);
@@ -65,7 +65,7 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
         mock.Setup(x => x.AddAsync(It.IsAny<TEntity>()))
             .ReturnsAsync((TEntity entity) =>
             {
-                Data.Add(entity);
+                _data.Add(entity);
                 return entity;
             });
     }
@@ -80,12 +80,12 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
 
                 var id = (Guid)property.GetValue(entity)!;
 
-                var index = Data.FindIndex(x =>
+                var index = _data.FindIndex(x =>
                     (Guid)property.GetValue(x)! == id);
 
                 if (index == -1) return false;
 
-                Data[index] = entity;
+                _data[index] = entity;
                 return true;
             });
     }
@@ -98,12 +98,12 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
                 var property = typeof(TEntity).GetProperty("Id");
                 if (property == null) return false;
 
-                var index = Data.FindIndex(x =>
+                var index = _data.FindIndex(x =>
                     (Guid)property.GetValue(x)! == id);
 
                 if (index == -1) return false;
 
-                Data.RemoveAt(index);
+                _data.RemoveAt(index);
                 return true;
             });
     }
