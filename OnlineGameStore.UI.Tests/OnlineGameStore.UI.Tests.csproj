@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OnlineGameStore.BLL.Tests\OnlineGameStore.BLL.Tests.csproj" />
     <ProjectReference Include="..\OnlineGameStore.SharedLogic\OnlineGameStore.SharedLogic.csproj" />
     <ProjectReference Include="..\OnlineGameStore.UI\OnlineGameStore.UI.csproj" />
     <ProjectReference Include="..\OnlineGameStore.BLL\OnlineGameStore.BLL.csproj" />
