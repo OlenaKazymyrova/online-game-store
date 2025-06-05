@@ -14,17 +14,17 @@ public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreDto, IGenr
         mock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid id) =>
             {
-                var index = Data.FindIndex(x => x.Id == id);
+                var index = _data.FindIndex(x => x.Id == id);
                 if (index == -1)
                 {
                     return false;
                 }
 
-                Data.RemoveAt(index);
+                _data.RemoveAt(index);
 
                 var parentRefToRemove = id;
 
-                foreach (var item in Data.Where(g => g.ParentId == parentRefToRemove))
+                foreach (var item in _data.Where(g => g.ParentId == parentRefToRemove))
                 {
                     item.ParentId = null;
                 }
