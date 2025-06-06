@@ -193,7 +193,7 @@ public class GenresControllerTests
     {
         var response = await _client.GetAsync("api/genres");
 
-        response.EnsureSuccessStatusCode();  // method not allowed
+        response.EnsureSuccessStatusCode();
 
         var genresReturned = await response.Content.ReadFromJsonAsync<List<GenreReadDto>>();
 
