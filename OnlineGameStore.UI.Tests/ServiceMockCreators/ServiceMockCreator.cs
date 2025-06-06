@@ -8,15 +8,17 @@ using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator<TService>
+public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateDto, TService> : IMockCreator<TService>
     where TEntity : class
-    where TDto : class
-    where TService : class, IService<TEntity, TDto>
+    where TCreateDto : class
+    where TReadDto : class
+    where TUpdateDto : class
+    where TService : class, IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
 {
-    protected readonly List<TDto> _data;
+    protected readonly List<TEntity> _data;
     protected readonly IMapper _mapper;
 
-    protected ServiceMockCreator(List<TDto> data)
+    protected ServiceMockCreator(List<TEntity> data)
     {
         _data = data;
         _mapper = CreateMapperFromProfiles();
@@ -44,14 +46,14 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
     protected virtual void SetupGetById(Mock<TService> mock)
     {
         mock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => _data.FirstOrDefault(d =>
-                (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id));
+            .ReturnsAsync((Guid id) => _mapper.Map<TReadDto>(_data.FirstOrDefault(d =>
+                (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id)));
     }
 
 
     protected virtual void SetupGetAll(Mock<TService> mock)
     {
-        mock.Setup(x => x.GetAllAsync(
+        mock.Setup(x => x.GetAsync(
                 It.IsAny<Expression<Func<TEntity, bool>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>()))
@@ -66,38 +68,41 @@ public abstract class ServiceMockCreator<TEntity, TDto, TService> : IMockCreator
                 if (orderBy != null) entities = orderBy(entities);
                 // enhance or override in future for including parameter
 
-                return _mapper.Map<IEnumerable<TDto>>(entities.ToList());
+                return _mapper.Map<IEnumerable<TReadDto>>(entities.ToList());
             });
     }
 
     protected virtual void SetupAdd(Mock<TService> mock)
     {
-        mock.Setup(x => x.AddAsync(It.IsAny<TDto>()))
-            .ReturnsAsync((TDto newDto) =>
+        mock.Setup(x => x.AddAsync(It.IsAny<TCreateDto>()))
+            .ReturnsAsync((TCreateDto createDto) =>
             {
-                var idProp = newDto.GetType().GetProperty("Id");
-                if (idProp != null && (Guid)idProp.GetValue(newDto)! == Guid.Empty)
+                var idProp = createDto.GetType().GetProperty("Id");
+                if (idProp != null && (Guid)idProp.GetValue(createDto)! == Guid.Empty)  // what if there is not proprty named Id
                 {
-                    idProp.SetValue(newDto, Guid.NewGuid());
+                    idProp.SetValue(createDto, Guid.NewGuid());
                 }
 
-                _data.Add(newDto);
-                return newDto;
+                var entity = _mapper.Map<TEntity>(createDto);
+                _data.Add(entity);
+
+                return _mapper.Map<TReadDto>(entity);
             });
     }
 
     protected virtual void SetupUpdate(Mock<TService> mock)
     {
-        mock.Setup(x => x.UpdateAsync(It.IsAny<TDto>()))
-            .ReturnsAsync((TDto dto) =>
+        mock.Setup(x => x.UpdateAsync(It.IsAny<TUpdateDto>()))
+            .ReturnsAsync((TUpdateDto updateDto) =>
             {
-                var id = (Guid)dto.GetType().GetProperty("Id")?.GetValue(dto)!;
+                var id = (Guid)updateDto.GetType().GetProperty("Id")?.GetValue(updateDto)!;
                 var index = _data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
 
-                if (index == -1) return false;
+                if (index == -1)
+                    return false;
 
-                _data[index] = dto;
+                _mapper.Map(updateDto, _data[index]);
                 return true;
             });
     }
