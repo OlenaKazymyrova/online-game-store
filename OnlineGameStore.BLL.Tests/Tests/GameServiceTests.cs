@@ -51,7 +51,7 @@ public class GameServiceTests
     [Fact]
     public async Task GetAllAsync_GamesExist_ReturnsAllGames()
     {
-        var allGames = await _gameService.GetAllAsync();
+        var allGames = await _gameService.GetAsync();
 
         Assert.NotNull(allGames);
         Assert.Equal(EntityCount, allGames.Count());

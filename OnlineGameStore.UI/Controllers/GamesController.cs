@@ -40,7 +40,7 @@ public class GamesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
-        var games = await _service.GetAllAsync();
+        var games = await _service.GetAsync();
         return Ok(games);
     }
 

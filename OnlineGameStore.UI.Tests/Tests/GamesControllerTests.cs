@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.DataGenerators;
@@ -13,7 +15,7 @@ public class GamesControllerTests
 
     public GamesControllerTests()
     {
-        var data = new GameDtoGenerator().Generate(100);
+        var data = new GameEntityGenerator().Generate(100);
         var mockCreator = new GameServiceMockCreator(data);
         var factory = new ControllerTestsHelper<IGameService>(mockCreator);
         _client = factory.CreateClient();
