@@ -10,7 +10,8 @@ public class GenreEntityGenerator : IDataGenerator<Genre>
     {
         var parentGenreList = new List<Genre>();
         var childGenreList = new List<Genre>();
-        int parentCount = count / 2;
+
+        int parentCount = (int)Math.Ceiling((double)count / 2);
         int childCount = count - parentCount;
 
         for (var i = 0; i < parentCount; i++)
@@ -18,8 +19,8 @@ public class GenreEntityGenerator : IDataGenerator<Genre>
             parentGenreList.Add(new Genre
             {
                 Id = Guid.NewGuid(),
-                Name = $"Parent genre {i}",
-                Description = $"Description {i}",
+                Name = $"Parent genre {RandomNumberGenerator.GetInt32(0, int.MaxValue)}",
+                Description = $"Description {RandomNumberGenerator.GetInt32(0, int.MaxValue)}",
                 ParentGenre = null,
                 ParentId = null
             });
@@ -30,9 +31,9 @@ public class GenreEntityGenerator : IDataGenerator<Genre>
             childGenreList.Add(new Genre
             {
                 Id = Guid.NewGuid(),
-                Name = $"Child genre {i}",
-                Description = $"Description {i}",
-                ParentId = parentGenreList[RandomNumberGenerator.GetInt32(0, parentCount - 1)].Id,
+                Name = $"Child genre {RandomNumberGenerator.GetInt32(0, int.MaxValue)}",
+                Description = $"Description {RandomNumberGenerator.GetInt32(0, int.MaxValue)}",
+                ParentId = parentGenreList[RandomNumberGenerator.GetInt32(0, parentGenreList.Count - 1)].Id,
             });
         }
 
