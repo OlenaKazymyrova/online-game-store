@@ -30,6 +30,17 @@ public class GenresController : ControllerBase
     }
 
     /// <summary>
+    /// Retrieves the list of all genres.
+    /// </summary>
+    [ProducesResponseType(typeof(List<GenreReadDto>), StatusCodes.Status200OK)]
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        var genres = await _service.GetAsync();
+        return (genres is null) ? Ok(new List<GenreReadDto>()) : Ok(genres);
+    }
+
+    /// <summary>
     /// Creates a new genre.
     /// </summary>
     /// <param name="dto">The genre data to create from.</param>
@@ -53,7 +64,7 @@ public class GenresController : ControllerBase
 
         // ###############
         // this is to be handled with filters in the future
-        var genres = await _service.GetAllAsync();
+        var genres = await _service.GetAsync();
         if (genres.Any(existing => existing.Equals(dto)))
         {
             return Conflict("The genre already exists");
