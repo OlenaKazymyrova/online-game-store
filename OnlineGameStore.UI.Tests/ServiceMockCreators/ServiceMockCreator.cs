@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using OnlineGameStore.BLL.Interfaces;
@@ -39,6 +40,7 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
         SetupGetAll(mock);
         SetupAdd(mock);
         SetupUpdate(mock);
+        SetupPatch(mock);
         SetupDelete(mock);
         return mock.Object;
     }
@@ -78,7 +80,8 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
             .ReturnsAsync((TCreateDto createDto) =>
             {
                 var idProp = createDto.GetType().GetProperty("Id");
-                if (idProp != null && (Guid)idProp.GetValue(createDto)! == Guid.Empty)  // what if there is not proprty named Id
+                if (idProp != null &&
+                    (Guid)idProp.GetValue(createDto)! == Guid.Empty) // what if there is not proprty named Id
                 {
                     idProp.SetValue(createDto, Guid.NewGuid());
                 }
@@ -103,6 +106,29 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
                     return false;
 
                 _mapper.Map(updateDto, _data[index]);
+                return true;
+            });
+    }
+
+    protected virtual void SetupPatch(Mock<TService> mock)
+    {
+        mock.Setup(x => x.PatchAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<TUpdateDto>>()))
+            .ReturnsAsync((Guid id, JsonPatchDocument<TUpdateDto> patchDoc) =>
+            {
+                var index = _data.FindIndex(d =>
+                    (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
+
+                if (index == -1)
+                    return false;
+                var entity = _data[index];
+
+                var dto = _mapper.Map<TUpdateDto>(entity);
+
+                patchDoc.ApplyTo(dto);
+
+                _mapper.Map(dto, entity);
+
+                _data[index] = entity;
                 return true;
             });
     }
