@@ -84,4 +84,27 @@ public class GamesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] GameDto? gameDto)
+    {
+        if (gameDto == null)
+        {
+            return BadRequest("Game data is required.");
+        }
+
+        if (id != gameDto.Id)
+        {
+            return BadRequest("Game ID mismatch.");
+        }
+
+        var isUpdated = await _service.UpdateAsync(gameDto);
+
+        if (!isUpdated)
+        {
+            return NotFound();
+        }
+
+        return Ok();
+    }
 }

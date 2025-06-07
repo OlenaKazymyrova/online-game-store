@@ -144,6 +144,64 @@ public class GamesControllerTests
         Assert.Equal(HttpStatusCode.NotFound, secondDeleteRequest.StatusCode);
     }
 
+    [Fact]
+    public async Task UpdateAsync_GameExists_ReturnsUpdatedGame()
+    {
+        var newGame = GetGameDto();
+
+        var postRequest = await _client.PostAsJsonAsync("api/Games", newGame);
+
+        Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
+
+        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
+        var gameId = game!.Id;
+
+        newGame.Name = "Updated Game Name";
+        newGame.Id = gameId;
+
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{gameId}", newGame);
+
+        Assert.Equal(HttpStatusCode.OK, putRequest.StatusCode);
+
+        var getRequest = await _client.GetAsync("api/Games/" + gameId);
+
+        var updatedGame = await getRequest.Content.ReadFromJsonAsync<GameDto>();
+
+        Assert.NotNull(updatedGame);
+        Assert.Equal(newGame.Name, updatedGame.Name);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_GameDoesNotExist_ReturnsNotFound()
+    {
+        var newGame = GetGameDto();
+        newGame.Id = Guid.NewGuid();
+
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{newGame.Id}", newGame);
+
+        Assert.Equal(HttpStatusCode.NotFound, putRequest.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_GameIdMismatch_ReturnsBadRequest()
+    {
+        var newGame = GetGameDto();
+
+        var postRequest = await _client.PostAsJsonAsync("api/Games", newGame);
+
+        Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
+
+        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
+        var gameId = game!.Id;
+
+        newGame.Name = "Updated Game Name";
+        newGame.Id = Guid.NewGuid();
+
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{gameId}", newGame);
+
+        Assert.Equal(HttpStatusCode.BadRequest, putRequest.StatusCode);
+    }
+
     private GameDto GetGameDto(
         string name = "Test Game",
         string description = "Test Description",
