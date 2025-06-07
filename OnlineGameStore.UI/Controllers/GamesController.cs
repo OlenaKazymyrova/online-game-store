@@ -41,7 +41,7 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<GameDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync([FromQuery] PagingParams pagingParams)
+    public async Task<IActionResult> GetAsync([FromQuery] PagingParams pagingParams)
     {
         var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
 
