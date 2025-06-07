@@ -1,10 +1,11 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using OnlineGameStore.DAL.Entities;
+using System.Text;
+using Microsoft.AspNetCore.JsonPatch;
+using Newtonsoft.Json;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 
 namespace OnlineGameStore.UI.Tests.Tests;
@@ -145,7 +146,7 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task UpdateAsync_GameExists_ReturnsUpdatedGame()
+    public async Task UpdatePutAsync_GameExists_ReturnsUpdatedGame()
     {
         var newGame = GetGameDto();
 
@@ -172,7 +173,7 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task UpdateAsync_GameDoesNotExist_ReturnsNotFound()
+    public async Task UpdatePutAsync_GameDoesNotExist_ReturnsNotFound()
     {
         var newGame = GetGameDto();
         newGame.Id = Guid.NewGuid();
@@ -180,6 +181,56 @@ public class GamesControllerTests
         var putRequest = await _client.PutAsJsonAsync("api/Games/", newGame);
 
         Assert.Equal(HttpStatusCode.NotFound, putRequest.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdatePutAsync_GameNotValid_ReturnsBadRequest()
+    {
+        var notAGame = new List<GameDto>();
+
+        var putRequest = await _client.PutAsJsonAsync("api/Games/", notAGame);
+
+        Assert.Equal(HttpStatusCode.BadRequest, putRequest.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdatePatchAsync_GameExists_UpdatesGame()
+    {
+        var newGame = GetGameDto();
+
+        var postResponse = await _client.PostAsJsonAsync("api/Games", newGame);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+        var created = await postResponse.Content.ReadFromJsonAsync<GameDto>();
+        var id = created!.Id;
+
+        var patchDoc = new JsonPatchDocument<GameDto>();
+        patchDoc.Replace(g => g.Name, "Updated Game Name");
+
+        var json = JsonConvert.SerializeObject(patchDoc);
+        var content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+
+        var patchResponse = await _client.PatchAsync($"api/Games/{id}", content);
+        Assert.Equal(HttpStatusCode.OK, patchResponse.StatusCode);
+
+        var getResponse = await _client.GetAsync($"api/Games/{id}");
+        var updated = await getResponse.Content.ReadFromJsonAsync<GameDto>();
+
+        Assert.Equal("Updated Game Name", updated!.Name);
+    }
+
+    [Fact]
+    public async Task UpdatePatchAsync_GameDoesNotExist_ReturnsNotFound()
+    {
+        var newGame = GetGameDto();
+        newGame.Id = Guid.NewGuid();
+
+        var patchDoc = new JsonPatchDocument<GameDto>();
+        patchDoc.Replace(g => g.Name, "Updated Game Name");
+
+        var patchRequest = await _client.PatchAsJsonAsync($"api/Games/{newGame.Id}", patchDoc);
+
+        Assert.Equal(HttpStatusCode.NotFound, patchRequest.StatusCode);
     }
 
     private GameDto GetGameDto(

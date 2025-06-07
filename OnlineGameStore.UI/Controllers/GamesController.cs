@@ -103,14 +103,14 @@ public class GamesController : ControllerBase
 
         return Ok();
     }
-    
+
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> UpdatePatchAsync(Guid id, [FromBody] JsonPatchDocument<GameDto> patchDoc)
     {
         if (patchDoc == null) return BadRequest("Patch document is required.");
 
         var result = await _service.PatchAsync(id, patchDoc);
-        
+
         if (!result) return NotFound();
         return Ok();
     }
