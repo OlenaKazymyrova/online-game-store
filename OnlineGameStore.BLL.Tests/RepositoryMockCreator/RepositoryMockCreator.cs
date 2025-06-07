@@ -1,8 +1,10 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.SharedLogic.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 
@@ -44,19 +46,45 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
         mock.Setup(x => x.GetAsync(
                 It.IsAny<Expression<Func<TEntity, bool>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>?>(),
-                It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>()))
+                It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>(),
+                It.IsAny<PagingParams?>()))
             .ReturnsAsync((
                 Expression<Func<TEntity, bool>>? filter,
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
-                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include) =>
+                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include,
+                PagingParams? pagingParams
+                ) =>
             {
+                pagingParams ??= new PagingParams();
+
                 IQueryable<TEntity> query = _data.AsQueryable();
 
-                if (include != null) query = include(query);
-                if (filter != null) query = query.Where(filter);
-                if (orderBy != null) query = orderBy(query);
+                if (include != null)
+                    query = include(query);
 
-                return query.ToList();
+                if (filter != null)
+                    query = query.Where(filter);
+
+                if (orderBy != null)
+                    query = orderBy(query);
+
+                if (pagingParams != null)
+                {
+                    int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+                    query = query.Skip(skip).Take(pagingParams.PageSize);
+                }
+
+                return new PaginatedResponse<TEntity>
+                {
+                    Items = query.ToList(),
+                    Pagination = new PaginationMetadata
+                    {
+                        Page = pagingParams.Page,
+                        PageSize = pagingParams.PageSize,
+                        TotalItems = _data.Count(),
+                        TotalPages = (int)Math.Ceiling((double)_data.Count() / pagingParams.PageSize)
+                    }
+                };
             });
     }
 
