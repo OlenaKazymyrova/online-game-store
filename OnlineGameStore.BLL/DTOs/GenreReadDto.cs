@@ -1,30 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OnlineGameStore.DAL.Entities;
+namespace OnlineGameStore.BLL.DTOs;
 
-public class Genre
+public class GenreReadDto
 {
     [Required]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public required Guid Id { get; set; }
+
     [Required]
-    public required string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
+
     public string Description { get; set; } = string.Empty;
-    public Guid? ParentId { get; set; } = Guid.Empty;
-    public Genre? ParentGenre { get; set; } = default;
+
+    public Guid? ParentId { get; set; } = default;
 
     public override bool Equals(object? obj) =>
-        Equals(obj as Genre);
+        Equals(obj as GenreReadDto);
 
     public override int GetHashCode() =>
         HashCode.Combine(Id, Name, Description, ParentId);
 
-    public static bool operator ==(Genre? left, Genre? right) =>
+    public static bool operator ==(GenreReadDto? left, GenreReadDto? right) =>
         Equals(left, right);
 
-    public static bool operator !=(Genre? left, Genre? right) =>
+    public static bool operator !=(GenreReadDto? left, GenreReadDto? right) =>
         !Equals(left, right);
 
-    private bool Equals(Genre? other)
+    private bool Equals(GenreReadDto? other)
     {
         if (other is null)
             return false;

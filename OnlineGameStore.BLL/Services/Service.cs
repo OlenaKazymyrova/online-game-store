@@ -6,52 +6,54 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Services;
 
-public abstract class Service<TEntity, TDto> : IService<TEntity, TDto>
+public abstract class Service<TEntity, TCreateDto, TReadDto, TUpdateDto> : IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
     where TEntity : class
-    where TDto : class
+    where TCreateDto : class
+    where TReadDto : class
+    where TUpdateDto : class
 {
-    protected readonly IRepository<TEntity> Repository;
-    protected readonly IMapper Mapper;
+    protected readonly IRepository<TEntity> _repository;
+    protected readonly IMapper _mapper;
 
     protected Service(IRepository<TEntity> repository, IMapper mapper)
     {
-        Repository = repository;
-        Mapper = mapper;
+        _repository = repository;
+        _mapper = mapper;
     }
 
-    public virtual async Task<TDto?> GetByIdAsync(Guid id)
+    public virtual async Task<TReadDto?> GetByIdAsync(Guid id)
     {
-        var entity = await Repository.GetByIdAsync(id);
-        return entity == null ? null : Mapper.Map<TDto>(entity);
+        var entity = await _repository.GetByIdAsync(id);
+        return entity == null ? null : _mapper.Map<TReadDto>(entity);
     }
 
-    public virtual async Task<IEnumerable<TDto>> GetAllAsync(
+    public virtual async Task<IEnumerable<TReadDto>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
     {
-        var entities = await Repository.GetAsync(filter, orderBy, include);
-        return Mapper.Map<IEnumerable<TDto>>(entities);
+        var entities = await _repository.GetAsync(filter, orderBy, include);
+        return _mapper.Map<IEnumerable<TReadDto>>(entities);
     }
 
-    public virtual async Task<TDto?> AddAsync(TDto dto)
+    public virtual async Task<TReadDto?> AddAsync(TCreateDto dto)
     {
         if (dto is null) return null;
 
-        var entity = Mapper.Map<TEntity>(dto);
-        var addedEntity = await Repository.AddAsync(entity);
-        return addedEntity == null ? null : Mapper.Map<TDto>(addedEntity);
+        var entity = _mapper.Map<TEntity>(dto);
+        var addedEntity = await _repository.AddAsync(entity);
+        return addedEntity == null ? null : _mapper.Map<TReadDto>(addedEntity);
     }
 
-    public virtual async Task<bool> UpdateAsync(TDto dto)
+    public virtual async Task<bool> UpdateAsync(TUpdateDto dto)
     {
         if (dto is null) return false;
-        var entity = Mapper.Map<TEntity>(dto);
-        return await Repository.UpdateAsync(entity);
+        var entity = _mapper.Map<TEntity>(dto);
+        return await _repository.UpdateAsync(entity);
     }
 
     public virtual async Task<bool> DeleteAsync(Guid id)
     {
-        return await Repository.DeleteAsync(id);
+        return await _repository.DeleteAsync(id);
     }
 }

@@ -54,7 +54,7 @@ public class GenreServiceTests
     [Fact]
     public async Task AddAsync_ReturnsGame()
     {
-        var newGenre = new GenreDto
+        var newGenreDto = new GenreDto
         {
             Id = Guid.NewGuid(),
             Name = "New name",
@@ -62,10 +62,10 @@ public class GenreServiceTests
             ParentId = null
         };
 
-        var result = await _genreService.AddAsync(newGenre);
+        var result = await _genreService.AddAsync(newGenreDto);
 
         Assert.NotNull(result);
-        Assert.Equal(newGenre, result);
+        Assert.Equal(_mapper.Map<Genre>(newGenreDto), _mapper.Map<Genre>(result));
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class GenreServiceTests
     [Fact]
     public async Task GetAll_ReturnsAll()
     {
-        var result = await _genreService.GetAllAsync();
+        var result = await _genreService.GetAsync();
 
         Assert.Equal(_data, _mapper.Map<List<Genre>>(result));
     }

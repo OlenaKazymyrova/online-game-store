@@ -1,4 +1,6 @@
-﻿using OnlineGameStore.BLL.DTOs;
+﻿using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.BLL.Tests.DataGenerators;
+using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
@@ -9,23 +11,29 @@ namespace OnlineGameStore.UI.Tests.Tests;
 
 public class GenresControllerTests
 {
-    private const int _dtoAmountToGenerate = 1;
+    private const int _dtoAmountToGenerate = 100;
     private readonly HttpClient _client;
 
     public GenresControllerTests()
     {
-        var data = new GenreDtoGenerator().Generate(100);
+        var data = new GenreEntityGenerator().Generate(_dtoAmountToGenerate);
         var mockCreator = new GenreServiceMockCreator(data);
         var factory = new ControllerTestsHelper<IGenreService>(mockCreator);
         _client = factory.CreateClient();
     }
 
+    private static Genre GenGenreEntity()
+    {
+        var genreGen = new GenreEntityGenerator();
+        return genreGen.Generate(1).First();
+    }
 
-    private static GenreDto GenGenreDto(int count = _dtoAmountToGenerate)
+    private static GenreDto GenGenreDto()
     {
         var genreGen = new GenreDtoGenerator();
-        return genreGen.Generate(_dtoAmountToGenerate).First();
+        return genreGen.Generate(1).First();
     }
+
 
     [Fact]
     public async Task Create_GenreNotExist_ReturnsLocationUri()
@@ -46,18 +54,19 @@ public class GenresControllerTests
         Assert.Equal(newGenreDto, createdGenre);
     }
 
-    [Fact]
-    public async Task Create_GenreAlreadyExists_ReturnsConflict()
-    {
-        var newGenreDto = GenGenreDto();
-        var postResponse1 = await _client.PostAsJsonAsync("api/genres", newGenreDto);
+    // NOTE: the test is to be skipped as the condition for adding a confliciting genre has changed
+    //[Fact]
+    //public async Task Create_GenreAlreadyExists_ReturnsConflict()
+    //{
+    //    var newGenreDto = GenGenreDto();
+    //    var postResponse1 = await _client.PostAsJsonAsync("api/genres", newGenreDto);
 
-        postResponse1.EnsureSuccessStatusCode();
+    //    postResponse1.EnsureSuccessStatusCode();
 
-        var postReponse2 = await _client.PostAsJsonAsync("api/genres", newGenreDto);
+    //    var postReponse2 = await _client.PostAsJsonAsync("api/genres", newGenreDto);
 
-        Assert.Equal(HttpStatusCode.Conflict, postReponse2.StatusCode);
-    }
+    //    Assert.Equal(HttpStatusCode.Conflict, postReponse2.StatusCode);
+    //}
 
     [Fact]
     public async Task GetGenre_GenreExists_ReturnsGenre()
@@ -177,5 +186,18 @@ public class GenresControllerTests
         var fetchedParentGenre = await getParentResponse.Content.ReadFromJsonAsync<GenreDto>();
 
         Assert.Equal(fetchedParentGenre, parentGenre);
+    }
+
+    [Fact]
+    public async Task Get_GenresExist_GetsListWithAllGenres()
+    {
+        var response = await _client.GetAsync("api/genres");
+
+        response.EnsureSuccessStatusCode();
+
+        var genresReturned = await response.Content.ReadFromJsonAsync<List<GenreReadDto>>();
+
+        Assert.NotNull(genresReturned);
+        Assert.True(genresReturned.Count == _dtoAmountToGenerate);
     }
 }

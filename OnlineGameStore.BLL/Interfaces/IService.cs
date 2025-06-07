@@ -3,16 +3,18 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IService<TEntity, TDto>
+public interface IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
     where TEntity : class
-    where TDto : class
+    where TCreateDto : class
+    where TReadDto : class
+    where TUpdateDto : class
 {
-    Task<TDto?> GetByIdAsync(Guid id);
-    Task<IEnumerable<TDto>> GetAllAsync(
+    Task<TReadDto?> GetByIdAsync(Guid id);
+    Task<IEnumerable<TReadDto>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
-    Task<TDto?> AddAsync(TDto dto);
-    Task<bool> UpdateAsync(TDto dto);
+    Task<TReadDto?> AddAsync(TCreateDto dto);
+    Task<bool> UpdateAsync(TUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);
 }

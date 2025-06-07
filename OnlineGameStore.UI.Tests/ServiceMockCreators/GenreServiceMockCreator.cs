@@ -5,9 +5,9 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreDto, IGenreService>
+public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreDto, GenreReadDto, GenreDto, IGenreService>
 {
-    public GenreServiceMockCreator(List<GenreDto> data) : base(data) { }
+    public GenreServiceMockCreator(List<Genre> data) : base(data) { }
 
     protected override void SetupDelete(Mock<IGenreService> mock)
     {
