@@ -16,10 +16,10 @@ public class GenreEntityGenerator : IDataGenerator<Genre>
 
         for (var i = 0; i < parentCount; i++)
         {
-            var randomInt = RandomNumberGenerator.GetInt32(0, int.MaxValue); 
+            var randomInt = RandomNumberGenerator.GetInt32(0, int.MaxValue);
 
             parentGenreList.Add(new Genre
-            { 
+            {
                 Id = Guid.NewGuid(),
                 Name = $"Parent genre {randomInt}",
                 Description = $"Description {randomInt}",
