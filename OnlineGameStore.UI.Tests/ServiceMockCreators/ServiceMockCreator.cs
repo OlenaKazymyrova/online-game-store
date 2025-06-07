@@ -5,6 +5,8 @@ using Moq;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.SharedLogic.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
@@ -56,19 +58,43 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
         mock.Setup(x => x.GetAsync(
                 It.IsAny<Expression<Func<TEntity, bool>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>?>(),
-                It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>()))
+                It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>(),
+                It.IsAny<PagingParams>()))
             .ReturnsAsync((
                 Expression<Func<TEntity, bool>>? filter,
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
-                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include) =>
+                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include,
+                PagingParams? pagingParams) =>
             {
+                pagingParams ??= new PagingParams();
+
                 var entities = _data.Select(d => _mapper.Map<TEntity>(d)).AsQueryable();
 
-                if (filter != null) entities = entities.Where(filter);
-                if (orderBy != null) entities = orderBy(entities);
+                if (filter != null)
+                    entities = entities.Where(filter);
+
+                if (orderBy != null)
+                    entities = orderBy(entities);
+
+                if (pagingParams != null)
+                {
+                    int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+                    entities = entities.Skip(skip).Take(pagingParams.PageSize);
+                }
+
                 // enhance or override in future for including parameter
 
-                return _mapper.Map<IEnumerable<TReadDto>>(entities.ToList());
+                return new PaginatedResponse<TReadDto>
+                {
+                    Items = _mapper.Map<IEnumerable<TReadDto>>(entities.ToList()),
+                    Pagination = new PaginationMetadata
+                    {
+                        Page = pagingParams.Page,
+                        PageSize = pagingParams.PageSize,
+                        TotalItems = _data.Count(),
+                        TotalPages = (int)Math.Ceiling((double)_data.Count() / pagingParams.PageSize)
+                    }
+                };
             });
     }
 

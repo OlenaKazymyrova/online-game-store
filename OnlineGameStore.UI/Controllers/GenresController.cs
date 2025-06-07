@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Controllers;
 
@@ -30,14 +32,17 @@ public class GenresController : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves the list of all genres.
+    /// Retrieves the list of genres using pagination.
     /// </summary>
+    /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(List<GenreReadDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
     {
-        var genres = await _service.GetAsync();
-        return (genres is null) ? Ok(new List<GenreReadDto>()) : Ok(genres);
+        var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
+
+        return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
     }
 
     /// <summary>
@@ -45,7 +50,6 @@ public class GenresController : ControllerBase
     /// </summary>
     /// <param name="dto">The genre data to create from.</param>
     [ProducesResponseType(typeof(GenreDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
@@ -61,15 +65,6 @@ public class GenresController : ControllerBase
         {
             dto.Id = Guid.NewGuid();
         }
-
-        // ###############
-        // this is to be handled with filters in the future
-        var genres = await _service.GetAsync();
-        if (genres.Any(existing => existing.Equals(dto)))
-        {
-            return Conflict("The genre already exists");
-        }
-        // ###############
 
         var createdGenre = await _service.AddAsync(dto);
 

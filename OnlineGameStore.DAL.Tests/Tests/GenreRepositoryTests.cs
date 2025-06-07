@@ -85,7 +85,7 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task GetAllAsync_ReturnsAll()
+    public async Task GetAsync_TwoGenresProvided_ReturnsTwoGenres()
     {
         var repository = _creator.Create();
 
@@ -95,7 +95,7 @@ public class GenreRepositoryTests
         var result = await repository.GetAsync();
 
         Assert.NotNull(result);
-        Assert.True(result.Count() == _testGenreAmount);
+        Assert.True(result.Items.Count() == _testGenreAmount);
     }
 
     [Fact]
