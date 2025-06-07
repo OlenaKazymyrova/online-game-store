@@ -6,6 +6,7 @@ using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using System.Net;
 using System.Net.Http.Json;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
@@ -189,15 +190,34 @@ public class GenresControllerTests
     }
 
     [Fact]
-    public async Task Get_GenresExist_GetsListWithAllGenres()
+    public async Task Get_WithoutExplicitPagination_GetsJsonWithDefaultPaginationAndListOfGenres()
     {
+        var defaultPagingParams = new PagingParams();
         var response = await _client.GetAsync("api/genres");
 
         response.EnsureSuccessStatusCode();
 
-        var genresReturned = await response.Content.ReadFromJsonAsync<List<GenreReadDto>>();
+        var genresPaginated = await response.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
 
-        Assert.NotNull(genresReturned);
-        Assert.True(genresReturned.Count == _dtoAmountToGenerate);
+        // NOTE: the default pageSize must be less than default number of entities to generate
+        Assert.NotNull(genresPaginated);
+        Assert.Equal(defaultPagingParams.PageSize, genresPaginated.Items.Count());
+    }
+
+    [Fact]
+    public async Task Get_WithExplicitPagination_FirstPageNotEqualSecondPage()
+    {
+        var paginatedResponse1 = await _client.GetAsync("api/genres?pageSize=10&page=1");
+        var paginatedResponse2 = await _client.GetAsync("api/genres?pageSize=10&page=2");
+
+        paginatedResponse1.EnsureSuccessStatusCode();
+        paginatedResponse2.EnsureSuccessStatusCode();
+
+        var genrePaginated1 = paginatedResponse1.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+        var genrePaginated2 = paginatedResponse2.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+
+        Assert.NotNull(genrePaginated1);
+        Assert.NotNull(genrePaginated2);
+        Assert.NotEqual(genrePaginated1, genrePaginated2);
     }
 }

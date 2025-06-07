@@ -5,6 +5,7 @@ using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
@@ -13,11 +14,13 @@ public class GameServiceTests
     private const int EntityCount = 100;
     private readonly GameService _gameService;
     private readonly List<Game> _data;
+    private readonly IMapper _mapper;
 
     public GameServiceTests()
     {
         var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
-        var mapper = config.CreateMapper();
+
+        _mapper = config.CreateMapper();
 
         var gen = new GameEntityGenerator();
 
@@ -26,7 +29,7 @@ public class GameServiceTests
 
         var mockRepository = repMock.Create();
 
-        _gameService = new GameService(mockRepository, mapper);
+        _gameService = new GameService(mockRepository, _mapper);
     }
 
     [Fact]
@@ -49,12 +52,16 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetAllAsync_GamesExist_ReturnsAllGames()
+    public async Task GetAsync_GamesExist_ReturnsDefaultPaginatedGames()
     {
-        var allGames = await _gameService.GetAsync();
+        var pagingParams = new PagingParams();
+        var gamesPaginated = await _gameService.GetAsync();
 
-        Assert.NotNull(allGames);
-        Assert.Equal(EntityCount, allGames.Count());
+        int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+        var dataPaginatedExpected = _data.Skip(skip).Take(pagingParams.PageSize);
+
+        Assert.NotNull(gamesPaginated);
+        Assert.Equal(dataPaginatedExpected.Count(), gamesPaginated.Items.Count());
     }
 
     [Fact]
