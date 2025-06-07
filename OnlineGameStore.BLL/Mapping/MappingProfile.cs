@@ -9,13 +9,13 @@ public class BllMappingProfile : Profile
     public BllMappingProfile()
     {
         CreateMap<Game, GameDto>()
-            .ForMember(dest => dest.PublisherId, opt => opt.MapFrom(src => src.Publisher))
-            .ForMember(dest => dest.GenreId, opt => opt.MapFrom(src => src.Genre))
-            .ForMember(dest => dest.LicenseId, opt => opt.MapFrom(src => src.License))
+            .ForMember(dest => dest.PublisherId, opt => opt.MapFrom(src => src.PublisherId))
+            .ForMember(dest => dest.GenreId, opt => opt.MapFrom(src => src.GenreId))
+            .ForMember(dest => dest.LicenseId, opt => opt.MapFrom(src => src.LicenseId))
             .ReverseMap()
-            .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.PublisherId))
-            .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.GenreId))
-            .ForMember(dest => dest.License, opt => opt.MapFrom(src => src.LicenseId))
+            .ForMember(dest => dest.PublisherId, opt => opt.MapFrom(src => src.PublisherId))
+            .ForMember(dest => dest.GenreId, opt => opt.MapFrom(src => src.GenreId))
+            .ForMember(dest => dest.LicenseId, opt => opt.MapFrom(src => src.LicenseId))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
             .ForMember(dest => dest.ReleaseDate, opt => opt.MapFrom(src => src.ReleaseDate));
 
