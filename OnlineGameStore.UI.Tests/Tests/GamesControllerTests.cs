@@ -159,7 +159,7 @@ public class GamesControllerTests
         newGame.Name = "Updated Game Name";
         newGame.Id = gameId;
 
-        var putRequest = await _client.PutAsJsonAsync($"api/Games/{gameId}", newGame);
+        var putRequest = await _client.PutAsJsonAsync("api/Games/", newGame);
 
         Assert.Equal(HttpStatusCode.OK, putRequest.StatusCode);
 
@@ -177,29 +177,9 @@ public class GamesControllerTests
         var newGame = GetGameDto();
         newGame.Id = Guid.NewGuid();
 
-        var putRequest = await _client.PutAsJsonAsync($"api/Games/{newGame.Id}", newGame);
+        var putRequest = await _client.PutAsJsonAsync("api/Games/", newGame);
 
         Assert.Equal(HttpStatusCode.NotFound, putRequest.StatusCode);
-    }
-
-    [Fact]
-    public async Task UpdateAsync_GameIdMismatch_ReturnsBadRequest()
-    {
-        var newGame = GetGameDto();
-
-        var postRequest = await _client.PostAsJsonAsync("api/Games", newGame);
-
-        Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
-
-        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
-        var gameId = game!.Id;
-
-        newGame.Name = "Updated Game Name";
-        newGame.Id = Guid.NewGuid();
-
-        var putRequest = await _client.PutAsJsonAsync($"api/Games/{gameId}", newGame);
-
-        Assert.Equal(HttpStatusCode.BadRequest, putRequest.StatusCode);
     }
 
     private GameDto GetGameDto(
