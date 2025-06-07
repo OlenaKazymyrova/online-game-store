@@ -228,7 +228,10 @@ public class GamesControllerTests
         var patchDoc = new JsonPatchDocument<GameDto>();
         patchDoc.Replace(g => g.Name, "Updated Game Name");
 
-        var patchRequest = await _client.PatchAsJsonAsync($"api/Games/{newGame.Id}", patchDoc);
+        var json = JsonConvert.SerializeObject(patchDoc);
+        var content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
+
+        var patchRequest = await _client.PatchAsync($"api/Games/{newGame.Id}", content);
 
         Assert.Equal(HttpStatusCode.NotFound, patchRequest.StatusCode);
     }
