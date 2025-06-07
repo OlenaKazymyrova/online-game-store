@@ -82,13 +82,13 @@ public class GameServiceTests
         var isUpdated = await _gameService.UpdateAsync(updatedGameDto);
 
         Assert.True(isUpdated);
-        
+
         var updatedGame = await _gameService.GetByIdAsync(game.Id);
-        
+
         Assert.NotNull(updatedGame);
         Assert.Equal(updatedGameDto.Name, updatedGame.Name);
     }
-    
+
     [Fact]
     public async Task UpdateAsync_GameDoesNotExist_ReturnsFalse()
     {
@@ -98,7 +98,7 @@ public class GameServiceTests
 
         Assert.False(isUpdated);
     }
-    
+
     [Fact]
     public async Task PatchAsync_GameExists_ReturnsTrue()
     {
@@ -110,13 +110,13 @@ public class GameServiceTests
         var isPatched = await _gameService.PatchAsync(game.Id, patchDoc);
 
         Assert.True(isPatched);
-        
+
         var patchedGame = await _gameService.GetByIdAsync(game.Id);
-        
+
         Assert.NotNull(patchedGame);
         Assert.Equal(newName, patchedGame.Name);
     }
-    
+
     [Fact]
     public async Task PatchAsync_GameDoesNotExist_ReturnsFalse()
     {
@@ -127,7 +127,7 @@ public class GameServiceTests
 
         Assert.False(isPatched);
     }
-    
+
     [Fact]
     public async Task PatchAsync_EmptyPatch_ReturnsTrue()
     {
