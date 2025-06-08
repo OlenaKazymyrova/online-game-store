@@ -40,7 +40,8 @@ public abstract class
 
     public virtual async Task<TReadDto?> AddAsync(TCreateDto dto)
     {
-        if (dto is null) return null;
+        if (dto is null)
+            return null;
 
         var entity = _mapper.Map<TEntity>(dto);
         var addedEntity = await _repository.AddAsync(entity);
