@@ -49,17 +49,23 @@ public abstract class
 
     public virtual async Task<bool> UpdateAsync(TUpdateDto dto)
     {
-        if (dto is null) return false;
+        if (dto is null)
+            return false;
+
         var entity = _mapper.Map<TEntity>(dto);
+
         return await _repository.UpdateAsync(entity);
     }
 
     public virtual async Task<bool> PatchAsync(Guid id, JsonPatchDocument<TUpdateDto> patchDoc)
     {
-        if (patchDoc == null) return false;
+        if (patchDoc == null)
+            return false;
 
         var entity = await _repository.GetByIdAsync(id);
-        if (entity == null) return false;
+
+        if (entity == null)
+            return false;
 
         var dto = _mapper.Map<TUpdateDto>(entity);
 
@@ -67,8 +73,7 @@ public abstract class
 
         _mapper.Map(dto, entity);
 
-        var isUpdated = await _repository.UpdateAsync(entity);
-        return isUpdated;
+        return await _repository.UpdateAsync(entity);
     }
 
     public virtual async Task<bool> DeleteAsync(Guid id)
