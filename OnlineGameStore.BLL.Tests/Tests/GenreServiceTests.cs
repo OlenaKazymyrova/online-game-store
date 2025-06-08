@@ -6,7 +6,6 @@ using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Pagination;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 

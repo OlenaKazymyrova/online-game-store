@@ -52,8 +52,7 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
                 Expression<Func<TEntity, bool>>? filter,
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
                 Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include,
-                PagingParams? pagingParams
-                ) =>
+                PagingParams? pagingParams) =>
             {
                 pagingParams ??= new PagingParams();
 
@@ -68,11 +67,8 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
                 if (orderBy != null)
                     query = orderBy(query);
 
-                if (pagingParams != null)
-                {
-                    int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
-                    query = query.Skip(skip).Take(pagingParams.PageSize);
-                }
+                int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+                query = query.Skip(skip).Take(pagingParams.PageSize);
 
                 return new PaginatedResponse<TEntity>
                 {

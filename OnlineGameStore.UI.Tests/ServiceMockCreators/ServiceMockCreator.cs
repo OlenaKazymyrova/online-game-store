@@ -6,7 +6,6 @@ using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.SharedLogic.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
@@ -38,7 +37,7 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
     {
         var mock = new Mock<TService>();
         SetupGetById(mock);
-        SetupGetAll(mock);
+        SetupGet(mock);
         SetupAdd(mock);
         SetupUpdate(mock);
         SetupDelete(mock);
@@ -53,7 +52,7 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
     }
 
 
-    protected virtual void SetupGetAll(Mock<TService> mock)
+    protected virtual void SetupGet(Mock<TService> mock)
     {
         mock.Setup(x => x.GetAsync(
                 It.IsAny<Expression<Func<TEntity, bool>>?>(),
@@ -76,11 +75,8 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
                 if (orderBy != null)
                     entities = orderBy(entities);
 
-                if (pagingParams != null)
-                {
-                    int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
-                    entities = entities.Skip(skip).Take(pagingParams.PageSize);
-                }
+                int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+                entities = entities.Skip(skip).Take(pagingParams.PageSize);
 
                 // enhance or override in future for including parameter
 
