@@ -103,7 +103,9 @@ public class GameServiceTests
     public async Task PatchAsync_GameExists_ReturnsTrue()
     {
         var game = _data[0];
+
         const string newName = "Patched Game Name";
+
         var patchDoc = new JsonPatchDocument<GameDto>();
         patchDoc.Replace(g => g.Name, newName);
 
@@ -115,6 +117,10 @@ public class GameServiceTests
 
         Assert.NotNull(patchedGame);
         Assert.Equal(newName, patchedGame.Name);
+        // Check other properties remain unchanged
+        Assert.Equal(game.Description, patchedGame.Description);
+        Assert.Equal(game.Price, patchedGame.Price);
+        Assert.Equal(game.ReleaseDate, patchedGame.ReleaseDate);
     }
 
     [Fact]
