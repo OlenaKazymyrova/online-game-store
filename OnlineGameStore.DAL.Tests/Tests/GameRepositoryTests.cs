@@ -49,10 +49,10 @@ public class GameRepositoryTests
         await repository.AddAsync(game1);
         await repository.AddAsync(game2);
 
-        var result = await repository.GetAsync();
+        var paginatedResult = await repository.GetAsync();
 
-        Assert.NotNull(result);
-        Assert.Equal(2, result.Count());
+        Assert.NotNull(paginatedResult);
+        Assert.Equal(2, paginatedResult.Items.Count());
     }
 
     [Fact]

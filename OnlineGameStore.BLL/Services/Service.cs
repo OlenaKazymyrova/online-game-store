@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Services;
 
@@ -29,13 +30,19 @@ public abstract class
         return entity == null ? null : _mapper.Map<TReadDto>(entity);
     }
 
-    public virtual async Task<IEnumerable<TReadDto>> GetAsync(
+    public virtual async Task<PaginatedResponse<TReadDto>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        PagingParams? pagingParams = null)
     {
-        var entities = await _repository.GetAsync(filter, orderBy, include);
-        return _mapper.Map<IEnumerable<TReadDto>>(entities);
+        var paginatedResponse = await _repository.GetAsync(filter, orderBy, include, pagingParams);
+
+        return new PaginatedResponse<TReadDto>
+        {
+            Items = _mapper.Map<IEnumerable<TReadDto>>(paginatedResponse.Items),
+            Pagination = paginatedResponse.Pagination
+        };
     }
 
     public virtual async Task<TReadDto?> AddAsync(TCreateDto dto)

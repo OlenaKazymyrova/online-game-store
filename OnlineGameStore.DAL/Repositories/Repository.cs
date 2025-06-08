@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.DAL.Repositories;
 
@@ -17,11 +18,14 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         _dbSet = _dbContext.Set<TEntity>();
     }
 
-    public virtual async Task<IEnumerable<TEntity>> GetAsync(
+    public virtual async Task<PaginatedResponse<TEntity>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        PagingParams? pagingParams = null)
     {
+        pagingParams ??= new PagingParams();
+
         IQueryable<TEntity> query = _dbSet;
 
         if (include != null)
@@ -39,7 +43,20 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
             query = orderBy(query);
         }
 
-        return await query.ToListAsync();
+        int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+        query = query.Skip(skip).Take(pagingParams.PageSize);
+
+        return new PaginatedResponse<TEntity>
+        {
+            Items = await query.ToListAsync(),
+            Pagination = new PaginationMetadata
+            {
+                Page = pagingParams.Page,
+                PageSize = pagingParams.PageSize,
+                TotalItems = _dbSet.Count(),
+                TotalPages = (int)Math.Ceiling((double)_dbSet.Count() / pagingParams.PageSize)
+            }
+        };
     }
 
     public virtual async Task<TEntity?> GetByIdAsync(Guid id)

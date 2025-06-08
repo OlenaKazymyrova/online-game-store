@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Controllers;
 
@@ -35,14 +36,17 @@ public class GamesController : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves a list of all games.
+    /// Retrieves a list of games using pagination.
     /// </summary>
+    /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(IEnumerable<GameDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAsync([FromQuery] PagingParams pagingParams)
     {
-        var games = await _service.GetAsync();
-        return Ok(games);
+        var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
+
+        return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
     }
 
     /// <summary>

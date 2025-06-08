@@ -7,6 +7,7 @@ using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
@@ -54,16 +55,18 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAllAsync_GamesExist_ReturnsGamesList()
+    public async Task Get_WithoutExplicitPagination_GetsJsonWithDefaultPaginationAndListOfGames()
     {
+        var defaultPagingParams = new PagingParams();
         var getRequest = await _client.GetAsync("api/Games");
 
         Assert.Equal(HttpStatusCode.OK, getRequest.StatusCode);
 
-        var games = await getRequest.Content.ReadFromJsonAsync<IEnumerable<GameDto>>();
+        var gamesPaginatedResponse = await getRequest.Content.ReadFromJsonAsync<PaginatedResponse<GameDto>>();
 
-        Assert.NotNull(games);
-        Assert.NotEmpty(games);
+        // NOTE: the default pageSize must be less than default number of entities to generate
+        Assert.NotNull(gamesPaginatedResponse);
+        Assert.Equal(gamesPaginatedResponse.Items.Count(), defaultPagingParams.PageSize);
     }
 
     [Fact]
