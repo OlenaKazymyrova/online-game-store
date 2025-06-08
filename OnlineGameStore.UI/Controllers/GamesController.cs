@@ -86,6 +86,10 @@ public class GamesController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Updates all game fields.
+    /// </summary>
+    /// <param name="gameDto">New Game entity with existing ID</param>
     [HttpPut]
     public async Task<IActionResult> UpdatePutAsync([FromBody] GameDto gameDto)
     {
@@ -104,6 +108,28 @@ public class GamesController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Updates only specified game fields.
+    /// </summary>
+    /// <remarks>
+    /// If you want to update game name and price, you can send a JSON object like this:
+    /// 
+    ///     [
+    ///         {
+    ///             "path": "/name",
+    ///             "op": "replace",
+    ///             "value": "game"
+    ///         },
+    ///         {
+    ///             "path": "/price",
+    ///             "op": "replace",
+    ///             "value": 5
+    ///         }
+    ///     ]
+    /// 
+    /// </remarks>
+    /// <param name="id">ID of a Game entity to update</param>
+    /// <param name="patchDoc">JSON object that contains fields to be updated and new values</param>
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> UpdatePatchAsync(Guid id, [FromBody] JsonPatchDocument<GameDto> patchDoc)
     {
