@@ -204,8 +204,10 @@ public class GamesControllerTests
         var created = await postResponse.Content.ReadFromJsonAsync<GameDto>();
         var id = created!.Id;
 
+        const string newName = "Updated Game Name";
+
         var patchDoc = new JsonPatchDocument<GameDto>();
-        patchDoc.Replace(g => g.Name, "Updated Game Name");
+        patchDoc.Replace(g => g.Name, newName);
 
         var json = JsonConvert.SerializeObject(patchDoc);
         var content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
@@ -216,7 +218,7 @@ public class GamesControllerTests
         var getResponse = await _client.GetAsync($"api/Games/{id}");
         var updated = await getResponse.Content.ReadFromJsonAsync<GameDto>();
 
-        Assert.Equal("Updated Game Name", updated!.Name);
+        Assert.Equal(newName, updated!.Name);
     }
 
     [Fact]
@@ -225,8 +227,10 @@ public class GamesControllerTests
         var newGame = GetGameDto();
         newGame.Id = Guid.NewGuid();
 
+        const string newName = "Updated Game Name";
+
         var patchDoc = new JsonPatchDocument<GameDto>();
-        patchDoc.Replace(g => g.Name, "Updated Game Name");
+        patchDoc.Replace(g => g.Name, newName);
 
         var json = JsonConvert.SerializeObject(patchDoc);
         var content = new StringContent(json, Encoding.UTF8, "application/json-patch+json");
