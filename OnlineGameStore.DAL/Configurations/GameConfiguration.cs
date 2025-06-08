@@ -27,13 +27,13 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .IsRequired()
             .HasMaxLength(GameConstants.DescriptionMaxLength);
 
-        builder.Property(g => g.Publisher)
+        builder.Property(g => g.PublisherId)
             .HasColumnName("publisher_id");
 
-        builder.Property(g => g.Genre)
+        builder.Property(g => g.GenreId)
             .HasColumnName("genre_id");
 
-        builder.Property(g => g.License)
+        builder.Property(g => g.LicenseId)
             .HasColumnName("license_id");
     }
 }
