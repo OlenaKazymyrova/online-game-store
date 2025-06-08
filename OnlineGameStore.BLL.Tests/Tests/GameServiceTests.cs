@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.BLL.Services;
@@ -66,6 +67,83 @@ public class GameServiceTests
 
         Assert.NotNull(created);
         Assert.Equal(newGame.Id, created.Id);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_GameExists_ReturnsTrue()
+    {
+        var game = _data[0];
+        var updatedGameDto = GetGameDto(
+            name: "Updated Game",
+            description: "Updated Description");
+
+        updatedGameDto.Id = game.Id;
+
+        var isUpdated = await _gameService.UpdateAsync(updatedGameDto);
+
+        Assert.True(isUpdated);
+
+        var updatedGame = await _gameService.GetByIdAsync(game.Id);
+
+        Assert.NotNull(updatedGame);
+        Assert.Equal(updatedGameDto.Name, updatedGame.Name);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_GameDoesNotExist_ReturnsFalse()
+    {
+        var nonExistentGameDto = GetGameDto();
+
+        var isUpdated = await _gameService.UpdateAsync(nonExistentGameDto);
+
+        Assert.False(isUpdated);
+    }
+
+    [Fact]
+    public async Task PatchAsync_GameExists_ReturnsTrue()
+    {
+        var game = _data[0];
+
+        const string newName = "Patched Game Name";
+
+        var patchDoc = new JsonPatchDocument<GameDto>();
+        patchDoc.Replace(g => g.Name, newName);
+
+        var isPatched = await _gameService.PatchAsync(game.Id, patchDoc);
+
+        Assert.True(isPatched);
+
+        var patchedGame = await _gameService.GetByIdAsync(game.Id);
+
+        Assert.NotNull(patchedGame);
+        Assert.Equal(newName, patchedGame.Name);
+        // Check other properties remain unchanged
+        Assert.Equal(game.Description, patchedGame.Description);
+        Assert.Equal(game.Price, patchedGame.Price);
+        Assert.Equal(game.ReleaseDate, patchedGame.ReleaseDate);
+    }
+
+    [Fact]
+    public async Task PatchAsync_GameDoesNotExist_ReturnsFalse()
+    {
+        var patchDoc = new JsonPatchDocument<GameDto>();
+        patchDoc.Replace(g => g.Name, "Non-existent Game");
+
+        var isPatched = await _gameService.PatchAsync(Guid.NewGuid(), patchDoc);
+
+        Assert.False(isPatched);
+    }
+
+    [Fact]
+    public async Task PatchAsync_EmptyPatch_ReturnsTrue()
+    {
+        var game = _data[0];
+
+        var patchDoc = new JsonPatchDocument<GameDto>();
+
+        var isPatched = await _gameService.PatchAsync(game.Id, patchDoc);
+
+        Assert.True(isPatched);
     }
 
     [Fact]

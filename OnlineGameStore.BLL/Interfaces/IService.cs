@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace OnlineGameStore.BLL.Interfaces;
@@ -16,5 +17,6 @@ public interface IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
     Task<TReadDto?> AddAsync(TCreateDto dto);
     Task<bool> UpdateAsync(TUpdateDto dto);
+    Task<bool> PatchAsync(Guid id, JsonPatchDocument<TUpdateDto> patchDoc);
     Task<bool> DeleteAsync(Guid id);
 }
