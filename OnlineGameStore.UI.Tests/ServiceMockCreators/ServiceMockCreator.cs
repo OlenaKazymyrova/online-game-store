@@ -81,7 +81,7 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
             {
                 var idProp = createDto.GetType().GetProperty("Id");
                 if (idProp != null &&
-                    (Guid)idProp.GetValue(createDto)! == Guid.Empty) // what if there is not proprty named Id
+                    (Guid)idProp.GetValue(createDto)! == Guid.Empty)
                 {
                     idProp.SetValue(createDto, Guid.NewGuid());
                 }
@@ -120,6 +120,7 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
 
                 if (index == -1)
                     return false;
+
                 var entity = _data[index];
 
                 var dto = _mapper.Map<TUpdateDto>(entity);
