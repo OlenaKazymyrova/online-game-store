@@ -51,7 +51,7 @@ public abstract class
             return null;
 
         var entity = _mapper.Map<TEntity>(dto);
-        entity.Id = Guid.NewGuid(); 
+        entity.Id = Guid.NewGuid();
 
         var addedEntity = await _repository.AddAsync(entity);
 
