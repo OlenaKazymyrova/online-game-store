@@ -95,7 +95,7 @@ public class GamesController : ControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the Game to update.</param>
     /// <param name="gameDto">The new Game data.</param>
-    [HttpPut]
+    [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePutAsync([FromRoute] Guid id, [FromBody] GameCreateDto gameDto)
     {
         if (gameDto == null)
