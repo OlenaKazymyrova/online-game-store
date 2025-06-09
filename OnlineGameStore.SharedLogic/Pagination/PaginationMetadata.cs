@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace OnlineGameStore.SharedLogic.Pagination;
 
 public class PaginationMetadata
