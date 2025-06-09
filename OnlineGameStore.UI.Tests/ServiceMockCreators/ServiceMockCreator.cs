@@ -112,7 +112,7 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
     protected virtual void SetupUpdate(Mock<TService> mock)
     {
         mock.Setup(x => x.UpdateAsync(
-            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(),
             It.IsAny<TCreateDto>()))
             .ReturnsAsync((Guid id, TCreateDto updateDto) =>
             {

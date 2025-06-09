@@ -91,7 +91,7 @@ public class GenresControllerTests
         putResponse.EnsureSuccessStatusCode();
 
         var getResponse = await _client.GetAsync($"api/genres/{createdGenre.Id}");
-        
+
         getResponse.EnsureSuccessStatusCode();
 
         var updatedGenre = await getResponse.Content.ReadFromJsonAsync<GenreDto>();
@@ -235,7 +235,7 @@ public class GenresControllerTests
 
         childResponse.EnsureSuccessStatusCode();
 
-        var createdChild = await childResponse.Content.ReadFromJsonAsync<GenreReadDto>(); 
+        var createdChild = await childResponse.Content.ReadFromJsonAsync<GenreReadDto>();
 
         var deleteChildResponse = await _client.DeleteAsync($"api/genres/{createdChild!.Id}");
 

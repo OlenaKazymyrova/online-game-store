@@ -66,7 +66,7 @@ public class GenresController : ControllerBase
             return BadRequest();
         }
 
-        return CreatedAtAction(   
+        return CreatedAtAction(
             nameof(GetById),
             new { id = createdGenre.Id },
             createdGenre

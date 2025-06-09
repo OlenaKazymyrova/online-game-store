@@ -55,9 +55,9 @@ public class GenreRepositoryTests
         var genre = _testParentGenre;
         genre.ParentId = genre.Id;
         var result = await repository.AddAsync(genre);
-        
+
         Assert.Null(result);
-    } 
+    }
 
     [Fact]
     public async Task GetByIdAsync_GenreIsPresent_ReturnsGenre()
