@@ -6,6 +6,7 @@ using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using System.Net;
 using System.Net.Http.Json;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
@@ -189,15 +190,102 @@ public class GenresControllerTests
     }
 
     [Fact]
-    public async Task Get_GenresExist_GetsListWithAllGenres()
+    public async Task Get_WithoutExplicitPagination_GetsJsonWithDefaultPaginationAndListOfGenres()
     {
+        var defaultPagingParams = new PagingParams();
         var response = await _client.GetAsync("api/genres");
 
         response.EnsureSuccessStatusCode();
 
-        var genresReturned = await response.Content.ReadFromJsonAsync<List<GenreReadDto>>();
+        var genresPaginated = await response.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
 
-        Assert.NotNull(genresReturned);
-        Assert.True(genresReturned.Count == _dtoAmountToGenerate);
+        // NOTE: the default pageSize must be less than default number of entities to generate
+        Assert.NotNull(genresPaginated);
+        Assert.Equal(defaultPagingParams.PageSize, genresPaginated.Items.Count());
     }
+
+    [Fact]
+    public async Task Get_WithExplicitPagination_FirstPageNotEqualSecondPage()
+    {
+        var paginatedResponse1 = await _client.GetAsync("api/genres?pageSize=10&page=1");
+        var paginatedResponse2 = await _client.GetAsync("api/genres?pageSize=10&page=2");
+
+        paginatedResponse1.EnsureSuccessStatusCode();
+        paginatedResponse2.EnsureSuccessStatusCode();
+
+        var genrePaginated1 = paginatedResponse1.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+        var genrePaginated2 = paginatedResponse2.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+
+        Assert.NotNull(genrePaginated1);
+        Assert.NotNull(genrePaginated2);
+        Assert.NotEqual(genrePaginated1, genrePaginated2);
+    }
+
+    [Fact]
+    public async Task Get_WithDifferentPageSize_NumberOfItemsInPageIsDifferent()
+    {
+        int pageSize1 = 10;
+        int pageSize2 = 20;
+        int page = 1;
+
+        var response1 = await _client.GetAsync($"api/genres?pageSize={pageSize1}&page={page}");
+        var response2 = await _client.GetAsync($"api/genres?pageSize={pageSize2}&page={page}");
+
+        response1.EnsureSuccessStatusCode();
+        response2.EnsureSuccessStatusCode();
+
+        var paginatedResponse1 = await response1.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+        var paginatedResponse2 = await response2.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+
+        Assert.NotEqual(pageSize1, pageSize2);
+        Assert.NotNull(paginatedResponse1);
+        Assert.NotNull(paginatedResponse2);
+        Assert.NotEqual(paginatedResponse1!.Items.Count(), paginatedResponse2!.Items.Count());
+    }
+
+    [Fact]
+    public async Task Get_WithPageSizeNotSpecifiedAndPageSpecified_ResponseHasDefaultPageSize()
+    {
+        int page = 1;
+        var defaultPagingParams = new PagingParams();
+
+        var response1 = await _client.GetAsync($"api/genres?page={page}");
+        var response2 = await _client.GetAsync($"api/genres?page={page}");
+
+        response1.EnsureSuccessStatusCode();
+        response2.EnsureSuccessStatusCode();
+
+        var paginatedResponse1 = await response1.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+        var paginatedResponse2 = await response2.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+
+        Assert.NotNull(paginatedResponse1);
+        Assert.NotNull(paginatedResponse2);
+        Assert.Equal(defaultPagingParams.PageSize, paginatedResponse1.Items.Count());
+        Assert.Equal(paginatedResponse1!.Items.Count(), paginatedResponse2!.Items.Count());
+    }
+
+    [Fact]
+    public async Task Get_WithPageSizeSpecifiedAndPageNotSpecified_ResponseHasDefaultPage()
+    {
+        int pageSize1 = 10;
+        int pageSize2 = 20;
+
+        var defaultPagingParams = new PagingParams();
+
+        var response1 = await _client.GetAsync($"api/genres?pageSize={pageSize1}");
+        var response2 = await _client.GetAsync($"api/genres?pageSize={pageSize2}");
+
+        response1.EnsureSuccessStatusCode();
+        response2.EnsureSuccessStatusCode();
+
+        var paginatedResponse1 = await response1.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+        var paginatedResponse2 = await response2.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>();
+
+        Assert.NotNull(paginatedResponse1);
+        Assert.NotNull(paginatedResponse2);
+        Assert.NotEqual(paginatedResponse2.Items.Count(), paginatedResponse1.Items.Count());
+        Assert.Equal(paginatedResponse1.Pagination.Page, paginatedResponse2.Pagination.Page);
+    }
+
+
 }

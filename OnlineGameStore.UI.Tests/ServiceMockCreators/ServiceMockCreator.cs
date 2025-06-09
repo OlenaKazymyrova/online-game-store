@@ -1,10 +1,12 @@
 using System.Linq.Expressions;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.SharedLogic.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
@@ -36,9 +38,10 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
     {
         var mock = new Mock<TService>();
         SetupGetById(mock);
-        SetupGetAll(mock);
+        SetupGet(mock);
         SetupAdd(mock);
         SetupUpdate(mock);
+        SetupPatch(mock);
         SetupDelete(mock);
         return mock.Object;
     }
@@ -51,24 +54,45 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
     }
 
 
-    protected virtual void SetupGetAll(Mock<TService> mock)
+    protected virtual void SetupGet(Mock<TService> mock)
     {
         mock.Setup(x => x.GetAsync(
                 It.IsAny<Expression<Func<TEntity, bool>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>?>(),
-                It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>()))
+                It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>(),
+                It.IsAny<PagingParams>()))
             .ReturnsAsync((
                 Expression<Func<TEntity, bool>>? filter,
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
-                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include) =>
+                Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include,
+                PagingParams? pagingParams) =>
             {
+                pagingParams ??= new PagingParams();
+
                 var entities = _data.Select(d => _mapper.Map<TEntity>(d)).AsQueryable();
 
-                if (filter != null) entities = entities.Where(filter);
-                if (orderBy != null) entities = orderBy(entities);
+                if (filter != null)
+                    entities = entities.Where(filter);
+
+                if (orderBy != null)
+                    entities = orderBy(entities);
+
+                int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+                entities = entities.Skip(skip).Take(pagingParams.PageSize);
+
                 // enhance or override in future for including parameter
 
-                return _mapper.Map<IEnumerable<TReadDto>>(entities.ToList());
+                return new PaginatedResponse<TReadDto>
+                {
+                    Items = _mapper.Map<IEnumerable<TReadDto>>(entities.ToList()),
+                    Pagination = new PaginationMetadata
+                    {
+                        Page = pagingParams.Page,
+                        PageSize = pagingParams.PageSize,
+                        TotalItems = _data.Count(),
+                        TotalPages = (int)Math.Ceiling((double)_data.Count() / pagingParams.PageSize)
+                    }
+                };
             });
     }
 
@@ -78,7 +102,8 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
             .ReturnsAsync((TCreateDto createDto) =>
             {
                 var idProp = createDto.GetType().GetProperty("Id");
-                if (idProp != null && (Guid)idProp.GetValue(createDto)! == Guid.Empty)  // what if there is not proprty named Id
+                if (idProp != null &&
+                    (Guid)idProp.GetValue(createDto)! == Guid.Empty)
                 {
                     idProp.SetValue(createDto, Guid.NewGuid());
                 }
@@ -103,6 +128,30 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
                     return false;
 
                 _mapper.Map(updateDto, _data[index]);
+                return true;
+            });
+    }
+
+    protected virtual void SetupPatch(Mock<TService> mock)
+    {
+        mock.Setup(x => x.PatchAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<TUpdateDto>>()))
+            .ReturnsAsync((Guid id, JsonPatchDocument<TUpdateDto> patchDoc) =>
+            {
+                var index = _data.FindIndex(d =>
+                    (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
+
+                if (index == -1)
+                    return false;
+
+                var entity = _data[index];
+
+                var dto = _mapper.Map<TUpdateDto>(entity);
+
+                patchDoc.ApplyTo(dto);
+
+                _mapper.Map(dto, entity);
+
+                _data[index] = entity;
                 return true;
             });
     }

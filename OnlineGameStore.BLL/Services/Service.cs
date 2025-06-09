@@ -1,12 +1,15 @@
 using System.Linq.Expressions;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Services;
 
-public abstract class Service<TEntity, TCreateDto, TReadDto, TUpdateDto> : IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
+public abstract class
+    Service<TEntity, TCreateDto, TReadDto, TUpdateDto> : IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
     where TEntity : class
     where TCreateDto : class
     where TReadDto : class
@@ -27,18 +30,25 @@ public abstract class Service<TEntity, TCreateDto, TReadDto, TUpdateDto> : IServ
         return entity == null ? null : _mapper.Map<TReadDto>(entity);
     }
 
-    public virtual async Task<IEnumerable<TReadDto>> GetAsync(
+    public virtual async Task<PaginatedResponse<TReadDto>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        PagingParams? pagingParams = null)
     {
-        var entities = await _repository.GetAsync(filter, orderBy, include);
-        return _mapper.Map<IEnumerable<TReadDto>>(entities);
+        var paginatedResponse = await _repository.GetAsync(filter, orderBy, include, pagingParams);
+
+        return new PaginatedResponse<TReadDto>
+        {
+            Items = _mapper.Map<IEnumerable<TReadDto>>(paginatedResponse.Items),
+            Pagination = paginatedResponse.Pagination
+        };
     }
 
     public virtual async Task<TReadDto?> AddAsync(TCreateDto dto)
     {
-        if (dto is null) return null;
+        if (dto is null)
+            return null;
 
         var entity = _mapper.Map<TEntity>(dto);
         var addedEntity = await _repository.AddAsync(entity);
@@ -47,8 +57,30 @@ public abstract class Service<TEntity, TCreateDto, TReadDto, TUpdateDto> : IServ
 
     public virtual async Task<bool> UpdateAsync(TUpdateDto dto)
     {
-        if (dto is null) return false;
+        if (dto is null)
+            return false;
+
         var entity = _mapper.Map<TEntity>(dto);
+
+        return await _repository.UpdateAsync(entity);
+    }
+
+    public virtual async Task<bool> PatchAsync(Guid id, JsonPatchDocument<TUpdateDto> patchDoc)
+    {
+        if (patchDoc == null)
+            return false;
+
+        var entity = await _repository.GetByIdAsync(id);
+
+        if (entity == null)
+            return false;
+
+        var dto = _mapper.Map<TUpdateDto>(entity);
+
+        patchDoc.ApplyTo(dto);
+
+        _mapper.Map(dto, entity);
+
         return await _repository.UpdateAsync(entity);
     }
 

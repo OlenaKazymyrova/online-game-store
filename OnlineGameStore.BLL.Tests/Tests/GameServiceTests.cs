@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Mapping;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
@@ -13,11 +15,13 @@ public class GameServiceTests
     private const int EntityCount = 100;
     private readonly GameService _gameService;
     private readonly List<Game> _data;
+    private readonly IMapper _mapper;
 
     public GameServiceTests()
     {
         var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
-        var mapper = config.CreateMapper();
+
+        _mapper = config.CreateMapper();
 
         var gen = new GameEntityGenerator();
 
@@ -26,7 +30,7 @@ public class GameServiceTests
 
         var mockRepository = repMock.Create();
 
-        _gameService = new GameService(mockRepository, mapper);
+        _gameService = new GameService(mockRepository, _mapper);
     }
 
     [Fact]
@@ -49,12 +53,16 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetAllAsync_GamesExist_ReturnsAllGames()
+    public async Task GetAsync_GamesExist_ReturnsDefaultPaginatedGames()
     {
-        var allGames = await _gameService.GetAsync();
+        var pagingParams = new PagingParams();
+        var gamesPaginated = await _gameService.GetAsync();
 
-        Assert.NotNull(allGames);
-        Assert.Equal(EntityCount, allGames.Count());
+        int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+        var dataPaginatedExpected = _data.Skip(skip).Take(pagingParams.PageSize);
+
+        Assert.NotNull(gamesPaginated);
+        Assert.Equal(dataPaginatedExpected.Count(), gamesPaginated.Items.Count());
     }
 
     [Fact]
@@ -66,6 +74,83 @@ public class GameServiceTests
 
         Assert.NotNull(created);
         Assert.Equal(newGame.Id, created.Id);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_GameExists_ReturnsTrue()
+    {
+        var game = _data[0];
+        var updatedGameDto = GetGameDto(
+            name: "Updated Game",
+            description: "Updated Description");
+
+        updatedGameDto.Id = game.Id;
+
+        var isUpdated = await _gameService.UpdateAsync(updatedGameDto);
+
+        Assert.True(isUpdated);
+
+        var updatedGame = await _gameService.GetByIdAsync(game.Id);
+
+        Assert.NotNull(updatedGame);
+        Assert.Equal(updatedGameDto.Name, updatedGame.Name);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_GameDoesNotExist_ReturnsFalse()
+    {
+        var nonExistentGameDto = GetGameDto();
+
+        var isUpdated = await _gameService.UpdateAsync(nonExistentGameDto);
+
+        Assert.False(isUpdated);
+    }
+
+    [Fact]
+    public async Task PatchAsync_GameExists_ReturnsTrue()
+    {
+        var game = _data[0];
+
+        const string newName = "Patched Game Name";
+
+        var patchDoc = new JsonPatchDocument<GameDto>();
+        patchDoc.Replace(g => g.Name, newName);
+
+        var isPatched = await _gameService.PatchAsync(game.Id, patchDoc);
+
+        Assert.True(isPatched);
+
+        var patchedGame = await _gameService.GetByIdAsync(game.Id);
+
+        Assert.NotNull(patchedGame);
+        Assert.Equal(newName, patchedGame.Name);
+        // Check other properties remain unchanged
+        Assert.Equal(game.Description, patchedGame.Description);
+        Assert.Equal(game.Price, patchedGame.Price);
+        Assert.Equal(game.ReleaseDate, patchedGame.ReleaseDate);
+    }
+
+    [Fact]
+    public async Task PatchAsync_GameDoesNotExist_ReturnsFalse()
+    {
+        var patchDoc = new JsonPatchDocument<GameDto>();
+        patchDoc.Replace(g => g.Name, "Non-existent Game");
+
+        var isPatched = await _gameService.PatchAsync(Guid.NewGuid(), patchDoc);
+
+        Assert.False(isPatched);
+    }
+
+    [Fact]
+    public async Task PatchAsync_EmptyPatch_ReturnsTrue()
+    {
+        var game = _data[0];
+
+        var patchDoc = new JsonPatchDocument<GameDto>();
+
+        var isPatched = await _gameService.PatchAsync(game.Id, patchDoc);
+
+        Assert.True(isPatched);
     }
 
     [Fact]

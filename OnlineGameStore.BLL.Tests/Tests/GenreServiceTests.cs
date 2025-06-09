@@ -5,6 +5,7 @@ using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
@@ -82,11 +83,16 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task GetAll_ReturnsAll()
+    public async Task GetAsync_WithoutExplicitPagination_ReturnsDefaultPaginatedResponse()
     {
+        var pagingParams = new PagingParams();
         var result = await _genreService.GetAsync();
 
-        Assert.Equal(_data, _mapper.Map<List<Genre>>(result));
+        int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
+        var dataPaginatedExpected = _data.Skip(skip).Take(pagingParams.PageSize);
+
+        Assert.NotNull(result);
+        Assert.Equal(dataPaginatedExpected, _mapper.Map<List<Genre>>(result.Items));
     }
 
     [Fact]
