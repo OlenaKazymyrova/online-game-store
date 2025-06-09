@@ -37,8 +37,6 @@ public class GenresControllerTests
         return genreGen.Generate(1).First();
     }
 
-
-
     [Fact]
     public async Task Create_GenreNotExist_ReturnsLocationUri()
     {
@@ -348,6 +346,4 @@ public class GenresControllerTests
         Assert.NotEqual(paginatedResponse2.Items.Count(), paginatedResponse1.Items.Count());
         Assert.Equal(paginatedResponse1.Pagination.Page, paginatedResponse2.Pagination.Page);
     }
-
-
 }
