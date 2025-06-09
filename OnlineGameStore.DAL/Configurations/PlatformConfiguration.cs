@@ -25,5 +25,34 @@ public class PlatformConfiguration : IEntityTypeConfiguration<Platform>
         builder.HasMany(p => p.Games)
             .WithMany(g => g.Platforms)
             .UsingEntity(j => j.ToTable("GamePlatforms"));
+        
+        builder
+            .HasMany(p => p.Games)
+            .WithMany(g => g.Platforms)
+            .UsingEntity<Dictionary<string, object>>(
+                "GamePlatforms",
+                j => j
+                    .HasOne<Game>()
+                    .WithMany()
+                    .HasForeignKey("game_id")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<Platform>()
+                    .WithMany()
+                    .HasForeignKey("platform_id")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.ToTable("GamePlatforms");
+                    j.HasKey("game_id", "platform_id");
+
+                    j.Property<Guid>("game_id")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    j.Property<Guid>("platform_id")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+                });
     }
 }
