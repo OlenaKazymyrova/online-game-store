@@ -11,7 +11,7 @@ using OnlineGameStore.SharedLogic.Pagination;
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
 public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateDto, TService> : IMockCreator<TService>
-    where TEntity : class
+    where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
@@ -52,7 +52,6 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
             .ReturnsAsync((Guid id) => _mapper.Map<TReadDto>(_data.FirstOrDefault(d =>
                 (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id)));
     }
-
 
     protected virtual void SetupGet(Mock<TService> mock)
     {
@@ -101,14 +100,9 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
         mock.Setup(x => x.AddAsync(It.IsAny<TCreateDto>()))
             .ReturnsAsync((TCreateDto createDto) =>
             {
-                var idProp = createDto.GetType().GetProperty("Id");
-                if (idProp != null &&
-                    (Guid)idProp.GetValue(createDto)! == Guid.Empty)
-                {
-                    idProp.SetValue(createDto, Guid.NewGuid());
-                }
-
                 var entity = _mapper.Map<TEntity>(createDto);
+                entity.Id = Guid.NewGuid();
+
                 _data.Add(entity);
 
                 return _mapper.Map<TReadDto>(entity);
@@ -117,10 +111,12 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
 
     protected virtual void SetupUpdate(Mock<TService> mock)
     {
-        mock.Setup(x => x.UpdateAsync(It.IsAny<TUpdateDto>()))
-            .ReturnsAsync((TUpdateDto updateDto) =>
+        mock.Setup(x => x.UpdateAsync(
+            It.IsAny<Guid>(), 
+            It.IsAny<TCreateDto>()))
+            .ReturnsAsync((Guid id, TCreateDto updateDto) =>
             {
-                var id = (Guid)updateDto.GetType().GetProperty("Id")?.GetValue(updateDto)!;
+                //var id = (Guid)updateDto.GetType().GetProperty("Id")?.GetValue(updateDto)!;
                 var index = _data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
 
@@ -128,6 +124,8 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
                     return false;
 
                 _mapper.Map(updateDto, _data[index]);
+                _data[index].Id = id;
+
                 return true;
             });
     }

@@ -10,7 +10,7 @@ namespace OnlineGameStore.BLL.Services;
 
 public abstract class
     Service<TEntity, TCreateDto, TReadDto, TUpdateDto> : IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
-    where TEntity : class
+    where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
@@ -51,16 +51,20 @@ public abstract class
             return null;
 
         var entity = _mapper.Map<TEntity>(dto);
+        entity.Id = Guid.NewGuid(); 
+
         var addedEntity = await _repository.AddAsync(entity);
+
         return addedEntity == null ? null : _mapper.Map<TReadDto>(addedEntity);
     }
 
-    public virtual async Task<bool> UpdateAsync(TUpdateDto dto)
+    public virtual async Task<bool> UpdateAsync(Guid id, TCreateDto dto)
     {
         if (dto is null)
             return false;
 
         var entity = _mapper.Map<TEntity>(dto);
+        entity.Id = id;
 
         return await _repository.UpdateAsync(entity);
     }

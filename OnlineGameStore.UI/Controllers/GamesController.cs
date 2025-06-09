@@ -56,7 +56,7 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] GameDto? gameDto)
+    public async Task<IActionResult> CreateAsync([FromBody] GameCreateDto? gameDto)
     {
         if (gameDto == null)
         {
@@ -93,16 +93,17 @@ public class GamesController : ControllerBase
     /// <summary>
     /// Updates all game fields.
     /// </summary>
-    /// <param name="gameDto">New Game entity with existing ID</param>
+    /// <param name="id">The unique identifier of the Game to update.</param>
+    /// <param name="gameDto">The new Game data.</param>
     [HttpPut]
-    public async Task<IActionResult> UpdatePutAsync([FromBody] GameDto gameDto)
+    public async Task<IActionResult> UpdatePutAsync([FromRoute] Guid id, [FromBody] GameCreateDto gameDto)
     {
         if (gameDto == null)
         {
             return BadRequest("Game data is required.");
         }
 
-        var isUpdated = await _service.UpdateAsync(gameDto);
+        var isUpdated = await _service.UpdateAsync(id, gameDto);
 
         if (!isUpdated)
         {

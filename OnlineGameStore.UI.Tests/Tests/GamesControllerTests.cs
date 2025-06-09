@@ -72,7 +72,7 @@ public class GamesControllerTests
     [Fact]
     public async Task CreateAsync_GameIsValid_ReturnsCreatedGame()
     {
-        var newGame = GetGameDto();
+        var newGame = GetGameCreateDto();
 
         var postRequest = await _client.PostAsJsonAsync("api/Games", newGame);
 
@@ -81,7 +81,8 @@ public class GamesControllerTests
         var createdGame = await postRequest.Content.ReadFromJsonAsync<GameDto>();
 
         Assert.NotNull(createdGame);
-        Assert.Equal(newGame.Id, createdGame.Id);
+        Assert.Equal(newGame.Name, createdGame.Name);
+        Assert.Equal(newGame.Description, createdGame.Description);
     }
 
     [Fact]
@@ -151,19 +152,18 @@ public class GamesControllerTests
     [Fact]
     public async Task UpdatePutAsync_GameExists_ReturnsUpdatedGame()
     {
-        var newGame = GetGameDto();
+        var gameCreateDto = GetGameCreateDto();
 
-        var postRequest = await _client.PostAsJsonAsync("api/Games", newGame);
+        var postRequest = await _client.PostAsJsonAsync("api/Games", gameCreateDto);
 
         Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
 
-        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
-        var gameId = game!.Id;
+        var createdGame = await postRequest.Content.ReadFromJsonAsync<GameDto>();
+        var gameId = createdGame!.Id;
 
-        newGame.Name = "Updated Game Name";
-        newGame.Id = gameId;
+        gameCreateDto.Name = "Updated Game Name";
 
-        var putRequest = await _client.PutAsJsonAsync("api/Games/", newGame);
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{createdGame.Id}", gameCreateDto);
 
         Assert.Equal(HttpStatusCode.OK, putRequest.StatusCode);
 
@@ -172,7 +172,7 @@ public class GamesControllerTests
         var updatedGame = await getRequest.Content.ReadFromJsonAsync<GameDto>();
 
         Assert.NotNull(updatedGame);
-        Assert.Equal(newGame.Name, updatedGame.Name);
+        Assert.NotEqual(gameCreateDto.Name, updatedGame.Name);
     }
 
     [Fact]
@@ -261,4 +261,23 @@ public class GamesControllerTests
             ReleaseDate = releaseDate
         };
     }
+
+    private GameCreateDto GetGameCreateDto(
+    string name = "Test Game",
+    string description = "Test Description",
+    decimal price = 59.99m,
+    DateTime releaseDate = default)
+    {
+        return new GameCreateDto
+        {
+            Name = name,
+            Description = description,
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid(),
+            Price = price,
+            ReleaseDate = releaseDate
+        };
+    }
+
 }

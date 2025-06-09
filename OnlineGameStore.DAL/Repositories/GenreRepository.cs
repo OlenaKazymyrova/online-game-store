@@ -14,7 +14,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
             throw new ArgumentNullException(nameof(entity));
         }
 
-        var isParentGenreValid = await IsParentGenreValidAsync(entity.ParentId);
+        var isParentGenreValid = await IsParentGenreValidAsync(entity.Id, entity.ParentId);
 
         if (!isParentGenreValid)
         {
@@ -53,7 +53,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
             return false;
         }
 
-        var isParentGenreValid = await IsParentGenreValidAsync(entity.ParentId);
+        var isParentGenreValid = await IsParentGenreValidAsync(entity.Id, entity.ParentId);
 
         if (!isParentGenreValid)
         {
@@ -79,11 +79,12 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         }
     }
 
-    private async Task<bool> IsParentGenreValidAsync(Guid? parentId)
+    private async Task<bool> IsParentGenreValidAsync(Guid genreId, Guid? parentId)
     {
         if (parentId is null)
             return true;
-        if (parentId == Guid.Empty)
+
+        if (parentId == Guid.Empty || genreId == parentId)
             return false;
 
         return await _dbContext.Genres.FindAsync(parentId) is not null;
