@@ -86,11 +86,11 @@ public class GenresControllerTests
 
         genreCreateDto.Name = "Awesome updated name";
 
-        var putResponse = await _client.PutAsJsonAsync($"api/genres{createdGenre!.Id}", genreCreateDto);
+        var putResponse = await _client.PutAsJsonAsync($"api/genres/{createdGenre!.Id}", genreCreateDto);
 
         putResponse.EnsureSuccessStatusCode();
 
-        var getResponse = await _client.GetAsync($"api/gneres{createdGenre.Id}");
+        var getResponse = await _client.GetAsync($"api/genres/{createdGenre.Id}");
         
         getResponse.EnsureSuccessStatusCode();
 
@@ -235,9 +235,9 @@ public class GenresControllerTests
 
         childResponse.EnsureSuccessStatusCode();
 
-        var createdChild = childResponse.Content.ReadFromJsonAsync<GenreReadDto>(); 
+        var createdChild = await childResponse.Content.ReadFromJsonAsync<GenreReadDto>(); 
 
-        var deleteChildResponse = await _client.DeleteAsync($"api/genres/{createdChild.Id}");
+        var deleteChildResponse = await _client.DeleteAsync($"api/genres/{createdChild!.Id}");
 
         deleteChildResponse.EnsureSuccessStatusCode();
 
