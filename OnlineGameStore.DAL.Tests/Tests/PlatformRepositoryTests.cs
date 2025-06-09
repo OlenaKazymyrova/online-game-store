@@ -4,16 +4,16 @@ namespace OnlineGameStore.DAL.Tests.Tests;
 
 public class PlatformRepositoryTests
 {
-    private readonly PlatformRepositoryCreator _creator = new ();
-    
+    private readonly PlatformRepositoryCreator _creator = new();
+
     [Fact]
     public async Task AddAsync_AddsPlatform()
     {
         var repository = _creator.Create();
         var platform = GetPlatform();
-        
+
         var result = await repository.AddAsync(platform);
-        
+
         Assert.NotNull(result);
         Assert.True(result.Id != Guid.Empty);
         Assert.Equal(platform.Name, result.Name);
@@ -25,9 +25,9 @@ public class PlatformRepositoryTests
         var repository = _creator.Create();
         var platform = GetPlatform();
         var addedPlatform = await repository.AddAsync(platform);
-        
+
         var result = await repository.GetByIdAsync(addedPlatform!.Id);
-        
+
         Assert.NotNull(result);
         Assert.Equal(addedPlatform.Id, result.Id);
         Assert.Equal(addedPlatform.Name, result.Name);
@@ -38,7 +38,7 @@ public class PlatformRepositoryTests
     {
         var repository = _creator.Create();
         var nonExistentId = Guid.NewGuid();
-        
+
         var result = await repository.GetByIdAsync(nonExistentId);
 
         Assert.Null(result);
@@ -52,9 +52,9 @@ public class PlatformRepositoryTests
         var platform2 = GetPlatform("Platform 2");
         await repository.AddAsync(platform1);
         await repository.AddAsync(platform2);
-        
+
         var paginatedResult = await repository.GetAsync();
-        
+
         Assert.NotNull(paginatedResult);
         Assert.Equal(2, paginatedResult.Items.Count());
     }
@@ -67,9 +67,9 @@ public class PlatformRepositoryTests
         var platform2 = GetPlatform("PlayStation");
         await repository.AddAsync(platform1);
         await repository.AddAsync(platform2);
-        
+
         var paginatedResult = await repository.GetAsync(p => p.Name.Contains("box"));
-        
+
         Assert.Single(paginatedResult.Items);
         Assert.Equal("Xbox", paginatedResult.Items.First().Name);
     }
@@ -82,9 +82,9 @@ public class PlatformRepositoryTests
         var platform2 = GetPlatform("A Platform");
         await repository.AddAsync(platform1);
         await repository.AddAsync(platform2);
-        
+
         var paginatedResult = await repository.GetAsync(orderBy: q => q.OrderBy(p => p.Name));
-        
+
         Assert.Equal(2, paginatedResult.Items.Count());
         Assert.Equal("A Platform", paginatedResult.Items.First().Name);
         Assert.Equal("B Platform", paginatedResult.Items.Last().Name);
@@ -92,15 +92,15 @@ public class PlatformRepositoryTests
 
     [Fact]
     public async Task UpdateAsync_UpdatesPlatform()
-    { 
+    {
         var repository = _creator.Create();
         var platform = GetPlatform();
         var addedPlatform = await repository.AddAsync(platform);
         addedPlatform!.Name = "Updated Platform Name";
-        
+
         var result = await repository.UpdateAsync(addedPlatform);
         var updatedPlatform = await repository.GetByIdAsync(addedPlatform.Id);
-        
+
         Assert.True(result);
         Assert.Equal("Updated Platform Name", updatedPlatform!.Name);
     }
@@ -111,10 +111,10 @@ public class PlatformRepositoryTests
         var repository = _creator.Create();
         var platform = GetPlatform();
         var addedPlatform = await repository.AddAsync(platform);
-        
+
         var result = await repository.DeleteAsync(addedPlatform!.Id);
         var deletedPlatform = await repository.GetByIdAsync(addedPlatform.Id);
-       
+
         Assert.True(result);
         Assert.Null(deletedPlatform);
     }
@@ -124,19 +124,18 @@ public class PlatformRepositoryTests
     {
         var repository = _creator.Create();
         var nonExistentId = Guid.NewGuid();
-       
+
         var result = await repository.DeleteAsync(nonExistentId);
-        
+
         Assert.False(result);
     }
 
     private Platform GetPlatform(string name = "Test Platform")
     {
-        return new Platform 
+        return new Platform
         {
-        Id = Guid.NewGuid(),
-        Name = name
+            Id = Guid.NewGuid(),
+            Name = name
         };
     }
-    
 }
