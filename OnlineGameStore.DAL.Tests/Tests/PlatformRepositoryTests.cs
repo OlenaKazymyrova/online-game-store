@@ -53,10 +53,10 @@ public class PlatformRepositoryTests
         await repository.AddAsync(platform1);
         await repository.AddAsync(platform2);
         
-        var result = await repository.GetAsync();
+        var paginatedResult = await repository.GetAsync();
         
-        Assert.NotNull(result);
-        Assert.Equal(2, result.Count());
+        Assert.NotNull(paginatedResult);
+        Assert.Equal(2, paginatedResult.Items.Count());
     }
 
     [Fact]
@@ -68,10 +68,10 @@ public class PlatformRepositoryTests
         await repository.AddAsync(platform1);
         await repository.AddAsync(platform2);
         
-        var result = await repository.GetAsync(p => p.Name.Contains("box"));
+        var paginatedResult = await repository.GetAsync(p => p.Name.Contains("box"));
         
-        Assert.Single(result);
-        Assert.Equal("Xbox", result.First().Name);
+        Assert.Single(paginatedResult.Items);
+        Assert.Equal("Xbox", paginatedResult.Items.First().Name);
     }
 
     [Fact]
@@ -83,11 +83,11 @@ public class PlatformRepositoryTests
         await repository.AddAsync(platform1);
         await repository.AddAsync(platform2);
         
-        var result = await repository.GetAsync(orderBy: q => q.OrderBy(p => p.Name));
+        var paginatedResult = await repository.GetAsync(orderBy: q => q.OrderBy(p => p.Name));
         
-        Assert.Equal(2, result.Count());
-        Assert.Equal("A Platform", result.First().Name);
-        Assert.Equal("B Platform", result.Last().Name);
+        Assert.Equal(2, paginatedResult.Items.Count());
+        Assert.Equal("A Platform", paginatedResult.Items.First().Name);
+        Assert.Equal("B Platform", paginatedResult.Items.Last().Name);
     }
 
     [Fact]
