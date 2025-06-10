@@ -166,7 +166,7 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_DeleteParent_SetsChildReferenceToNull()
+    public async Task DeleteAsync_DeleteParent_DeletesChildGenre()
     {
         var repository = _creator.Create();
 
@@ -174,12 +174,12 @@ public class GenreRepositoryTests
         await repository.AddAsync(_testChildGenre);
 
         bool result = await repository.DeleteAsync(_testParentGenre.Id);
+        
+        Assert.True(result);
 
         var childGenre = await repository.GetByIdAsync(_testChildGenre.Id);
 
-        Assert.NotNull(childGenre);
-        Assert.Null(childGenre.ParentId);
-        Assert.Null(childGenre.ParentGenre);
+        Assert.Null(childGenre);
     }
 
     [Fact]
