@@ -48,8 +48,8 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(
-    [FromQuery] PagingParams pagingParams,
-    [FromQuery] GameAggregationParams gameFilters)
+        [FromQuery] PagingParams pagingParams,
+        [FromQuery] GameAggregationParams gameFilters)
     {
         //  Normalize
         var sortBy = gameFilters.SortBy.ToLower();
@@ -71,7 +71,8 @@ public class GamesController : ControllerBase
         {
             "name" => q => isDescending ? q.OrderByDescending(g => g.Name) : q.OrderBy(g => g.Name),
             "price" => q => isDescending ? q.OrderByDescending(g => g.Price) : q.OrderBy(g => g.Price),
-            "releasedate" => q => isDescending ? q.OrderByDescending(g => g.ReleaseDate) : q.OrderBy(g => g.ReleaseDate),
+            "releasedate" => q =>
+                isDescending ? q.OrderByDescending(g => g.ReleaseDate) : q.OrderBy(g => g.ReleaseDate),
             _ => throw new InvalidOperationException("Unexpected sortBy value.")
         };
 
@@ -81,9 +82,7 @@ public class GamesController : ControllerBase
             pagingParams: pagingParams
         );
 
-        return paginatedResponse is null
-            ? StatusCode(500)
-            : Ok(paginatedResponse);
+        return Ok(paginatedResponse);
     }
 
     /// <summary>
