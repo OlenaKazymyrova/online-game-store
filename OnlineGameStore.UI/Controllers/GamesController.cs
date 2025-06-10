@@ -58,14 +58,18 @@ public class GamesController : ControllerBase
 
         // Build filter
         Expression<Func<Game, bool>>? filter = null;
-        if (!string.IsNullOrWhiteSpace(gameFilters.Name) || gameFilters.MinPrice.HasValue || gameFilters.MaxPrice.HasValue)
+
+        bool hasNameFilter = !string.IsNullOrWhiteSpace(gameFilters.Name);
+        bool hasMinPriceFilter = gameFilters.MinPrice.HasValue;
+        bool hasMaxPriceFilter = gameFilters.MaxPrice.HasValue;
+
+        if (hasNameFilter || hasMinPriceFilter || hasMaxPriceFilter)
         {
             filter = game =>
-                (string.IsNullOrWhiteSpace(gameFilters.Name) || game.Name.Contains(gameFilters.Name)) &&
-                (!gameFilters.MinPrice.HasValue || game.Price >= gameFilters.MinPrice) &&
-                (!gameFilters.MaxPrice.HasValue || game.Price <= gameFilters.MaxPrice);
+                (!hasNameFilter || game.Name.Contains(gameFilters.Name)) &&  // it says gameFilters could be null
+                (!hasMinPriceFilter || game.Price >= gameFilters.MinPrice) &&
+                (!hasMaxPriceFilter || game.Price <= gameFilters.MaxPrice);
         }
-
         // Build ordering
         Func<IQueryable<Game>, IOrderedQueryable<Game>> orderBy = sortBy switch
         {

@@ -3,9 +3,6 @@
 namespace OnlineGameStore.UI.Filtering;
 public class GameAggregationParams
 {
-    private static readonly string[] AllowedSortBy = { "name", "price", "releasedate" };
-    private static readonly string[] AllowedSortOrder = { "asc", "desc" };
-
     [RegularExpression("^(name|price|releasedate)$", ErrorMessage = "Invalid sortBy value. Allowed values: name, price, releaseDate.")]
     public string SortBy { get; set; } = "name";
 
