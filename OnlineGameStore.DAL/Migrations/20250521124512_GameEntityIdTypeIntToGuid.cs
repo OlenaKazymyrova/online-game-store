@@ -34,19 +34,19 @@ namespace OnlineGameStore.DAL.Migrations
                 table: "games",
                 type: "uniqueidentifier",
                 nullable: true);
-            
+
             migrationBuilder.DropPrimaryKey(name: "PK_games", table: "games");
-            
+
             migrationBuilder.DropColumn(name: "id", table: "games");
             migrationBuilder.DropColumn(name: "publisher_id", table: "games");
             migrationBuilder.DropColumn(name: "license_id", table: "games");
             migrationBuilder.DropColumn(name: "genre_id", table: "games");
-            
+
             migrationBuilder.RenameColumn(name: "id_new", table: "games", newName: "id");
             migrationBuilder.RenameColumn(name: "publisher_id_new", table: "games", newName: "publisher_id");
             migrationBuilder.RenameColumn(name: "license_id_new", table: "games", newName: "license_id");
             migrationBuilder.RenameColumn(name: "genre_id_new", table: "games", newName: "genre_id");
-            
+
             migrationBuilder.AddPrimaryKey(name: "PK_games", table: "games", column: "id");
         }
 

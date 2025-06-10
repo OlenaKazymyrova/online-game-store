@@ -174,7 +174,7 @@ public class GenreRepositoryTests
         await repository.AddAsync(_testChildGenre);
 
         bool result = await repository.DeleteAsync(_testParentGenre.Id);
-        
+
         Assert.True(result);
 
         var childGenre = await repository.GetByIdAsync(_testChildGenre.Id);
