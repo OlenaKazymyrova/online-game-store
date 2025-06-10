@@ -8,84 +8,89 @@ namespace OnlineGameStore.DAL.Migrations
     /// <inheritdoc />
     public partial class GameEntityIdTypeIntToGuid : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<Guid>(
-                name: "publisher_id",
-                table: "games",
-                type: "uniqueidentifier",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
-
-            migrationBuilder.AlterColumn<Guid>(
-                name: "license_id",
-                table: "games",
-                type: "uniqueidentifier",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
-
-            migrationBuilder.AlterColumn<Guid>(
-                name: "genre_id",
-                table: "games",
-                type: "uniqueidentifier",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
-
-            migrationBuilder.AlterColumn<Guid>(
-                name: "id",
+            migrationBuilder.AddColumn<Guid>(
+                name: "id_new",
                 table: "games",
                 type: "uniqueidentifier",
                 nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int")
-                .OldAnnotation("SqlServer:Identity", "1, 1");
+                defaultValueSql: "NEWID()");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "publisher_id_new",
+                table: "games",
+                type: "uniqueidentifier",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "license_id_new",
+                table: "games",
+                type: "uniqueidentifier",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "genre_id_new",
+                table: "games",
+                type: "uniqueidentifier",
+                nullable: true);
+            
+            migrationBuilder.DropPrimaryKey(name: "PK_games", table: "games");
+            
+            migrationBuilder.DropColumn(name: "id", table: "games");
+            migrationBuilder.DropColumn(name: "publisher_id", table: "games");
+            migrationBuilder.DropColumn(name: "license_id", table: "games");
+            migrationBuilder.DropColumn(name: "genre_id", table: "games");
+            
+            migrationBuilder.RenameColumn(name: "id_new", table: "games", newName: "id");
+            migrationBuilder.RenameColumn(name: "publisher_id_new", table: "games", newName: "publisher_id");
+            migrationBuilder.RenameColumn(name: "license_id_new", table: "games", newName: "license_id");
+            migrationBuilder.RenameColumn(name: "genre_id_new", table: "games", newName: "genre_id");
+            
+            migrationBuilder.AddPrimaryKey(name: "PK_games", table: "games", column: "id");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "publisher_id",
+            migrationBuilder.AddColumn<int>(
+                name: "id_old",
                 table: "games",
                 type: "int",
                 nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "license_id",
-                table: "games",
-                type: "int",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "genre_id",
-                table: "games",
-                type: "int",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "id",
-                table: "games",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier")
+                defaultValue: 0)
                 .Annotation("SqlServer:Identity", "1, 1");
+
+            migrationBuilder.AddColumn<int>(
+                name: "publisher_id_old",
+                table: "games",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "license_id_old",
+                table: "games",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "genre_id_old",
+                table: "games",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.DropPrimaryKey(name: "PK_games", table: "games");
+
+            migrationBuilder.DropColumn(name: "id", table: "games");
+            migrationBuilder.DropColumn(name: "publisher_id", table: "games");
+            migrationBuilder.DropColumn(name: "license_id", table: "games");
+            migrationBuilder.DropColumn(name: "genre_id", table: "games");
+
+            migrationBuilder.RenameColumn(name: "id_old", table: "games", newName: "id");
+            migrationBuilder.RenameColumn(name: "publisher_id_old", table: "games", newName: "publisher_id");
+            migrationBuilder.RenameColumn(name: "license_id_old", table: "games", newName: "license_id");
+            migrationBuilder.RenameColumn(name: "genre_id_old", table: "games", newName: "genre_id");
+
+            migrationBuilder.AddPrimaryKey(name: "PK_games", table: "games", column: "id");
         }
     }
 }
