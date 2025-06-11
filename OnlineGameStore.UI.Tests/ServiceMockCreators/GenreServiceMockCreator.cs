@@ -5,7 +5,7 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreDto, GenreReadDto, GenreDto, IGenreService>
+public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto, GenreReadDto, GenreDto, IGenreService>
 {
     public GenreServiceMockCreator(List<Genre> data) : base(data) { }
 

@@ -53,11 +53,10 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task AddAsync_ReturnsGame()
+    public async Task AddAsync_AddValidGenreCreateDto_ReturnsValidGenreReadDto()
     {
-        var newGenreDto = new GenreDto
+        var newGenreDto = new GenreCreateDto
         {
-            Id = Guid.NewGuid(),
             Name = "New name",
             Description = "Description",
             ParentId = null
@@ -66,7 +65,8 @@ public class GenreServiceTests
         var result = await _genreService.AddAsync(newGenreDto);
 
         Assert.NotNull(result);
-        Assert.Equal(_mapper.Map<Genre>(newGenreDto), _mapper.Map<Genre>(result));
+        Assert.Equal(newGenreDto.Name, result.Name);
+        Assert.Equal(newGenreDto.Description, result.Description);
     }
 
     [Fact]
@@ -74,12 +74,21 @@ public class GenreServiceTests
     {
         var genre = _data[0];
 
-        genre.Description = "Updated description";
-        genre.Name = "Updated name";
+        var genreCreateDto = new GenreCreateDto
+        {
+            Name = genre.Name,
+            Description = "Updated description",
+            ParentId = genre.ParentId
+        };
 
-        var result = await _genreService.UpdateAsync(_mapper.Map<GenreDto>(genre));
+        var result = await _genreService.UpdateAsync(genre.Id, genreCreateDto);
+
+        var updatedGenre = await _genreService.GetByIdAsync(genre.Id);
 
         Assert.True(result);
+        Assert.NotNull(updatedGenre);
+        Assert.Equal(updatedGenre.Description, genreCreateDto.Description);
+        Assert.Equal(genre.Name, updatedGenre.Name);
     }
 
     [Fact]

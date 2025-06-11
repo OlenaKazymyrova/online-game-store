@@ -4,7 +4,7 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public class GameServiceMockCreator : ServiceMockCreator<Game, GameDto, GameDto, GameDto, IGameService>
+public class GameServiceMockCreator : ServiceMockCreator<Game, GameCreateDto, GameDto, GameDto, IGameService>
 {
     public GameServiceMockCreator(List<Game> data) : base(data) { }
 }

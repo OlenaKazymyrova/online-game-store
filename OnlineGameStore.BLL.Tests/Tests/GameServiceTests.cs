@@ -68,25 +68,26 @@ public class GameServiceTests
     [Fact]
     public async Task AddAsync_ReturnsGame()
     {
-        var newGame = GetGameDto();
+        var newGame = GetGameCreateDto();
 
         var created = await _gameService.AddAsync(newGame);
 
+        var fetched = await _gameService.GetByIdAsync(created!.Id);
+
         Assert.NotNull(created);
-        Assert.Equal(newGame.Id, created.Id);
+        Assert.NotNull(fetched);
+        Assert.Equal(fetched.Id, created.Id);
     }
 
     [Fact]
     public async Task UpdateAsync_GameExists_ReturnsTrue()
     {
         var game = _data[0];
-        var updatedGameDto = GetGameDto(
+        var updatedGameDto = GetGameCreateDto(
             name: "Updated Game",
             description: "Updated Description");
 
-        updatedGameDto.Id = game.Id;
-
-        var isUpdated = await _gameService.UpdateAsync(updatedGameDto);
+        var isUpdated = await _gameService.UpdateAsync(game.Id, updatedGameDto);
 
         Assert.True(isUpdated);
 
@@ -94,14 +95,16 @@ public class GameServiceTests
 
         Assert.NotNull(updatedGame);
         Assert.Equal(updatedGameDto.Name, updatedGame.Name);
+        Assert.Equal(updatedGameDto.Description, updatedGame.Description);
     }
 
     [Fact]
     public async Task UpdateAsync_GameDoesNotExist_ReturnsFalse()
     {
-        var nonExistentGameDto = GetGameDto();
+        var nonExistentGameDto = GetGameCreateDto();
+        var id = Guid.NewGuid();
 
-        var isUpdated = await _gameService.UpdateAsync(nonExistentGameDto);
+        var isUpdated = await _gameService.UpdateAsync(id, nonExistentGameDto);
 
         Assert.False(isUpdated);
     }
@@ -190,6 +193,24 @@ public class GameServiceTests
         return new GameDto
         {
             Id = Guid.NewGuid(),
+            Name = name,
+            Description = description,
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid(),
+            Price = price,
+            ReleaseDate = releaseDate
+        };
+    }
+
+    private GameCreateDto GetGameCreateDto(
+        string name = "Test Game",
+        string description = "Test Description",
+        decimal price = 59.99m,
+        DateTime releaseDate = default)
+    {
+        return new GameCreateDto
+        {
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),

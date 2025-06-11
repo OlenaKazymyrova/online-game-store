@@ -48,6 +48,18 @@ public class GenreRepositoryTests
     }
 
     [Fact]
+    public async Task AddAsync_GenreIdIsEqualToParentId_Fails()
+    {
+        var repository = _creator.Create();
+
+        var genre = _testParentGenre;
+        genre.ParentId = genre.Id;
+        var result = await repository.AddAsync(genre);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
     public async Task GetByIdAsync_GenreIsPresent_ReturnsGenre()
     {
         var repository = _creator.Create();
