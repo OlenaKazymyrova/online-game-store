@@ -1,0 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace OnlineGameStore.BLL.DTOs;
+
+public class PlatformDto
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Name { get; set; } = string.Empty;
+}

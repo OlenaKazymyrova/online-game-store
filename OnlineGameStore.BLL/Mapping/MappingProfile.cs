@@ -13,5 +13,12 @@ public class BllMappingProfile : Profile
         CreateMap<Genre, GenreDto>().ReverseMap();
 
         CreateMap<Genre, GenreReadDto>().ReverseMap();
+        
+        CreateMap<Platform, PlatformDto>();
+        
+        CreateMap<PlatformCreateDto, Platform>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Trim()))
+            .ForMember(dest => dest.Games, opt => opt.Ignore());
     }
 }
