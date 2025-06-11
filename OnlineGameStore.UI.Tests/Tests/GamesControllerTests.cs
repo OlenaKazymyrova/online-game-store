@@ -8,7 +8,7 @@ using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using OnlineGameStore.SharedLogic.Pagination;
-using OnlineGameStore.UI.Filtering;
+using OnlineGameStore.UI.Aggregation;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
