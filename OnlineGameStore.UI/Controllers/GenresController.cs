@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
@@ -51,26 +50,19 @@ public class GenresController : ControllerBase
     /// <param name="dto">The genre data to create from.</param>
     [ProducesResponseType(typeof(GenreDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] GenreDto dto)
+    public async Task<IActionResult> Create([FromBody] GenreCreateDto dto)
     {
         if (dto is null)
         {
             return BadRequest("Genre data is invalid or not present");
         }
 
-        if (dto.Id is null
-            || dto.Id == Guid.Empty)
-        {
-            dto.Id = Guid.NewGuid();
-        }
-
         var createdGenre = await _service.AddAsync(dto);
 
         if (createdGenre is null)
         {
-            return StatusCode(500);
+            return BadRequest();
         }
 
         return CreatedAtAction(
@@ -78,6 +70,27 @@ public class GenresController : ControllerBase
             new { id = createdGenre.Id },
             createdGenre
         );
+    }
+
+
+    /// <summary>
+    /// Updates all Genre fields
+    /// </summary>
+    /// <param name="id">The unique identifier of the Genre to update.</param>
+    /// <param name="genreDto">The new Genre data.</param>
+    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] GenreCreateDto genreDto)
+    {
+        if (genreDto is null)
+        {
+            return BadRequest("Genre data is required");
+        }
+
+        var isUpdated = await _service.UpdateAsync(id, genreDto);
+
+        return (isUpdated) ? Ok() : NotFound();
     }
 
     /// <summary>

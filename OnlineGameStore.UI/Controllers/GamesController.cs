@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Pagination;
+using OnlineGameStore.UI.Filtering;
+using System.Linq.Expressions;
 
 namespace OnlineGameStore.UI.Controllers;
 
@@ -39,14 +42,51 @@ public class GamesController : ControllerBase
     /// Retrieves a list of games using pagination.
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    [ProducesResponseType(typeof(IEnumerable<GameDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    /// <param name="gameFilters"> Specifies the possible filtering and ordering</param>
     [HttpGet]
-    public async Task<IActionResult> GetAsync([FromQuery] PagingParams pagingParams)
+    [ProducesResponseType(typeof(PaginatedResponse<GameDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Get(
+        [FromQuery] PagingParams pagingParams,
+        [FromQuery] GameAggregationParams gameFilters)
     {
-        var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
+        //  Normalize
+        var sortBy = gameFilters.SortBy.ToLower();
+        var sortOrder = gameFilters.SortOrder.ToLower();
+        var isDescending = sortOrder == "desc";
 
-        return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
+        // Build filter
+        Expression<Func<Game, bool>>? filter = null;
+
+        bool hasNameFilter = !string.IsNullOrWhiteSpace(gameFilters.Name);
+        bool hasMinPriceFilter = gameFilters.MinPrice.HasValue;
+        bool hasMaxPriceFilter = gameFilters.MaxPrice.HasValue;
+
+        if (hasNameFilter || hasMinPriceFilter || hasMaxPriceFilter)
+        {
+            filter = game =>
+                (!hasNameFilter || game.Name.Contains(gameFilters.Name)) &&  // it says gameFilters could be null
+                (!hasMinPriceFilter || game.Price >= gameFilters.MinPrice) &&
+                (!hasMaxPriceFilter || game.Price <= gameFilters.MaxPrice);
+        }
+        // Build ordering
+        Func<IQueryable<Game>, IOrderedQueryable<Game>> orderBy = sortBy switch
+        {
+            "name" => q => isDescending ? q.OrderByDescending(g => g.Name) : q.OrderBy(g => g.Name),
+            "price" => q => isDescending ? q.OrderByDescending(g => g.Price) : q.OrderBy(g => g.Price),
+            "releasedate" => q =>
+                isDescending ? q.OrderByDescending(g => g.ReleaseDate) : q.OrderBy(g => g.ReleaseDate),
+            _ => throw new InvalidOperationException("Unexpected sortBy value.")
+        };
+
+        var paginatedResponse = await _service.GetAsync(
+            filter: filter,
+            orderBy: orderBy,
+            pagingParams: pagingParams
+        );
+
+        return Ok(paginatedResponse);
     }
 
     /// <summary>
@@ -56,7 +96,7 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] GameDto? gameDto)
+    public async Task<IActionResult> CreateAsync([FromBody] GameCreateDto? gameDto)
     {
         if (gameDto == null)
         {
@@ -93,16 +133,17 @@ public class GamesController : ControllerBase
     /// <summary>
     /// Updates all game fields.
     /// </summary>
-    /// <param name="gameDto">New Game entity with existing ID</param>
-    [HttpPut]
-    public async Task<IActionResult> UpdatePutAsync([FromBody] GameDto gameDto)
+    /// <param name="id">The unique identifier of the Game to update.</param>
+    /// <param name="gameDto">The new Game data.</param>
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdatePutAsync([FromRoute] Guid id, [FromBody] GameCreateDto gameDto)
     {
         if (gameDto == null)
         {
             return BadRequest("Game data is required.");
         }
 
-        var isUpdated = await _service.UpdateAsync(gameDto);
+        var isUpdated = await _service.UpdateAsync(id, gameDto);
 
         if (!isUpdated)
         {

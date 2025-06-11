@@ -8,6 +8,7 @@ using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using OnlineGameStore.SharedLogic.Pagination;
+using OnlineGameStore.UI.Filtering;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
@@ -70,9 +71,56 @@ public class GamesControllerTests
     }
 
     [Fact]
+    public async Task Get_WithValidParameters_ReturnsOkResult()
+    {
+        var pagingParams = new PagingParams();
+        var gameFilters = new GameAggregationParams
+        {
+            SortBy = "name",
+            SortOrder = "asc"
+        };
+
+        var game1 = GetGameCreateDto("3 Game A", "Description A", 49.99m, new DateTime(2020, 1, 1));
+        var game2 = GetGameCreateDto("2 Game B", "Description B", 59.99m, new DateTime(2021, 1, 1));
+        var game3 = GetGameCreateDto("1 Game C", "Description C", 39.99m, new DateTime(2022, 1, 1));
+
+        await _client.PostAsJsonAsync("api/Games", game1);
+        await _client.PostAsJsonAsync("api/Games", game2);
+        await _client.PostAsJsonAsync("api/Games", game3);
+
+        var getRequest = await _client.GetAsync($"api/Games"
+            + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
+            + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
+
+        var gamesPaginatedResponse = await getRequest.Content.ReadFromJsonAsync<PaginatedResponse<GameDto>>();
+
+        Assert.Equal(HttpStatusCode.OK, getRequest.StatusCode);
+        Assert.NotNull(gamesPaginatedResponse);
+        Assert.NotEmpty(gamesPaginatedResponse.Items);
+        Assert.Equal(gamesPaginatedResponse.Items.First().Name, game3.Name);
+    }
+
+    [Fact]
+    public async Task Get_WithInvalidParameters_ReturnsBadRequest()
+    {
+        var pagingParams = new PagingParams { PageSize = 10, Page = 1 };
+        var gameFilters = new GameAggregationParams
+        {
+            SortBy = "invalid",
+            SortOrder = "asc"
+        };
+
+        var getRequest = await _client.GetAsync($"api/Games"
+            + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
+            + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
+
+        Assert.Equal(HttpStatusCode.BadRequest, getRequest.StatusCode);
+    }
+
+    [Fact]
     public async Task CreateAsync_GameIsValid_ReturnsCreatedGame()
     {
-        var newGame = GetGameDto();
+        var newGame = GetGameCreateDto();
 
         var postRequest = await _client.PostAsJsonAsync("api/Games", newGame);
 
@@ -81,7 +129,8 @@ public class GamesControllerTests
         var createdGame = await postRequest.Content.ReadFromJsonAsync<GameDto>();
 
         Assert.NotNull(createdGame);
-        Assert.Equal(newGame.Id, createdGame.Id);
+        Assert.Equal(newGame.Name, createdGame.Name);
+        Assert.Equal(newGame.Description, createdGame.Description);
     }
 
     [Fact]
@@ -151,19 +200,18 @@ public class GamesControllerTests
     [Fact]
     public async Task UpdatePutAsync_GameExists_ReturnsUpdatedGame()
     {
-        var newGame = GetGameDto();
+        var gameCreateDto = GetGameCreateDto();
 
-        var postRequest = await _client.PostAsJsonAsync("api/Games", newGame);
+        var postRequest = await _client.PostAsJsonAsync("api/Games", gameCreateDto);
 
         Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
 
-        var game = await postRequest.Content.ReadFromJsonAsync<GameDto>();
-        var gameId = game!.Id;
+        var createdGame = await postRequest.Content.ReadFromJsonAsync<GameDto>();
+        var gameId = createdGame!.Id;
 
-        newGame.Name = "Updated Game Name";
-        newGame.Id = gameId;
+        gameCreateDto.Name = "Updated Game Name";
 
-        var putRequest = await _client.PutAsJsonAsync("api/Games/", newGame);
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{createdGame.Id}", gameCreateDto);
 
         Assert.Equal(HttpStatusCode.OK, putRequest.StatusCode);
 
@@ -172,7 +220,7 @@ public class GamesControllerTests
         var updatedGame = await getRequest.Content.ReadFromJsonAsync<GameDto>();
 
         Assert.NotNull(updatedGame);
-        Assert.Equal(newGame.Name, updatedGame.Name);
+        Assert.Equal(gameCreateDto.Name, updatedGame.Name);
     }
 
     [Fact]
@@ -181,7 +229,7 @@ public class GamesControllerTests
         var newGame = GetGameDto();
         newGame.Id = Guid.NewGuid();
 
-        var putRequest = await _client.PutAsJsonAsync("api/Games/", newGame);
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{newGame.Id}", newGame);
 
         Assert.Equal(HttpStatusCode.NotFound, putRequest.StatusCode);
     }
@@ -191,7 +239,7 @@ public class GamesControllerTests
     {
         var notAGame = new List<GameDto>();
 
-        var putRequest = await _client.PutAsJsonAsync("api/Games/", notAGame);
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{Guid.NewGuid()}", notAGame);
 
         Assert.Equal(HttpStatusCode.BadRequest, putRequest.StatusCode);
     }
@@ -252,6 +300,24 @@ public class GamesControllerTests
         return new GameDto
         {
             Id = Guid.NewGuid(),
+            Name = name,
+            Description = description,
+            PublisherId = Guid.NewGuid(),
+            GenreId = Guid.NewGuid(),
+            LicenseId = Guid.NewGuid(),
+            Price = price,
+            ReleaseDate = releaseDate
+        };
+    }
+
+    private GameCreateDto GetGameCreateDto(
+        string name = "Test Game",
+        string description = "Test Description",
+        decimal price = 59.99m,
+        DateTime releaseDate = default)
+    {
+        return new GameCreateDto
+        {
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
