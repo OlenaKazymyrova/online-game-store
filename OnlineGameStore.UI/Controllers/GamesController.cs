@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Pagination;
-using OnlineGameStore.UI.Filtering;
-using System.Linq.Expressions;
+using OnlineGameStore.UI.Aggregation;
+using OnlineGameStore.UI.QueryBuilders;
 
 namespace OnlineGameStore.UI.Controllers;
 
@@ -51,34 +50,10 @@ public class GamesController : ControllerBase
         [FromQuery] PagingParams pagingParams,
         [FromQuery] GameAggregationParams gameFilters)
     {
-        //  Normalize
-        var sortBy = gameFilters.SortBy.ToLower();
-        var sortOrder = gameFilters.SortOrder.ToLower();
-        var isDescending = sortOrder == "desc";
+        var queryBuilder = new GameQueryBuilder();
 
-        // Build filter
-        Expression<Func<Game, bool>>? filter = null;
-
-        bool hasNameFilter = !string.IsNullOrWhiteSpace(gameFilters.Name);
-        bool hasMinPriceFilter = gameFilters.MinPrice.HasValue;
-        bool hasMaxPriceFilter = gameFilters.MaxPrice.HasValue;
-
-        if (hasNameFilter || hasMinPriceFilter || hasMaxPriceFilter)
-        {
-            filter = game =>
-                (!hasNameFilter || game.Name.Contains(gameFilters.Name)) &&  // it says gameFilters could be null
-                (!hasMinPriceFilter || game.Price >= gameFilters.MinPrice) &&
-                (!hasMaxPriceFilter || game.Price <= gameFilters.MaxPrice);
-        }
-        // Build ordering
-        Func<IQueryable<Game>, IOrderedQueryable<Game>> orderBy = sortBy switch
-        {
-            "name" => q => isDescending ? q.OrderByDescending(g => g.Name) : q.OrderBy(g => g.Name),
-            "price" => q => isDescending ? q.OrderByDescending(g => g.Price) : q.OrderBy(g => g.Price),
-            "releasedate" => q =>
-                isDescending ? q.OrderByDescending(g => g.ReleaseDate) : q.OrderBy(g => g.ReleaseDate),
-            _ => throw new InvalidOperationException("Unexpected sortBy value.")
-        };
+        var filter = queryBuilder.BuildFilter(gameFilters);
+        var orderBy = queryBuilder.BuildOrderBy(gameFilters);
 
         var paginatedResponse = await _service.GetAsync(
             filter: filter,
