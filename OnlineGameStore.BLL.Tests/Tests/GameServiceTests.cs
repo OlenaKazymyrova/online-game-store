@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.BLL.Mapping;
+using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
@@ -19,7 +19,7 @@ public class GameServiceTests
 
     public GameServiceTests()
     {
-        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
+        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllGameMappingProfile>(); });
 
         _mapper = config.CreateMapper();
 
@@ -196,7 +196,6 @@ public class GameServiceTests
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
             LicenseId = Guid.NewGuid(),
             Price = price,
             ReleaseDate = releaseDate
@@ -214,7 +213,6 @@ public class GameServiceTests
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
             LicenseId = Guid.NewGuid(),
             Price = price,
             ReleaseDate = releaseDate

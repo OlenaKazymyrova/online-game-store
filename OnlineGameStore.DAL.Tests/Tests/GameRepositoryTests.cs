@@ -19,7 +19,7 @@ public class GameRepositoryTests
         Assert.Equal(game.Name, result.Name);
         Assert.Equal(game.Description, result.Description);
         Assert.Equal(game.PublisherId, result.PublisherId);
-        Assert.Equal(game.GenreId, result.GenreId);
+        Assert.Equal(game.Platforms, result.Platforms);
         Assert.Equal(game.LicenseId, result.LicenseId);
     }
 
@@ -36,7 +36,8 @@ public class GameRepositoryTests
         Assert.Equal(addedGame.Name, result.Name);
         Assert.Equal(addedGame.Description, result.Description);
         Assert.Equal(game.PublisherId, result.PublisherId);
-        Assert.Equal(game.GenreId, result.GenreId);
+        Assert.Equal(game.Platforms, result.Platforms);
+        Assert.Equal(game.Genres, result.Genres);
         Assert.Equal(game.LicenseId, result.LicenseId);
     }
 
@@ -90,7 +91,6 @@ public class GameRepositoryTests
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
             LicenseId = Guid.NewGuid(),
             Price = price,
             ReleaseDate = releaseDate

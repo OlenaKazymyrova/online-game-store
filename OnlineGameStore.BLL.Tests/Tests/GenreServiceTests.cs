@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.BLL.Mapping;
+using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
@@ -18,7 +18,7 @@ public class GenreServiceTests
 
     public GenreServiceTests()
     {
-        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
+        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllGameMappingProfile>(); });
 
         _mapper = config.CreateMapper();
 
