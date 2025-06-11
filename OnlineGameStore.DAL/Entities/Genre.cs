@@ -2,10 +2,10 @@
 
 namespace OnlineGameStore.DAL.Entities;
 
-public class Genre
+public class Genre : TEntity
 {
     [Required]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public override Guid Id { get; set; } = Guid.NewGuid();
     [Required]
     public required string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

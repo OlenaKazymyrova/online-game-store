@@ -35,8 +35,7 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint($"/swagger/{documentName}/swagger.json", $"OGS API v{apiVersion}");
     });
 }
-
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.MapControllers();
 

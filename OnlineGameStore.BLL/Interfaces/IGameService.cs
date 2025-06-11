@@ -3,4 +3,4 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IGameService : IService<Game, GameDto, GameDto, GameDto> { }
+public interface IGameService : IService<Game, GameCreateDto, GameDto, GameDto> { }
