@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlatformRepository, PlatformRepository>();
 
 
+
         return services;
     }
 }

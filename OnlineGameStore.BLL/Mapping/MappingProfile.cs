@@ -11,7 +11,8 @@ public class BllMappingProfile : Profile
         CreateMap<Game, GameDto>().ReverseMap();
 
         CreateMap<GameCreateDto, Game>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
+            .ForMember(dest => dest.Platforms, opt => opt.Ignore());
 
         CreateMap<Genre, GenreDto>().ReverseMap();
 
