@@ -10,4 +10,5 @@ public class Game
     public Guid? LicenseId { get; set; }
     public required decimal Price { get; set; }
     public required DateTime ReleaseDate { get; set; }
+    public ICollection<Platform> Platforms { get; set; } = new List<Platform>();
 }
