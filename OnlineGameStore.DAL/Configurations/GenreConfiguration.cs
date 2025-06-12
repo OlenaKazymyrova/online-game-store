@@ -34,8 +34,7 @@ public class GenreConfiguration : IEntityTypeConfiguration<Genre>
 
         //builder.HasMany(genre => genre.Games)
         //    .WithMany(game => game.Genres)
-        //    .UsingEntity(j => j.ToTable("GameGenres"));
-
+        //    .UsingEntity(j => j.ToTable("GameGenres;
 
         builder
             .HasMany(genre => genre.Games)
