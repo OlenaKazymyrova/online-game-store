@@ -7,13 +7,13 @@ using OnlineGameStore.DAL.Migrations;
 
 namespace OnlineGameStore.BLL.Mapping.Resolvers;
 
-public class GenreCreateDtoResolver : 
+public class GenreResolver : 
     IValueResolver<GenreCreateDto, Genre, ICollection<Game>>,
     IValueResolver<Genre, GenreReadDto, ICollection<Guid>>
 {
     private readonly OnlineGameStoreDbContext _context;
 
-    public GenreCreateDtoResolver(OnlineGameStoreDbContext context)
+    public GenreResolver(OnlineGameStoreDbContext context)
     {
         if (context is null)
         {

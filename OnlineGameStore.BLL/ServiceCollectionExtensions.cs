@@ -14,8 +14,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGenreService, GenreService>();
         services.AddAutoMapper(typeof(BllGameMappingProfile));
         services.AddAutoMapper(typeof(BllGenreMappingProfile));
-        services.AddScoped<GameCreateDtoResolver>();  // no parameterless constructor defined
-        services.AddScoped<GenreCreateDtoResolver>();
+        services.AddScoped<GameResolver>();  // no parameterless constructor defined
+        services.AddScoped<GenreResolver>();
 
         return services;
     }

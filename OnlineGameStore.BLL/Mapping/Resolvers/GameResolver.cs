@@ -5,13 +5,13 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Mapping.Resolvers
 {
-    public class GameCreateDtoResolver : 
+    public class GameResolver : 
         IValueResolver<GameCreateDto, Game, ICollection<Genre>>,
         IValueResolver<GameCreateDto, Game, ICollection<Platform>>
     {
         private readonly OnlineGameStoreDbContext _context;
 
-        public GameCreateDtoResolver(OnlineGameStoreDbContext context)
+        public GameResolver(OnlineGameStoreDbContext context)
         {
             if (context is null)
             {
