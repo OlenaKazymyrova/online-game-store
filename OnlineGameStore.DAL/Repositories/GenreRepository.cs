@@ -39,6 +39,14 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         }
     }
 
+    public override async Task<Genre?> GetByIdAsync(Guid id)
+    {   
+        return await _dbSet
+            .Include(genre => genre.ParentGenre)
+            .Include(genre => genre.Games)
+            .FirstOrDefaultAsync(g => g.Id == id);
+    }
+
     public override async Task<bool> UpdateAsync(Genre entity)
     {
         if (entity is null)

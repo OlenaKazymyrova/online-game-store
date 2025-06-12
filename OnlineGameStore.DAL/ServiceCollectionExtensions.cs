@@ -12,7 +12,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDalServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<OnlineGameStoreDbContext>(options =>
-            options.UseInMemoryDatabase("FakeDB")); // Replace with the actual one
+            options
+            .UseInMemoryDatabase("FakeDB")); // Replace with the actual one
 
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
