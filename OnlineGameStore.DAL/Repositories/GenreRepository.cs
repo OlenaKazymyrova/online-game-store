@@ -40,7 +40,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
     }
 
     public override async Task<Genre?> GetByIdAsync(Guid id)
-    {   
+    {
         return await _dbSet
             .Include(genre => genre.ParentGenre)
             .Include(genre => genre.Games)

@@ -168,7 +168,7 @@ public class GenresControllerTests
     }
 
     [Fact]
-    public async Task Delete_DeleteParent_SetsChildReferenceToNull()
+    public async Task Delete_DeleteParent_DeletesChild()
     {
         var parentGenre = GenGenreCreateDto();
 
@@ -201,12 +201,7 @@ public class GenresControllerTests
 
         var getChildResponse = await _client.GetAsync($"api/genres/{createdChild!.Id}");
 
-        getChildResponse.EnsureSuccessStatusCode();
-
-        var fetchedChildGenre = await getChildResponse.Content.ReadFromJsonAsync<GenreReadDto>();
-
-        Assert.NotNull(fetchedChildGenre);
-        Assert.Null(fetchedChildGenre.ParentId);
+        Assert.Equal(HttpStatusCode.NotFound, getChildResponse.StatusCode);
     }
 
     [Fact]
