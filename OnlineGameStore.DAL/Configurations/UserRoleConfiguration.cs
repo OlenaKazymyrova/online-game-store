@@ -13,11 +13,13 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         
         builder.HasOne<User>()
             .WithMany()
-            .HasForeignKey(ur => ur.UserId);
+            .HasForeignKey(ur => ur.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<Role>()
             .WithMany()
-            .HasForeignKey(ur => ur.RoleId);
+            .HasForeignKey(ur => ur.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
 }
