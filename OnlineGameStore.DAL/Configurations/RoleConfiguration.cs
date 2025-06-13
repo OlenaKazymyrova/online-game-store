@@ -18,7 +18,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
 
         builder.Property(r => r.Name)
             .IsRequired();
-        
+
         builder.HasIndex(r => r.Name)
             .IsUnique();
 
