@@ -98,11 +98,6 @@ public class GamesController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePutAsync([FromRoute] Guid id, [FromBody] GameCreateDto gameDto)
     {
-        if (gameDto == null)
-        {
-            return BadRequest("Game data is required.");
-        }
-
         var isUpdated = await _service.UpdateAsync(id, gameDto);
 
         if (!isUpdated)
