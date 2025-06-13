@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AutoMapper;
 using Microsoft.Data.SqlClient;
 using OnlineGameStore.BLL.DTOs;
@@ -14,9 +15,13 @@ public class BllGameMappingProfile : Profile
             .ForMember(dest => dest.PlatformsIds, opt => opt.MapFrom(src => src.Platforms.Select(p => p.Id)))
             .ForMember(dest => dest.GenresIds, opt => opt.MapFrom(src => src.Genres.Select(g => g.Id)));
 
+        CreateMap<GameDto, Game>()
+            .ForMember(dest => dest.Platforms, opt => opt.Ignore())
+            .ForMember(dest => dest.Genres, opt => opt.Ignore());
+
         CreateMap<GameCreateDto, Game>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
-            .ForMember(dest => dest.Platforms,  opt => opt.MapFrom<GameResolver>())
+            .ForMember(dest => dest.Platforms, opt => opt.MapFrom<GameResolver>())
             .ForMember(dest => dest.Genres, opt => opt.MapFrom<GameResolver>());
     }
 }

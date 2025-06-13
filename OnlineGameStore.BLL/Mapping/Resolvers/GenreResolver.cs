@@ -2,16 +2,15 @@
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.DAL.DBContext;
-using Microsoft.EntityFrameworkCore;
-using OnlineGameStore.DAL.Migrations;
 
 namespace OnlineGameStore.BLL.Mapping.Resolvers;
 
-public class GenreResolver : 
-    IValueResolver<GenreCreateDto, Genre, ICollection<Game>>,
-    IValueResolver<Genre, GenreReadDto, ICollection<Guid>>
+public class GenreResolver :
+    IValueResolver<GenreCreateDto, Genre, ICollection<Game>>
 {
-    private readonly OnlineGameStoreDbContext _context;
+    private readonly OnlineGameStoreDbContext? _context;
+
+    public GenreResolver() { }
 
     public GenreResolver(OnlineGameStoreDbContext context)
     {
@@ -22,25 +21,22 @@ public class GenreResolver :
         _context = context;
     }
 
-    public ICollection<Game> Resolve(GenreCreateDto source, Genre dest, ICollection<Game> destMember, ResolutionContext ctx)
+    public ICollection<Game> Resolve(GenreCreateDto source, Genre dest, ICollection<Game> destMember,
+        ResolutionContext ctx)
     {
-        if (source.GamesIds is null || source.GamesIds.Count == 0)
+        if (source.GamesIds is null || source.GamesIds.Count == 0 || _context is null)
             return [];
 
         var gameIds = source.GamesIds.ToArray();
 
-        return _context.Games
+        var games = _context.Games
             .Where(game => gameIds!.Contains(game.Id))
             .ToList();
-    }
 
-    public ICollection<Guid> Resolve(Genre source, GenreReadDto dest, ICollection<Guid> destMember, ResolutionContext ctx)
-    {
-        if (source.Games is null || source.Games.Count == 0)
-            return [];
+        if (games.Count == gameIds.Length)
+            return games;
 
-        return source.Games
-            .Select(game => game.Id)
-            .ToList();
+        var missingIds = gameIds.Except(games.Select(g => g.Id));
+        throw new KeyNotFoundException($"Games with IDs: [{string.Join(", ", missingIds)}] were not found.");
     }
 }

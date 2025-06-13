@@ -9,10 +9,11 @@ public class BllGenreMappingProfile : Profile
 {
     public BllGenreMappingProfile()
     {
-        CreateMap<Genre, GenreDto>().ReverseMap();
+        CreateMap<Genre, GenreDto>()
+            .ForMember(dest => dest.GamesIds, opt => opt.MapFrom(src => src.Games.Select(game => game.Id)));
 
         CreateMap<Genre, GenreReadDto>()
-            .ForMember(dest => dest.GamesIds, opt => opt.MapFrom<GenreResolver>());
+            .ForMember(dest => dest.GamesIds, opt => opt.MapFrom(src => src.Games.Select(game => game.Id)));
 
         CreateMap<GenreCreateDto, Genre>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
