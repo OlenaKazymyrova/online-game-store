@@ -116,7 +116,7 @@ namespace OnlineGameStore.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("OnlineGameStore.DAL.Entities.User", b =>
@@ -127,7 +127,7 @@ namespace OnlineGameStore.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("OnlineGameStore.DAL.Entities.UserRole", b =>
