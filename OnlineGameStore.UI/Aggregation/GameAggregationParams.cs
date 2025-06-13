@@ -1,15 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OnlineGameStore.UI.Filtering;
-public class GameAggregationParams
+namespace OnlineGameStore.UI.Aggregation;
+public class GameAggregationParams : AggregationParams
 {
     [RegularExpression("^(name|price|releasedate)$", ErrorMessage = "Invalid sortBy value. Allowed values: name, price, releaseDate.")]
-    public string SortBy { get; set; } = "name";
+    public override string SortBy { get; set; } = "name";
 
-    [RegularExpression("^(asc|desc)$", ErrorMessage = "Invalid sortOrder value. Allowed values: asc, desc.")]
-    public string SortOrder { get; set; } = "asc";
-
-    public string? Name { get; set; }
+    public override string? Name { get; set; }
 
     [Range(0, double.MaxValue, ErrorMessage = "minPrice must be a non-negative number.")]
     public decimal? MinPrice { get; set; }
