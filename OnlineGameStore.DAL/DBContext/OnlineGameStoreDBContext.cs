@@ -16,6 +16,8 @@ public class OnlineGameStoreDbContext(DbContextOptions<OnlineGameStoreDbContext>
 
     public DbSet<User> Users { get; set; }
 
+    public DbSet<UserRole> UserRoles { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
