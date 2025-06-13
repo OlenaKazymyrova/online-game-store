@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineGameStore.DAL.DBContext;
 
@@ -11,9 +12,11 @@ using OnlineGameStore.DAL.DBContext;
 namespace OnlineGameStore.DAL.Migrations
 {
     [DbContext(typeof(OnlineGameStoreDbContext))]
-    partial class OnlineGameStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613105057_UserRoleRelationshipAdded")]
+    partial class UserRoleRelationshipAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

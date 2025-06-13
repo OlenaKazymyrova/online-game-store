@@ -1,6 +1,6 @@
 namespace OnlineGameStore.DAL.Entities;
 
-public class User
+public class User : TEntity
 {
-    
+    public override Guid Id { get; set; }
 }
