@@ -12,7 +12,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.Id)
             .HasColumnName("id")
-            .ValueGeneratedOnAdd()
             .IsRequired();
         
         builder.HasKey(u => u.Id);
