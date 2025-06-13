@@ -10,13 +10,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToTable("users");
 
-        builder.Property(g => g.Id)
+        builder.Property(u => u.Id)
             .HasColumnName("id")
+            .ValueGeneratedOnAdd()
             .IsRequired();
         
-        builder.HasKey(g => g.Id);
+        builder.HasKey(u => u.Id);
 
-        builder.Property(g => g.UserName)
+        builder.Property(u => u.UserName)
             .HasColumnName("username")
             .IsRequired();
         
