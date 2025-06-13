@@ -40,6 +40,7 @@ public class RoleSeederService : BackgroundService
         catch (Exception ex)
         {
             Console.WriteLine($"Error seeding roles: {ex.Message}");
+            throw;
         }
         finally
         {
