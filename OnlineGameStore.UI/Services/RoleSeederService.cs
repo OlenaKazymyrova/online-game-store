@@ -20,18 +20,22 @@ public class RoleSeederService : BackgroundService
         _serviceProvider = serviceProvider;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         using var scope = _serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<OnlineGameStoreDbContext>();
 
         try
         {
-            if (!await dbContext.Roles.AnyAsync(stoppingToken))
+            foreach (var role in Roles)
             {
-                await dbContext.Roles.AddRangeAsync(Roles, stoppingToken);
-                await dbContext.SaveChangesAsync(stoppingToken);
+                if (!await dbContext.Roles.AnyAsync(r => r.Name == role.Name, cancellationToken))
+                {
+                    await dbContext.Roles.AddAsync(role, cancellationToken);
+                }
             }
+
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
         catch (OperationCanceledException ex)
         {
