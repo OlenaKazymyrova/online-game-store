@@ -1,0 +1,42 @@
+﻿using AutoMapper;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.DAL.DBContext;
+
+namespace OnlineGameStore.BLL.Mapping.Resolvers;
+
+public class GenreResolver :
+    IValueResolver<GenreCreateDto, Genre, ICollection<Game>>
+{
+    private readonly OnlineGameStoreDbContext? _context;
+
+    public GenreResolver() { }
+
+    public GenreResolver(OnlineGameStoreDbContext context)
+    {
+        if (context is null)
+        {
+            throw new ArgumentNullException(nameof(context), "OnlineGameStoreDbContext cannot be null.");
+        }
+        _context = context;
+    }
+
+    public ICollection<Game> Resolve(GenreCreateDto source, Genre dest, ICollection<Game> destMember,
+        ResolutionContext ctx)
+    {
+        if (source.GamesIds is null || source.GamesIds.Count == 0 || _context is null)
+            return [];
+
+        var gameIds = source.GamesIds.ToArray();
+
+        var games = _context.Games
+            .Where(game => gameIds!.Contains(game.Id))
+            .ToList();
+
+        if (games.Count == gameIds.Length)
+            return games;
+
+        var missingIds = gameIds.Except(games.Select(g => g.Id));
+        throw new KeyNotFoundException($"Games with IDs: [{string.Join(", ", missingIds)}] were not found.");
+    }
+}

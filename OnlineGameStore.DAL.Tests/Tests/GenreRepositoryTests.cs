@@ -1,4 +1,7 @@
-﻿using OnlineGameStore.DAL.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.DBContext;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Repositories;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
 namespace OnlineGameStore.DAL.Tests.Tests;
@@ -234,5 +237,72 @@ public class GenreRepositoryTests
         var result = await repository.AddAsync(_testChildGenre);
 
         Assert.Null(result);
+    }
+
+    // #####################
+    // # Tests for relations are conducted on the same DbContext
+    // #####################
+    [Fact]
+    public async Task AddAsync_GenreWithNonExistingGame_CreatesGame()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new OnlineGameStoreDbContext(options);
+        var genreRepository = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
+        var gameRepository = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
+
+        var newGenre = _testParentGenre;
+        newGenre.Games.Add(new Game
+        {
+            Name = "Test Game",
+            Description = "Test Description",
+            Price = 59.99m,
+            ReleaseDate = DateTime.Now
+        });
+
+        var addedGenre = await genreRepository.AddAsync(newGenre);
+
+        Assert.NotNull(addedGenre);
+
+        var addedGame = await gameRepository.GetByIdAsync(addedGenre.Games.First().Id);
+
+        Assert.NotNull(addedGame);
+        Assert.NotEmpty(addedGame.Genres);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_DeletesGenreWithGameReference_RemovesReferenceToGame()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new OnlineGameStoreDbContext(options);
+        var genreRepository = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
+        var gameRepository = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
+
+        var newGenre = _testParentGenre;
+        newGenre.Games.Add(new Game
+        {
+            Name = "Test Game",
+            Description = "Test Description",
+            Price = 59.99m,
+            ReleaseDate = DateTime.Now
+        });
+
+        var addedGenre = await genreRepository.AddAsync(newGenre);
+
+        Assert.NotNull(addedGenre);
+
+        var ifDeleted = await genreRepository.DeleteAsync(addedGenre.Id);
+
+        Assert.True(ifDeleted);
+
+        var addedGame = await gameRepository.GetByIdAsync(addedGenre.Games.First().Id);
+
+        Assert.NotNull(addedGame);
+        Assert.Empty(addedGame.Genres);
     }
 }

@@ -14,6 +14,8 @@ public class GenreReadDto
     public string Description { get; set; } = string.Empty;
 
     public Guid? ParentId { get; set; } = default;
+    [Required]
+    public ICollection<Guid> GamesIds { get; set; } = new List<Guid>();
 
     public override bool Equals(object? obj) =>
         Equals(obj as GenreReadDto);

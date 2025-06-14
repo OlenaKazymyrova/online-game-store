@@ -7,6 +7,8 @@ public class GenreDto
     public required string Description { get; set; }
     public Guid? ParentId { get; set; }
 
+    public ICollection<Guid> GamesIds = new List<Guid>();
+
     public override bool Equals(object? obj) =>
         Equals(obj as GenreDto);
 

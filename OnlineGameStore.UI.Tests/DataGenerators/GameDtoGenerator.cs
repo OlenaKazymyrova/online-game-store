@@ -16,7 +16,6 @@ public class GameDtoGenerator : IDataGenerator<GameDto>
                 Name = $"Game {i}",
                 Description = $"Description for Game {i}",
                 PublisherId = Guid.NewGuid(),
-                GenreId = Guid.NewGuid(),
                 LicenseId = Guid.NewGuid(),
                 Price = new decimal(i + 1) * 10,
                 ReleaseDate = DateTime.Now.AddDays(-i)

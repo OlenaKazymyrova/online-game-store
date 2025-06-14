@@ -24,10 +24,7 @@ public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto,
 
                 var parentRefToRemove = id;
 
-                foreach (var item in _data.Where(g => g.ParentId == parentRefToRemove))
-                {
-                    item.ParentId = null;
-                }
+                _data.RemoveAll(g => g.ParentId == parentRefToRemove);
 
                 return true;
             });
