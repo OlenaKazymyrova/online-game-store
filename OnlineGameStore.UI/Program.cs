@@ -1,10 +1,10 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
 using OnlineGameStore.UI.Services;
 using OnlineGameStore.DAL.DBContext;
-using Microsoft.EntityFrameworkCore;
 
 const string apiVersion = "1.0.0";
 const string documentName = "online-game-store-api";
@@ -29,6 +29,8 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDalServices(builder.Configuration);
 builder.Services.AddBllServices();
 builder.Services.AddHostedService<RoleSeederService>();
+
+builder.Services.AddHostedService<AdminSeederService>();
 
 var app = builder.Build();
 
