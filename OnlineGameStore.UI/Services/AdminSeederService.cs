@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
@@ -65,12 +66,15 @@ public class AdminSeederService : BackgroundService
             adminRole = newAdminRole;
         }
 
+        var hasher = new PasswordHasher<User>();
+
         var adminUser = new User
         {
             Email = adminEmail,
-            UserName = adminUsername,
-            PasswordHash = Encoding.Default.GetString(SHA256.HashData(Encoding.Default.GetBytes(adminPassword)))
+            UserName = adminUsername
         };
+
+        adminUser.PasswordHash = hasher.HashPassword(adminUser, adminPassword);
 
         try
         {
