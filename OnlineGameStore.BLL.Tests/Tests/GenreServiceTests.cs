@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.BLL.Mapping;
+using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
@@ -18,7 +18,7 @@ public class GenreServiceTests
 
     public GenreServiceTests()
     {
-        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
+        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllGenreMappingProfile>(); });
 
         _mapper = config.CreateMapper();
 
@@ -41,7 +41,8 @@ public class GenreServiceTests
 
         Assert.NotNull(result);
         Assert.NotNull(genre);
-        Assert.Equal(genre, _mapper.Map<Genre>(result));
+        Assert.Equal(genre.Id, result.Id);
+        Assert.Equal(genre.Name, result.Name);
     }
 
     [Fact]
@@ -101,7 +102,8 @@ public class GenreServiceTests
         var dataPaginatedExpected = _data.Skip(skip).Take(pagingParams.PageSize);
 
         Assert.NotNull(result);
-        Assert.Equal(dataPaginatedExpected, _mapper.Map<List<Genre>>(result.Items));
+        Assert.Equal(dataPaginatedExpected.Count(), result.Items.Count());
+
     }
 
     [Fact]

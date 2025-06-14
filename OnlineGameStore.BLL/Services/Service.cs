@@ -50,8 +50,25 @@ public abstract class
         if (dto is null)
             return null;
 
-        var entity = _mapper.Map<TEntity>(dto);
-        entity.Id = Guid.NewGuid();
+        TEntity entity;
+
+        try
+        {
+            entity = _mapper.Map<TEntity>(dto);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            Exception? inner = e.InnerException;
+
+            if (inner is AggregateException agg)
+                inner = agg.Flatten().InnerExceptions
+                    .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
+
+            if (inner is KeyNotFoundException)
+                return null;
+
+            throw;
+        }
 
         var addedEntity = await _repository.AddAsync(entity);
 

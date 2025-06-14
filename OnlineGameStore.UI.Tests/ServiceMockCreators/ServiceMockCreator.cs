@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.BLL.Mapping;
+using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.SharedLogic.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
 
@@ -28,7 +28,11 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
 
     private static IMapper CreateMapperFromProfiles()
     {
-        var configuration = new MapperConfiguration(cfg => { cfg.AddProfile<BllMappingProfile>(); });
+        var configuration = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<BllGameMappingProfile>();
+            cfg.AddProfile<BllGenreMappingProfile>();
+        });
 
         configuration.AssertConfigurationIsValid();
         return configuration.CreateMapper();
@@ -101,7 +105,6 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
             .ReturnsAsync((TCreateDto createDto) =>
             {
                 var entity = _mapper.Map<TEntity>(createDto);
-                entity.Id = Guid.NewGuid();
 
                 _data.Add(entity);
 

@@ -13,6 +13,7 @@ public interface IRepository<TEntity> where TEntity : class
         PagingParams? pagingParams = null
     );
 
+    Task<bool> ExistsAsync(Guid id);
     Task<TEntity?> GetByIdAsync(Guid id);
     Task<TEntity?> AddAsync(TEntity entity);
     Task<bool> UpdateAsync(TEntity entity);
