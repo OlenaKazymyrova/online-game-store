@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.OpenApi.Models;
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
+using OnlineGameStore.UI.Services;
 using OnlineGameStore.DAL.DBContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDalServices(builder.Configuration);
 builder.Services.AddBllServices();
+builder.Services.AddHostedService<RoleSeederService>();
 
 var app = builder.Build();
 
