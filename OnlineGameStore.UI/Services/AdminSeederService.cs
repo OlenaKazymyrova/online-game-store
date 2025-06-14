@@ -17,7 +17,7 @@ public class AdminSeederService : BackgroundService
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         using var scope = _serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<OnlineGameStoreDbContext>();
@@ -25,7 +25,7 @@ public class AdminSeederService : BackgroundService
         if (dbContext == null)
             throw new ArgumentNullException(nameof(dbContext));
 
-        if (await dbContext.Users.AnyAsync(stoppingToken))
+        if (await dbContext.Users.AnyAsync(cancellationToken))
             return;
 
         var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
@@ -41,7 +41,7 @@ public class AdminSeederService : BackgroundService
             return;
         }
 
-        var adminRole = await dbContext.Roles.FirstOrDefaultAsync(r => r.Name == "Admin", stoppingToken);
+        var adminRole = await dbContext.Roles.FirstOrDefaultAsync(r => r.Name == "Admin", cancellationToken);
 
         if (adminRole == null) // In case our Role seeding fails or starts later
         {
@@ -55,7 +55,7 @@ public class AdminSeederService : BackgroundService
             try
             {
                 dbContext.Roles.Add(newAdminRole);
-                await dbContext.SaveChangesAsync(stoppingToken);
+                await dbContext.SaveChangesAsync(cancellationToken);
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ public class AdminSeederService : BackgroundService
         try
         {
             dbContext.Users.Add(adminUser);
-            await dbContext.SaveChangesAsync(stoppingToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             dbContext.UserRoles.Add(new UserRole
             {
@@ -87,7 +87,7 @@ public class AdminSeederService : BackgroundService
                 RoleId = adminRole.Id
             });
 
-            await dbContext.SaveChangesAsync(stoppingToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
         catch (Exception ex)
         {
