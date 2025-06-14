@@ -79,8 +79,6 @@ public class AdminSeederService : BackgroundService
         try
         {
             dbContext.Users.Add(adminUser);
-            await dbContext.SaveChangesAsync(cancellationToken);
-
             dbContext.UserRoles.Add(new UserRole
             {
                 UserId = adminUser.Id,
