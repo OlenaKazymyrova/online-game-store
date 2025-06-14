@@ -18,6 +18,12 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         _dbSet = _dbContext.Set<TEntity>();
     }
 
+    public virtual async Task<bool> ExistsAsync(Guid id)
+    {
+        return await _dbSet.AnyAsync(e =>
+            EF.Property<Guid>(e, "Id") == id);
+    }
+
     public virtual async Task<PaginatedResponse<TEntity>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
