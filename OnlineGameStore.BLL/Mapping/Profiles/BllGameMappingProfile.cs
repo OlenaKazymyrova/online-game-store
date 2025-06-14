@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using AutoMapper;
-using Microsoft.Data.SqlClient;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Mapping.Resolvers;
 using OnlineGameStore.DAL.Entities;

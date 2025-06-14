@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.DAL.Migrations;
 using OnlineGameStore.DAL.Repositories;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
