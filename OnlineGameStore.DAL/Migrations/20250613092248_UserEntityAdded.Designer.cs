@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineGameStore.DAL.DBContext;
 
@@ -11,9 +12,11 @@ using OnlineGameStore.DAL.DBContext;
 namespace OnlineGameStore.DAL.Migrations
 {
     [DbContext(typeof(OnlineGameStoreDbContext))]
-    partial class OnlineGameStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613092248_UserEntityAdded")]
+    partial class UserEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,27 +111,6 @@ namespace OnlineGameStore.DAL.Migrations
                     b.ToTable("Genres", (string)null);
                 });
 
-            modelBuilder.Entity("OnlineGameStore.DAL.Entities.Role", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<string>("Description")
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(450)");
-
-                b.HasKey("Id");
-
-                b.HasIndex("Name")
-                    .IsUnique();
-
-                b.ToTable("Roles", (string)null);
-            });
-
             modelBuilder.Entity("OnlineGameStore.DAL.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -217,21 +199,6 @@ namespace OnlineGameStore.DAL.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("ParentGenre");
-                });
-
-            modelBuilder.Entity("OnlineGameStore.DAL.Entities.UserRole", b =>
-                {
-                    b.HasOne("OnlineGameStore.DAL.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineGameStore.DAL.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

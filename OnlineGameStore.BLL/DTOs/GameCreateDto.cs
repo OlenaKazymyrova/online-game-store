@@ -7,7 +7,7 @@ public class GameCreateDto
 {
     [Required]
     public string Name { get; set; }
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     public Guid? PublisherId { get; set; }
     public Guid? LicenseId { get; set; }
     [Required]

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
+using OnlineGameStore.UI.Aggregation;
+using OnlineGameStore.UI.QueryBuilders;
 
 namespace OnlineGameStore.UI.Controllers;
 
@@ -39,14 +41,27 @@ public class GamesController : ControllerBase
     /// Retrieves a list of games using pagination.
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    [ProducesResponseType(typeof(IEnumerable<GameDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    /// <param name="gameFilters"> Specifies the possible filtering and ordering</param>
     [HttpGet]
-    public async Task<IActionResult> GetAsync([FromQuery] PagingParams pagingParams)
+    [ProducesResponseType(typeof(PaginatedResponse<GameDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Get(
+        [FromQuery] PagingParams pagingParams,
+        [FromQuery] GameAggregationParams gameFilters)
     {
-        var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
+        var queryBuilder = new GameQueryBuilder();
 
-        return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
+        var filter = queryBuilder.BuildFilter(gameFilters);
+        var orderBy = queryBuilder.BuildOrderBy(gameFilters);
+
+        var paginatedResponse = await _service.GetAsync(
+            filter: filter,
+            orderBy: orderBy,
+            pagingParams: pagingParams
+        );
+
+        return Ok(paginatedResponse);
     }
 
     /// <summary>

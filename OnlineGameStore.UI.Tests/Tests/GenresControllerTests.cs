@@ -72,7 +72,7 @@ public class GenresControllerTests
     //}
 
     [Fact]
-    public async Task UpdatePut_DtoIsPresent_Success()
+    public async Task UpdatePut_GenreIsPresent_Success()
     {
         var genreCreateDto = GenGenreCreateDto();
 
@@ -101,7 +101,7 @@ public class GenresControllerTests
     }
 
     [Fact]
-    public async Task UpdatePut_GtoIsNotPresent_Failure()
+    public async Task UpdatePut_GenreIsNotPresent_Failure()
     {
         var newGenreDto = GenGenreCreateDto();
 

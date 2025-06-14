@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-CU19-ubuntu-22.04
+    container_name: dev-sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "rhIRr5i8R7n39Ckn1QWj"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:

@@ -87,6 +87,40 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         }
     }
 
+    public override async Task<bool> DeleteAsync(Guid id)
+    {
+        var existingGenre = await _dbSet.FindAsync(id);
+
+        if (existingGenre is null)
+        {
+            return false;
+        }
+
+        if (existingGenre.ParentId is null)
+        {
+            var childGenres = _dbSet.Where(g => g.ParentId == existingGenre.Id).ToList();
+            _dbSet.RemoveRange(childGenres);
+        }
+
+        _dbSet.Remove(existingGenre);
+
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"Error deleting genre: {ex.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+            throw;
+        }
+    }
+
     private async Task<bool> IsParentGenreValidAsync(Guid genreId, Guid? parentId)
     {
         if (parentId is null)

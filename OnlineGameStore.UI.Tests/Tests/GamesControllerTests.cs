@@ -8,6 +8,7 @@ using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using OnlineGameStore.SharedLogic.Pagination;
+using OnlineGameStore.UI.Aggregation;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
@@ -67,6 +68,53 @@ public class GamesControllerTests
         // NOTE: the default pageSize must be less than default number of entities to generate
         Assert.NotNull(gamesPaginatedResponse);
         Assert.Equal(gamesPaginatedResponse.Items.Count(), defaultPagingParams.PageSize);
+    }
+
+    [Fact]
+    public async Task Get_WithValidParameters_ReturnsOkResult()
+    {
+        var pagingParams = new PagingParams();
+        var gameFilters = new GameAggregationParams
+        {
+            SortBy = "name",
+            SortOrder = "asc"
+        };
+
+        var game1 = GetGameCreateDto("3 Game A", "Description A", 49.99m, new DateTime(2020, 1, 1));
+        var game2 = GetGameCreateDto("2 Game B", "Description B", 59.99m, new DateTime(2021, 1, 1));
+        var game3 = GetGameCreateDto("1 Game C", "Description C", 39.99m, new DateTime(2022, 1, 1));
+
+        await _client.PostAsJsonAsync("api/Games", game1);
+        await _client.PostAsJsonAsync("api/Games", game2);
+        await _client.PostAsJsonAsync("api/Games", game3);
+
+        var getRequest = await _client.GetAsync($"api/Games"
+            + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
+            + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
+
+        var gamesPaginatedResponse = await getRequest.Content.ReadFromJsonAsync<PaginatedResponse<GameDto>>();
+
+        Assert.Equal(HttpStatusCode.OK, getRequest.StatusCode);
+        Assert.NotNull(gamesPaginatedResponse);
+        Assert.NotEmpty(gamesPaginatedResponse.Items);
+        Assert.Equal(gamesPaginatedResponse.Items.First().Name, game3.Name);
+    }
+
+    [Fact]
+    public async Task Get_WithInvalidParameters_ReturnsBadRequest()
+    {
+        var pagingParams = new PagingParams { PageSize = 10, Page = 1 };
+        var gameFilters = new GameAggregationParams
+        {
+            SortBy = "invalid",
+            SortOrder = "asc"
+        };
+
+        var getRequest = await _client.GetAsync($"api/Games"
+            + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
+            + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
+
+        Assert.Equal(HttpStatusCode.BadRequest, getRequest.StatusCode);
     }
 
     [Fact]
@@ -262,10 +310,10 @@ public class GamesControllerTests
     }
 
     private GameCreateDto GetGameCreateDto(
-    string name = "Test Game",
-    string description = "Test Description",
-    decimal price = 59.99m,
-    DateTime releaseDate = default)
+        string name = "Test Game",
+        string description = "Test Description",
+        decimal price = 59.99m,
+        DateTime releaseDate = default)
     {
         return new GameCreateDto
         {
@@ -277,5 +325,4 @@ public class GamesControllerTests
             ReleaseDate = releaseDate
         };
     }
-
 }

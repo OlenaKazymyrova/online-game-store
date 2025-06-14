@@ -28,7 +28,7 @@ namespace OnlineGameStore.DAL.Migrations
                         column: x => x.ParentId,
                         principalTable: "Genres",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
