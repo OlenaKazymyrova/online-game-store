@@ -10,8 +10,6 @@ namespace OnlineGameStore.DAL.Tests.Tests;
 public class GameRepositoryTests
 {
     private readonly GameRepositoryCreator _gameRepoCreator = new GameRepositoryCreator();
-    private readonly GenreRepositoryCreator _genreRepoCreator = new GenreRepositoryCreator();
-    private readonly PlatformRepositoryCreator _platformRepoCreator = new PlatformRepositoryCreator();
 
     [Fact]
     public async Task AddAsync_AddsGame()

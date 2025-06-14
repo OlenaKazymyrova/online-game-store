@@ -25,8 +25,8 @@ public class ControllerTestsHelper<TService> : WebApplicationFactory<Program>
         builder.ConfigureLogging(logging =>
         {
             logging.ClearProviders();
-            logging.AddConsole();     
-            logging.AddDebug();       
+            logging.AddConsole();
+            logging.AddDebug();
             logging.SetMinimumLevel(LogLevel.Debug);
         });
 
