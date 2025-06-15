@@ -17,7 +17,6 @@ public class GameEntityGenerator : IDataGenerator<Game>
                 Name = $"Game {i}",
                 Description = $"Description {i}",
                 PublisherId = Guid.NewGuid(),
-                GenreId = Guid.NewGuid(),
                 LicenseId = Guid.NewGuid(),
                 Price = 10m + i,
                 ReleaseDate = DateTime.Today.AddDays(-i)

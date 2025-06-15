@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineGameStore.DAL.DBContext;
 
@@ -11,9 +12,11 @@ using OnlineGameStore.DAL.DBContext;
 namespace OnlineGameStore.DAL.Migrations
 {
     [DbContext(typeof(OnlineGameStoreDbContext))]
-    partial class OnlineGameStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613092248_UserEntityAdded")]
+    partial class UserEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace OnlineGameStore.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("GameGenres", b =>
-                {
-                    b.Property<Guid>("game_id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("genre_id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("game_id", "genre_id");
-
-                    b.HasIndex("genre_id");
-
-                    b.ToTable("GameGenres", (string)null);
-                });
 
             modelBuilder.Entity("GamePlatforms", b =>
                 {
@@ -64,6 +52,10 @@ namespace OnlineGameStore.DAL.Migrations
                         .HasMaxLength(4096)
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
+
+                    b.Property<Guid?>("GenreId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("genre_id");
 
                     b.Property<Guid?>("LicenseId")
                         .HasColumnType("uniqueidentifier")
@@ -119,27 +111,6 @@ namespace OnlineGameStore.DAL.Migrations
                     b.ToTable("Genres", (string)null);
                 });
 
-            modelBuilder.Entity("OnlineGameStore.DAL.Entities.Role", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Roles", (string)null);
-                });
-
             modelBuilder.Entity("OnlineGameStore.DAL.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -187,21 +158,6 @@ namespace OnlineGameStore.DAL.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("OnlineGameStore.DAL.Entities.UserRole", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRoles", (string)null);
-                });
-
             modelBuilder.Entity("Platform", b =>
                 {
                     b.Property<Guid>("Id")
@@ -218,21 +174,6 @@ namespace OnlineGameStore.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Platform", (string)null);
-                });
-
-            modelBuilder.Entity("GameGenres", b =>
-                {
-                    b.HasOne("OnlineGameStore.DAL.Entities.Game", null)
-                        .WithMany()
-                        .HasForeignKey("game_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineGameStore.DAL.Entities.Genre", null)
-                        .WithMany()
-                        .HasForeignKey("genre_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("GamePlatforms", b =>
@@ -258,21 +199,6 @@ namespace OnlineGameStore.DAL.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("ParentGenre");
-                });
-
-            modelBuilder.Entity("OnlineGameStore.DAL.Entities.UserRole", b =>
-                {
-                    b.HasOne("OnlineGameStore.DAL.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnlineGameStore.DAL.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

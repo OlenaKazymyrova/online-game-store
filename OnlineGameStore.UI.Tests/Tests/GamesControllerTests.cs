@@ -303,7 +303,6 @@ public class GamesControllerTests
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
             LicenseId = Guid.NewGuid(),
             Price = price,
             ReleaseDate = releaseDate
@@ -321,7 +320,6 @@ public class GamesControllerTests
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
-            GenreId = Guid.NewGuid(),
             LicenseId = Guid.NewGuid(),
             Price = price,
             ReleaseDate = releaseDate
