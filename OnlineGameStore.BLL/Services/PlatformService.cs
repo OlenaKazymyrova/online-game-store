@@ -1,8 +1,9 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineGameStore.BLL.Services;
 
@@ -13,32 +14,57 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
     {
     }
 
-    public override async Task<PlatformDto?> AddAsync(PlatformCreateDto dto)
+    public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
     {
-        var entity = _mapper.Map<Platform>(dto);
+        if (dto is null)
+            return null;
 
-        var existing = await _repository.GetAsync(
-            filter: p => p.Name.ToLower() == entity.Name.ToLower()
-        );
+        Platform entity;
 
-        if (existing.Items.Any()) return null;
+        try
+        {
+            entity = _mapper.Map<Platform>(dto);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            Exception? inner = e.InnerException;
+
+            if (inner is AggregateException agg)
+                inner = agg.Flatten().InnerExceptions
+                    .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
+
+            if (inner is KeyNotFoundException)
+                return null;
+
+            throw;
+        }
+
+        if (await NameExistsAsync(entity.Name))
+            throw new ValidationException("Platform name already exists.");
 
         var addedEntity = await _repository.AddAsync(entity);
-
-        return _mapper.Map<PlatformDto>(addedEntity);
+        return addedEntity == null ? null : _mapper.Map<PlatformDto>(addedEntity);
     }
 
-    public override async Task<bool> UpdateAsync(Guid id, PlatformCreateDto dto)
+    public override async Task<bool> UpdateAsync(Guid id, PlatformCreateDto? dto)
     {
+        if (dto is null)
+            return false;
+
         var entity = _mapper.Map<Platform>(dto);
         entity.Id = id;
 
-        var existing = await _repository.GetAsync(
-            filter: p => p.Name.ToLower() == entity.Name.ToLower()
-        );
-
-        if (existing.Items.Any()) return false;
+        if (await NameExistsAsync(entity.Name, id))
+            throw new ValidationException("Platform name already exists.");
 
         return await _repository.UpdateAsync(entity);
+    }
+
+    private async Task<bool> NameExistsAsync(string name, Guid? excludeId = null)
+    {
+        var existing = await _repository.GetAsync(
+            filter: p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase) && p.Id != excludeId);
+
+        return existing.Items.Any();
     }
 }

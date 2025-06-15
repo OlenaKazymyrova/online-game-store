@@ -15,8 +15,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlatformService, PlatformService>();
         services.AddAutoMapper(typeof(BllGameMappingProfile));
         services.AddAutoMapper(typeof(BllGenreMappingProfile));
-        services.AddScoped<GameResolver>();  // no parameterless constructor defined
+        services.AddAutoMapper(typeof(BllPlatformMappingProfile));
+        services.AddScoped<GameResolver>(); // no parameterless constructor defined
         services.AddScoped<GenreResolver>();
+        services.AddScoped<PlatformResolver>();
 
         return services;
     }

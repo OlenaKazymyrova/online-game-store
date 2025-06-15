@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Mapping;
+using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -15,7 +17,7 @@ public class PlatformServiceTests
 
     public PlatformServiceTests()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<BllMappingProfile>());
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<BllPlatformMappingProfile>());
         _mapper = config.CreateMapper();
 
         var gen = new PlatformEntityGenerator();
@@ -60,8 +62,9 @@ public class PlatformServiceTests
         var existing = _data[0];
         var duplicateDto = new PlatformCreateDto { Name = existing.Name };
 
-        var result = await _platformService.AddAsync(duplicateDto);
-        Assert.Null(result);
+        var exception = await Assert.ThrowsAsync<ValidationException>(() => _platformService.AddAsync(duplicateDto));
+
+        Assert.Equal("Platform name already exists.", exception.Message);
     }
 
     [Fact]
@@ -81,9 +84,9 @@ public class PlatformServiceTests
         var second = _data[1];
 
         var updateDto = new PlatformCreateDto { Name = first.Name };
-        var result = await _platformService.UpdateAsync(second.Id, updateDto);
+        var exception = await Assert.ThrowsAsync<ValidationException>(() => _platformService.UpdateAsync(second.Id, updateDto));
 
-        Assert.False(result);
+        Assert.Equal("Platform name already exists.", exception.Message);
     }
 
     [Fact]
