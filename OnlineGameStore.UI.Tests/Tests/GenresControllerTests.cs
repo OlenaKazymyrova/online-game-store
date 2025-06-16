@@ -51,7 +51,6 @@ public class GenresControllerTests
 
         Assert.NotNull(createdGenre);
         Assert.NotNull(location);
-        Assert.NotNull(createdGenre);
         Assert.EndsWith($"api/Genres/{createdGenre.Id}", location.ToString());
         Assert.Equal(genreCreateDto.Name, createdGenre.Name);
         Assert.Equal(genreCreateDto.Description, createdGenre.Description);
