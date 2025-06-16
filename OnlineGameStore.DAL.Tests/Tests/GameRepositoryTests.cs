@@ -20,11 +20,7 @@ public class GameRepositoryTests
 
         Assert.NotNull(result);
         Assert.True(result.Id != Guid.Empty);
-        Assert.Equal(game.Name, result.Name);
-        Assert.Equal(game.Description, result.Description);
-        Assert.Equal(game.PublisherId, result.PublisherId);
-        Assert.Equal(game.Platforms, result.Platforms);
-        Assert.Equal(game.LicenseId, result.LicenseId);
+        Assert.Equal(game, result);
     }
 
     [Fact]
@@ -36,13 +32,7 @@ public class GameRepositoryTests
         var result = await repository.GetByIdAsync(addedGame!.Id);
 
         Assert.NotNull(result);
-        Assert.Equal(addedGame.Id, result.Id);
-        Assert.Equal(addedGame.Name, result.Name);
-        Assert.Equal(addedGame.Description, result.Description);
-        Assert.Equal(game.PublisherId, result.PublisherId);
-        Assert.Equal(game.Platforms, result.Platforms);
-        Assert.Equal(game.Genres, result.Genres);
-        Assert.Equal(game.LicenseId, result.LicenseId);
+        Assert.Equal(addedGame, result);
     }
 
     [Fact]
