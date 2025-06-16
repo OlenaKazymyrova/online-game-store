@@ -39,11 +39,39 @@ public class PlatformsController : ControllerBase
             if (createdPlatform is null)
                 return BadRequest("Failed to create platform.");
 
-            return Created($"api/Platforms/{createdPlatform.Id}", createdPlatform);
+            return Created($"api/platforms/{createdPlatform.Id}", createdPlatform);
         }
         catch (ValidationException ex)
         {
             return Conflict(ex.Message);
         }
+    }
+    
+    /// <summary>
+    /// Retrieves the list of platforms using pagination.
+    /// </summary>
+    /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
+    [ProducesResponseType(typeof(List<PlatformDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
+    {
+        var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
+
+        return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
+    }
+    
+    /// <summary>
+    /// Retrieves a platform by its unique ID.
+    /// </summary>
+    /// <param name="id">The id of the platform to retrieve.</param>
+    [ProducesResponseType(typeof(PlatformDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var dto = await _service.GetByIdAsync(id);
+
+        return (dto is null) ? NotFound() : Ok(dto);
     }
 }
