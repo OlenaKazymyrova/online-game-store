@@ -46,7 +46,7 @@ public class PlatformsController : ControllerBase
             return Conflict(ex.Message);
         }
     }
-    
+
     /// <summary>
     /// Retrieves the list of platforms using pagination.
     /// </summary>
@@ -60,7 +60,7 @@ public class PlatformsController : ControllerBase
 
         return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
     }
-    
+
     /// <summary>
     /// Retrieves a platform by its unique ID.
     /// </summary>
