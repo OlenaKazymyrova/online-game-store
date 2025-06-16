@@ -16,8 +16,9 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
 
     public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
     {
-        Platform entity;
+        if (dto is null) return null;
 
+        Platform entity;
         try
         {
             entity = _mapper.Map<Platform>(dto);

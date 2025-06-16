@@ -20,7 +20,7 @@ public class PlatformsController : ControllerBase
     /// <summary>
     /// Creates a new platform.
     /// </summary>
-    /// <param name="dto">The platform data to create.</param>
+    /// <param name="platformDto">The platform data to create.</param>
     [HttpPost]
     [ProducesResponseType(typeof(PlatformDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
