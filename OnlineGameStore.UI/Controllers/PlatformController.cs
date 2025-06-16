@@ -25,11 +25,16 @@ public class PlatformsController : ControllerBase
     [ProducesResponseType(typeof(PlatformDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Create([FromBody] PlatformCreateDto dto)
+    public async Task<IActionResult> Create([FromBody] PlatformCreateDto? platformDto)
     {
+        if (platformDto == null)
+        {
+            return BadRequest("Platform data is required.");
+        }
+
         try
         {
-            var createdPlatform = await _service.AddAsync(dto);
+            var createdPlatform = await _service.AddAsync(platformDto);
 
             if (createdPlatform is null)
                 return BadRequest("Failed to create platform.");
