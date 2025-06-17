@@ -87,5 +87,5 @@ public class PlatformsController : ControllerBase
         var result = await _service.DeleteAsync(id);
         return result ? NoContent() : NotFound();
     }
-    
+
 }
