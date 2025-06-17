@@ -83,4 +83,32 @@ public class PlatformsControllerTests
 
         Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
     }
+
+    [Fact]
+    public async Task UpdatePlatform_ValidData_ReturnsUpdatedPlatform()
+    {
+        var platformCreateDto = GenPlatformCreateDto();
+
+        var postResponse = await _client.PostAsJsonAsync("api/Platforms", platformCreateDto);
+        
+        postResponse.EnsureSuccessStatusCode();
+
+        var createdPlatform = await postResponse.Content.ReadFromJsonAsync<PlatformDto>();
+
+        platformCreateDto.Name = "Updated name";
+
+        var putResponse = await _client.PutAsJsonAsync($"api/Platforms/{createdPlatform!.Id}", platformCreateDto);
+
+        putResponse.EnsureSuccessStatusCode();
+
+        var getResponse = await _client.GetAsync($"api/Platforms/{createdPlatform.Id}");
+
+        getResponse.EnsureSuccessStatusCode();
+
+        var updatedPlatform = await getResponse.Content.ReadFromJsonAsync<PlatformDto>();
+
+        Assert.NotNull(updatedPlatform);
+        Assert.Equal(updatedPlatform.Id, createdPlatform.Id);
+        Assert.NotEqual(updatedPlatform.Name, createdPlatform.Name);
+    }
 }
