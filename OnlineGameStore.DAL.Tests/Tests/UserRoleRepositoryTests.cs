@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Repositories;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
 namespace OnlineGameStore.DAL.Tests.Tests;
@@ -8,10 +11,26 @@ public class UserRoleRepositoryTests
     private readonly UserRoleRepositoryCreator _creator = new();
 
     [Fact]
-    public async Task GetUseRolesAsync_UserHasRoles_ReturnsRoles()
+    public async Task GetUserRolesAsync_UserHasRoles_ReturnsRoles()
     {
-        var repository = _creator.Create();
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var dbContext = new OnlineGameStoreDbContext(options);
+
         var userRole = GetUserRole();
+
+        var role = new Role
+        {
+            Id = userRole.RoleId,
+            Name = "TestRole"
+        };
+
+        await dbContext.Roles.AddAsync(role);
+        await dbContext.SaveChangesAsync();
+
+        var repository = new UserRoleRepository(dbContext);
 
         var addedUserRole = await repository.AddUserRoleAsync(userRole.UserId, userRole.RoleId);
 
