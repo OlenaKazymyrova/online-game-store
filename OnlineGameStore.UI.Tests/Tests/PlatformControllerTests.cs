@@ -86,6 +86,7 @@ public class PlatformsControllerTests
 
         Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
     }
+<<<<<<< HEAD
 
     [Fact]
     public async Task GetByIdPlatform_ValidData_ReturnsPlatform()
