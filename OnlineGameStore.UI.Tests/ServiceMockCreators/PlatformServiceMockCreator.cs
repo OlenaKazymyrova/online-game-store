@@ -48,6 +48,7 @@ public class PlatformServiceMockCreator
                 }
 
                 var entity = _mapper.Map<Platform>(updateDto);
+                entity.Id = id;
                 _data[index] = entity;
 
                 return true;
