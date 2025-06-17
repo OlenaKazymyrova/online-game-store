@@ -1,4 +1,3 @@
-using Azure.Identity;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
