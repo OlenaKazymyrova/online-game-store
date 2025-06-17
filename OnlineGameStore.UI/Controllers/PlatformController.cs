@@ -74,4 +74,18 @@ public class PlatformsController : ControllerBase
 
         return (dto is null) ? NotFound() : Ok(dto);
     }
+
+    /// <summary>
+    /// Deletes a platform by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the game to delete.</param>
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var result = await _service.DeleteAsync(id);
+        return result ? NoContent() : NotFound();
+    }
+    
 }

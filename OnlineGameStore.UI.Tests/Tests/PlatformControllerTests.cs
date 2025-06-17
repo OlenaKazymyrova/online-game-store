@@ -142,4 +142,28 @@ public class PlatformsControllerTests
 
         Assert.Contains("Page must be greater than 0", content);
     }
+
+    [Fact]
+    public async Task DeletePlatform_PlatformExists_ReturnsNoContent()
+    {
+        var newPlatform = GenPlatformCreateDto();
+
+        var postRequest = await _client.PostAsJsonAsync("api/platforms", newPlatform);
+
+        postRequest.EnsureSuccessStatusCode();
+
+        var createdPlatform = await postRequest.Content.ReadFromJsonAsync<PlatformDto>();
+
+        var deleteResponse = await _client.DeleteAsync($"api/platforms/{createdPlatform!.Id}");
+
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeletePlatform_PlatformDoesNotExist_ReturnsNotFound()
+    {
+        var deleteRequest = await _client.DeleteAsync($"api/platforms/{Guid.NewGuid().ToString()}");
+
+        Assert.Equal(HttpStatusCode.NotFound, deleteRequest.StatusCode);
+    }
 }
