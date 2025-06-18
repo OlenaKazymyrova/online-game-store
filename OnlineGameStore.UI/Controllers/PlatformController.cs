@@ -52,7 +52,7 @@ public class PlatformsController : ControllerBase
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(PaginatedResponse<PlatformDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
     {
@@ -66,7 +66,7 @@ public class PlatformsController : ControllerBase
     /// </summary>
     /// <param name="id">The id of the platform to retrieve.</param>
     [ProducesResponseType(typeof(PlatformDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -80,9 +80,9 @@ public class PlatformsController : ControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the Platform to update.</param>
     /// <param name="platformDto">The new Platform data.</param>
-    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] PlatformCreateDto platformDto)
