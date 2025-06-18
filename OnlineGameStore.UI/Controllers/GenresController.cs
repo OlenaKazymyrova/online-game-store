@@ -41,7 +41,7 @@ public class GenresController : ControllerBase
     {
         var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
 
-        return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
+        return Ok(paginatedResponse);
     }
 
     /// <summary>
