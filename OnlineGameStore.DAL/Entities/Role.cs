@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace OnlineGameStore.DAL.Entities;
 
 public class Role : TEntity
 {
-    public override Guid Id { get; set; }
-    public string Name { get; set; }
+    [Required]
+    public override Guid Id { get; set; } = Guid.NewGuid();
+    [Required]
+    public required string Name { get; set; }
     public string? Description { get; set; }
 }
