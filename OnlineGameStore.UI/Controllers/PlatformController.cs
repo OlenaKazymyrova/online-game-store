@@ -53,7 +53,7 @@ public class PlatformsController : ControllerBase
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(PaginatedResponse<PlatformDto>), StatusCodes.Status200OK)]
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
+    public async Task<IActionResult> GetAsync([FromQuery] PagingParams pagingParams)
     {
         var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
 
@@ -67,11 +67,11 @@ public class PlatformsController : ControllerBase
     [ProducesResponseType(typeof(PlatformDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetByIdAsync(Guid id)
     {
-        var dto = await _service.GetByIdAsync(id);
+        var platform = await _service.GetByIdAsync(id);
 
-        return (dto is null) ? NotFound() : Ok(dto);
+        return (platform is null) ? NotFound() : Ok(platform);
     }
 
     /// <summary>
