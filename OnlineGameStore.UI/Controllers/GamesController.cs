@@ -24,7 +24,7 @@ public class GamesController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the game to retrieve.</param>
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
@@ -45,7 +45,7 @@ public class GamesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedResponse<GameDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(
         [FromQuery] PagingParams pagingParams,
         [FromQuery] GameAggregationParams gameFilters)
@@ -91,8 +91,8 @@ public class GamesController : ControllerBase
     /// Deletes a game by its ID.
     /// </summary>
     /// <param name="id">The ID of the game to delete.</param>
-    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {

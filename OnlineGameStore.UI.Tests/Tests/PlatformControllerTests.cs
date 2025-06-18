@@ -28,6 +28,13 @@ public class PlatformsControllerTests
         return platformGen.Generate(1).First();
     }
 
+    private static (PlatformCreateDto first, PlatformCreateDto second) GenPlatformCreateDtos()
+    {
+        var platformGen = new PlatformCreateDtoGenerator();
+        var list = platformGen.Generate(2);
+        return (list[0], list[1]);
+    }
+
     [Fact]
     public async Task PostPlatform_ValidData_ReturnsCreated()
     {
@@ -66,7 +73,6 @@ public class PlatformsControllerTests
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
-
 
     [Fact]
     public async Task PostPlatform_DuplicateName_ReturnsConflict()
@@ -141,5 +147,64 @@ public class PlatformsControllerTests
         var content = await getResponse.Content.ReadAsStringAsync();
 
         Assert.Contains("Page must be greater than 0", content);
+    }
+
+    [Fact]
+    public async Task UpdatePutPlatform_ValidData_ReturnsUpdatedPlatform()
+    {
+        var platformCreateDto = GenPlatformCreateDto();
+
+        var postResponse = await _client.PostAsJsonAsync("api/platforms", platformCreateDto);
+
+        postResponse.EnsureSuccessStatusCode();
+
+        var createdPlatform = await postResponse.Content.ReadFromJsonAsync<PlatformDto>();
+
+        platformCreateDto.Name = "Updated name";
+
+        var putResponse = await _client.PutAsJsonAsync($"api/platforms/{createdPlatform!.Id}", platformCreateDto);
+
+        putResponse.EnsureSuccessStatusCode();
+
+        var getResponse = await _client.GetAsync($"api/platforms/{createdPlatform!.Id}");
+
+        getResponse.EnsureSuccessStatusCode();
+
+        var updatedPlatform = await getResponse.Content.ReadFromJsonAsync<PlatformDto>();
+
+        Assert.NotNull(updatedPlatform);
+        Assert.Equal(updatedPlatform.Id, createdPlatform.Id);
+        Assert.NotEqual(updatedPlatform.Name, createdPlatform.Name);
+    }
+
+    [Fact]
+    public async Task UpdatePutPlatform_PlatformDoesNotExist_ReturnsNotFound()
+    {
+        var platformCreateDto = GenPlatformCreateDto();
+
+        var putResponse = await _client.PutAsJsonAsync($"api/platforms/{Guid.NewGuid()}", platformCreateDto);
+
+        Assert.Equal(HttpStatusCode.NotFound, putResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_DuplicatePlatformName_ReturnsConflict()
+    {
+        var (firstPlatform, secondPlatform) = GenPlatformCreateDtos();
+
+        var firstPostResponse = await _client.PostAsJsonAsync("api/platforms", firstPlatform);
+        var secondPostResponse = await _client.PostAsJsonAsync("api/platforms", secondPlatform);
+
+        firstPostResponse.EnsureSuccessStatusCode();
+        secondPostResponse.EnsureSuccessStatusCode();
+
+        var firstCreatedPlatform = await firstPostResponse.Content.ReadFromJsonAsync<PlatformDto>();
+        var secondCreatedPlatform = await secondPostResponse.Content.ReadFromJsonAsync<PlatformDto>();
+        secondCreatedPlatform!.Name = firstCreatedPlatform!.Name;
+
+        var response =
+            await _client.PutAsJsonAsync($"api/platforms/{secondCreatedPlatform!.Id}", secondCreatedPlatform);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
 }
