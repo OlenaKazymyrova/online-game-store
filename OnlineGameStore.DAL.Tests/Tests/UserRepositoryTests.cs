@@ -8,7 +8,7 @@ public class UserRepositoryTests
     private readonly UserRepositoryCreator _creator = new();
 
     [Fact]
-    public async Task GetAsync_ReturnsAllRoles()
+    public async Task GetAsync_ReturnsAllUsers()
     {
         var repository = _creator.Create();
         var user1 = GetUser("User 1", "cool@example.com");
@@ -26,7 +26,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task ExistsAsync_RoleExists_ReturnsTrue()
+    public async Task ExistsAsync_UserExists_ReturnsTrue()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -41,7 +41,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task ExistsAsync_RoleDoesNotExist_ReturnsFalse()
+    public async Task ExistsAsync_UserDoesNotExist_ReturnsFalse()
     {
         var repository = _creator.Create();
 
@@ -51,7 +51,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_RoleExists_ReturnsRole()
+    public async Task GetByIdAsync_UserExists_ReturnsRole()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -67,7 +67,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_RoleDoesNotExits_ReturnsNull()
+    public async Task GetByIdAsync_UserDoesNotExits_ReturnsNull()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -78,7 +78,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task AddAsync_AddsRole()
+    public async Task AddAsync_AddsUser()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -90,7 +90,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateAsync_RoleExists_UpdatesRole()
+    public async Task UpdateAsync_UserExists_UpdatesRole()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -116,7 +116,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateAsync_RoleDoesNotExist_ReturnsException()
+    public async Task UpdateAsync_UserDoesNotExist_ReturnsException()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -125,7 +125,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_RoleExists_DeletesRole()
+    public async Task DeleteAsync_UserExists_DeletesRole()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -140,7 +140,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_RoleDoesNotExist_DoesNothing()
+    public async Task DeleteAsync_UserDoesNotExist_DoesNothing()
     {
         var repository = _creator.Create();
 
