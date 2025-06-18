@@ -54,8 +54,10 @@ public class GamesController : ControllerBase
 
         var filter = queryBuilder.BuildFilter(gameFilters);
         var orderBy = queryBuilder.BuildOrderBy(gameFilters);
+        var include = queryBuilder.BuildInclude(gameFilters);
 
         var paginatedResponse = await _service.GetAsync(
+            include: include,
             filter: filter,
             orderBy: orderBy,
             pagingParams: pagingParams

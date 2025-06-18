@@ -1,4 +1,6 @@
-﻿using OnlineGameStore.DAL.Entities;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.UI.Aggregation;
 using System.Linq.Expressions;
 
@@ -25,8 +27,8 @@ public class GameQueryBuilder : IQueryBuilder<Game, GameAggregationParams>
 
     public Func<IQueryable<Game>, IOrderedQueryable<Game>> BuildOrderBy(GameAggregationParams aggregationParams)
     {
-        var sortBy = aggregationParams.SortBy?.ToLower() ?? "name";
-        var isDescending = aggregationParams.SortOrder?.ToLower() == "desc";
+        var sortBy = aggregationParams.SortBy.ToLower();
+        var isDescending = aggregationParams.SortOrder.ToLower() == "desc";
 
         return sortBy switch
         {
@@ -34,6 +36,32 @@ public class GameQueryBuilder : IQueryBuilder<Game, GameAggregationParams>
             "price" => q => isDescending ? q.OrderByDescending(g => g.Price) : q.OrderBy(g => g.Price),
             "releasedate" => q => isDescending ? q.OrderByDescending(g => g.ReleaseDate) : q.OrderBy(g => g.ReleaseDate),
             _ => throw new InvalidOperationException("Unexpected sortBy value.")
+        };
+    }
+
+    public Func<IQueryable<Game>, IIncludableQueryable<Game, object>>? BuildInclude(GameAggregationParams aggregationParams)
+    {
+        if (string.IsNullOrWhiteSpace(aggregationParams.Include))
+        {
+            return null;
+        }
+
+        var includeParams = aggregationParams.Include?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(s => s.ToLower())
+            .ToHashSet() ?? new HashSet<string>();
+
+        return query =>
+        {
+            IQueryable<Game> result = query;
+
+            if (includeParams.Contains("genres"))
+                result = result.Include(game => game.Genres);
+
+            if (includeParams.Contains("platforms"))
+                result = result.Include(game => game.Platforms);
+
+            return (IIncludableQueryable<Game, object>)result;
         };
     }
 }
