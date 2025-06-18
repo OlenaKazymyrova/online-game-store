@@ -51,14 +51,14 @@ public class PlatformsController : ControllerBase
     /// Retrieves the list of platforms using pagination.
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    [ProducesResponseType(typeof(List<PlatformDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedResponse<PlatformDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
     {
         var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
 
-        return (paginatedResponse is null) ? StatusCode(500) : Ok(paginatedResponse);
+        return Ok(paginatedResponse);
     }
 
     /// <summary>

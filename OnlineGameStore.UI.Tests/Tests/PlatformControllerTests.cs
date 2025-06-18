@@ -60,7 +60,7 @@ public class PlatformsControllerTests
     [Fact]
     public async Task PostPlatform_MissingGameIds_ReturnsBadRequest()
     {
-        var invalidDto = new PlatformCreateDto { Name = "Valid name", GamesIds = null };
+        var invalidDto = new PlatformCreateDto { Name = "Valid name", GamesIds = null! };
 
         var response = await _client.PostAsJsonAsync("api/platforms", invalidDto);
 
@@ -142,7 +142,7 @@ public class PlatformsControllerTests
 
         Assert.Contains("Page must be greater than 0", content);
     }
-
+    
     [Fact]
     public async Task DeletePlatform_PlatformExists_ReturnsNoContent()
     {
