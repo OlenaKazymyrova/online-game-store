@@ -52,7 +52,6 @@ public class PlatformsController : ControllerBase
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(PaginatedResponse<PlatformDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
     {
@@ -76,31 +75,15 @@ public class PlatformsController : ControllerBase
     }
 
     /// <summary>
-    /// Updates all Platform fields
+    /// Deletes a platform by its ID.
     /// </summary>
-    /// <param name="id">The unique identifier of the Platform to update.</param>
-    /// <param name="platformDto">The new Platform data.</param>
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    /// <param name="id">The ID of the game to delete.</param>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] PlatformCreateDto platformDto)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
-        if (platformDto is null)
-        {
-            return BadRequest("Platform data is required.");
-        }
-
-        try
-        {
-            var isUpdated = await _service.UpdateAsync(id, platformDto);
-
-            return (isUpdated) ? Ok() : NotFound();
-        }
-        catch (ValidationException ex)
-        {
-            return Conflict(ex.Message);
-        }
+        var result = await _service.DeleteAsync(id);
+        return result ? NoContent() : NotFound();
     }
 }

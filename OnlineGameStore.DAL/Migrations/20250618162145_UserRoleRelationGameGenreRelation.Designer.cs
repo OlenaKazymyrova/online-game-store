@@ -12,8 +12,8 @@ using OnlineGameStore.DAL.DBContext;
 namespace OnlineGameStore.DAL.Migrations
 {
     [DbContext(typeof(OnlineGameStoreDbContext))]
-    [Migration("20250614145737_ManyToManyRelationGameGenre")]
-    partial class ManyToManyRelationGameGenre
+    [Migration("20250618162145_UserRoleRelationGameGenreRelation")]
+    partial class UserRoleRelationGameGenreRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
