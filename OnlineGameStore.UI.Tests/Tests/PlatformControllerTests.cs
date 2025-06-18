@@ -142,7 +142,7 @@ public class PlatformsControllerTests
 
         Assert.Contains("Page must be greater than 0", content);
     }
-    
+
     [Fact]
     public async Task DeletePlatform_PlatformExists_ReturnsNoContent()
     {

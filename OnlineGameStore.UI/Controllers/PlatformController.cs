@@ -52,7 +52,6 @@ public class PlatformsController : ControllerBase
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(PaginatedResponse<PlatformDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
     {
@@ -66,7 +65,7 @@ public class PlatformsController : ControllerBase
     /// </summary>
     /// <param name="id">The id of the platform to retrieve.</param>
     [ProducesResponseType(typeof(PlatformDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -79,13 +78,12 @@ public class PlatformsController : ControllerBase
     /// Deletes a platform by its ID.
     /// </summary>
     /// <param name="id">The ID of the game to delete.</param>
-    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await _service.DeleteAsync(id);
         return result ? NoContent() : NotFound();
     }
-
 }
