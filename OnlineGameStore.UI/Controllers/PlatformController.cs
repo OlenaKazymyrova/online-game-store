@@ -75,15 +75,31 @@ public class PlatformsController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes a platform by its ID.
+    /// Updates all Platform fields
     /// </summary>
-    /// <param name="id">The ID of the game to delete.</param>
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    /// <param name="id">The unique identifier of the Platform to update.</param>
+    /// <param name="platformDto">The new Platform data.</param>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] PlatformCreateDto platformDto)
     {
-        var result = await _service.DeleteAsync(id);
-        return result ? NoContent() : NotFound();
+        if (platformDto is null)
+        {
+            return BadRequest("Platform data is required.");
+        }
+
+        try
+        {
+            var isUpdated = await _service.UpdateAsync(id, platformDto);
+
+            return (isUpdated) ? Ok() : NotFound();
+        }
+        catch (ValidationException ex)
+        {
+            return Conflict(ex.Message);
+        }
     }
 }

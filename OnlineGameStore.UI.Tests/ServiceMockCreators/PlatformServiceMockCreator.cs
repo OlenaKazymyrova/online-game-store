@@ -28,4 +28,30 @@ public class PlatformServiceMockCreator
                 return _mapper.Map<PlatformDto>(entity);
             });
     }
+
+    protected override void SetupUpdate(Mock<IPlatformService> mock)
+    {
+        mock.Setup(x => x.UpdateAsync(It.IsAny<Guid>(), It.IsAny<PlatformCreateDto>()))
+            .ReturnsAsync((Guid id, PlatformCreateDto updateDto) =>
+            {
+                int index = _data.FindIndex(p => p.Id == id);
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                if (_data.Any(p =>
+                        p.Name.Equals(updateDto.Name, StringComparison.OrdinalIgnoreCase)
+                        && p.Id != id))
+                {
+                    throw new ValidationException("Platform name already exists.");
+                }
+
+                var entity = _mapper.Map<Platform>(updateDto);
+                entity.Id = id;
+                _data[index] = entity;
+
+                return true;
+            });
+    }
 }
