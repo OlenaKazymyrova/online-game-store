@@ -86,4 +86,33 @@ public class PlatformsController : ControllerBase
         var result = await _service.DeleteAsync(id);
         return result ? NoContent() : NotFound();
     }
+
+    /// <summary>
+    /// Updates all Platform fields
+    /// </summary>
+    /// <param name="id">The unique identifier of the Platform to update.</param>
+    /// <param name="platformDto">The new Platform data.</param>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] PlatformCreateDto platformDto)
+    {
+        if (platformDto is null)
+        {
+            return BadRequest("Platform data is required.");
+        }
+
+        try
+        {
+            var isUpdated = await _service.UpdateAsync(id, platformDto);
+
+            return (isUpdated) ? Ok() : NotFound();
+        }
+        catch (ValidationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
 }
