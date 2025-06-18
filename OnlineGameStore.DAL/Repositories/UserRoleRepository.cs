@@ -30,33 +30,17 @@ public class UserRoleRepository : IUserRoleRepository
 
     public async Task<bool> AddUserRoleAsync(Guid userId, Guid roleId)
     {
-        if (await _dbContext.UserRoles.AnyAsync(ur => ur.UserId == userId && ur.RoleId == roleId))
+        if (await UserHasRoleAsync(userId, roleId))
             return false;
 
         var userRole = new UserRole { UserId = userId, RoleId = roleId };
         _dbContext.UserRoles.Add(userRole);
 
-        try
-        {
-            return await _dbContext.SaveChangesAsync() > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error adding user role: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error adding user role: {ex.Message}");
-            throw;
-        }
+        return await SaveChangesAsync();
     }
 
     public async Task<bool> RemoveUserRoleAsync(Guid userId, Guid roleId)
     {
-        if (!await _dbContext.UserRoles.AnyAsync(ur => ur.UserId == userId && ur.RoleId == roleId))
-            return false;
-
         var userRole = await _dbContext.UserRoles
             .FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId);
 
@@ -64,18 +48,24 @@ public class UserRoleRepository : IUserRoleRepository
             return false;
 
         _dbContext.UserRoles.Remove(userRole);
+
+        return await SaveChangesAsync();
+    }
+
+    private async Task<bool> SaveChangesAsync()
+    {
         try
         {
             return await _dbContext.SaveChangesAsync() > 0;
         }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine($"Error removing user role: {ex.Message}");
+            Console.WriteLine($"Error saving changes: {ex.Message}");
             throw;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unexpected error removing user role: {ex.Message}");
+            Console.WriteLine($"Unexpected error saving changes: {ex.Message}");
             throw;
         }
     }
