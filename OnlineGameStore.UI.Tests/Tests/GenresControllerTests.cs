@@ -9,6 +9,7 @@ using System.Net.Http.Json;
 using OnlineGameStore.SharedLogic.Pagination;
 using Microsoft.AspNetCore.Mvc;
 using Castle.Components.DictionaryAdapter.Xml;
+using OnlineGameStore.BLL.DTOs.Genres;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 

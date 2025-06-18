@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
 

@@ -1,22 +1,34 @@
+﻿using OnlineGameStore.BLL.DTOs.Genres;
+using OnlineGameStore.BLL.DTOs.Platforms;
 using System.ComponentModel.DataAnnotations;
 
-namespace OnlineGameStore.BLL.DTOs;
+namespace OnlineGameStore.BLL.DTOs.Games;
 
-public class GameDto
+public class GameDetailedDto
 {
+    [Required]
     public Guid Id { get; set; }
+
     [Required]
     public string Name { get; set; }
-    public string Description { get; set; }
+
+    public string? Description { get; set; }
+
     public Guid? PublisherId { get; set; }
+
     public Guid? LicenseId { get; set; }
+
     [Required]
     [Range(0, double.MaxValue, ErrorMessage = "Price cannot be negative.")]
     public decimal Price { get; set; }
+
     [Required]
     public DateTime ReleaseDate { get; set; }
+
     [Required]
-    public ICollection<Guid> GenresIds { get; set; } = new List<Guid>();
+    public ICollection<GenreBasicDto> GenreDtos { get; set; } = new List<GenreBasicDto>();
+
     [Required]
-    public ICollection<Guid> PlatformsIds { get; set; } = new List<Guid>();
+    public ICollection<PlatformBasicDto> PlatformDtos { get; set; } = new List<PlatformBasicDto>();
 }
+

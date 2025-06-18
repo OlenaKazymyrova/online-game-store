@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace OnlineGameStore.BLL.DTOs;
+namespace OnlineGameStore.BLL.DTOs.Platforms;
 
 public class PlatformCreateDto
 {

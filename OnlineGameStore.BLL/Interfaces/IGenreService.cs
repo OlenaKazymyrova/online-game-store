@@ -1,4 +1,4 @@
-﻿using OnlineGameStore.BLL.DTOs;
+﻿using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;

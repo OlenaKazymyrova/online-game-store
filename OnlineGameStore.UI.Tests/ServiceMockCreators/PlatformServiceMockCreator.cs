@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Moq;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;

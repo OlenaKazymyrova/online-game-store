@@ -1,5 +1,6 @@
 ﻿using Moq;
 using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 
