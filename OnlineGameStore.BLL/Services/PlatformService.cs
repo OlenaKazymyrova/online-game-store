@@ -16,7 +16,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
 
     public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
     {
-        if (dto is null) 
+        if (dto is null)
             return null;
 
         Platform entity;
