@@ -20,7 +20,6 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
             return null;
 
         Platform entity;
-
         try
         {
             entity = _mapper.Map<Platform>(dto);

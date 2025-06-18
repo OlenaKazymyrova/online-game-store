@@ -32,6 +32,7 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
         {
             cfg.AddProfile<BllGameMappingProfile>();
             cfg.AddProfile<BllGenreMappingProfile>();
+            cfg.AddProfile<BllPlatformMappingProfile>();
         });
 
         configuration.AssertConfigurationIsValid();
@@ -115,8 +116,8 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
     protected virtual void SetupUpdate(Mock<TService> mock)
     {
         mock.Setup(x => x.UpdateAsync(
-            It.IsAny<Guid>(),
-            It.IsAny<TCreateDto>()))
+                It.IsAny<Guid>(),
+                It.IsAny<TCreateDto>()))
             .ReturnsAsync((Guid id, TCreateDto updateDto) =>
             {
                 //var id = (Guid)updateDto.GetType().GetProperty("Id")?.GetValue(updateDto)!;
