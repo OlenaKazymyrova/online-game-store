@@ -11,7 +11,7 @@ public class OnlineGameStoreDbContextFactory : IDesignTimeDbContextFactory<Onlin
         var optionsBuilder = new DbContextOptionsBuilder<OnlineGameStoreDbContext>();
 
         // use real connection string here when applying migrations
-        optionsBuilder.UseSqlServer("");
+        optionsBuilder.UseSqlServer("Server=localhost,1433;Database=OnlineGameStore;User Id=sa;Password=rhIRr5i8R7n39Ckn1QWj;TrustServerCertificate=True;");
 
         return new OnlineGameStoreDbContext(optionsBuilder.Options);
     }
