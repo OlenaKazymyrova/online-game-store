@@ -13,22 +13,9 @@ public class UserRoleRepositoryTests
     [Fact]
     public async Task GetUserRolesAsync_UserHasRoles_ReturnsRoles()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var dbContext = new OnlineGameStoreDbContext(options);
-
         var userRole = GetUserRole();
 
-        var role = new Role
-        {
-            Id = userRole.RoleId,
-            Name = "TestRole"
-        };
-
-        await dbContext.Roles.AddAsync(role);
-        await dbContext.SaveChangesAsync();
+        var dbContext = await GetSeededContext(userRole);
 
         var repository = new UserRoleRepository(dbContext);
 
@@ -40,6 +27,56 @@ public class UserRoleRepositoryTests
 
         Assert.NotNull(roles);
         Assert.Contains(userRole.RoleId, roles.Select(r => r.Id));
+    }
+
+    [Fact]
+    public async Task GetUserRoleAsync_UserDeleted_ReturnsEmptyList()
+    {
+        var userRole = GetUserRole();
+
+        var dbContext = await GetSeededContext(userRole);
+
+        var repository = new UserRoleRepository(dbContext);
+
+        await repository.AddUserRoleAsync(userRole.UserId, userRole.RoleId);
+
+        var rolesEnum = await repository.GetUserRolesAsync(userRole.UserId);
+        var nonEmptyRoles = rolesEnum.ToList();
+
+        Assert.NotEmpty(nonEmptyRoles);
+        Assert.Contains(userRole.RoleId, nonEmptyRoles.Select(r => r.Id));
+
+        var userRepository = new UserRepository(dbContext);
+        await userRepository.DeleteAsync(userRole.UserId);
+
+        var roles = await repository.GetUserRolesAsync(userRole.UserId);
+
+        Assert.Empty(roles);
+    }
+
+    [Fact]
+    public async Task GetUserRoleAsync_RoleDeleted_ReturnsEmptyList()
+    {
+        var userRole = GetUserRole();
+
+        var dbContext = await GetSeededContext(userRole);
+
+        var repository = new UserRoleRepository(dbContext);
+
+        await repository.AddUserRoleAsync(userRole.UserId, userRole.RoleId);
+
+        var rolesEnum = await repository.GetUserRolesAsync(userRole.UserId);
+        var nonEmptyRoles = rolesEnum.ToList();
+
+        Assert.NotEmpty(nonEmptyRoles);
+        Assert.Contains(userRole.RoleId, nonEmptyRoles.Select(r => r.Id));
+
+        var roleRepository = new RoleRepository(dbContext);
+        await roleRepository.DeleteAsync(userRole.RoleId);
+
+        var roles = await repository.GetUserRolesAsync(userRole.UserId);
+
+        Assert.Empty(roles);
     }
 
     [Fact]
@@ -123,5 +160,34 @@ public class UserRoleRepositoryTests
             UserId = userId ?? Guid.NewGuid(),
             RoleId = roleId ?? Guid.NewGuid()
         };
+    }
+
+    private static async Task<OnlineGameStoreDbContext> GetSeededContext(UserRole userRole)
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var dbContext = new OnlineGameStoreDbContext(options);
+
+        var role = new Role
+        {
+            Id = userRole.RoleId,
+            Name = "TestRole"
+        };
+
+        var user = new User
+        {
+            Id = userRole.UserId,
+            UserName = "TestUser",
+            Email = "user@example.com",
+            PasswordHash = "hashed_password"
+        };
+
+        await dbContext.Users.AddAsync(user);
+        await dbContext.Roles.AddAsync(role);
+        await dbContext.SaveChangesAsync();
+
+        return dbContext;
     }
 }
