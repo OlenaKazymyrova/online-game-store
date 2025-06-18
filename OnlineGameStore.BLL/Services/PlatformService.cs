@@ -18,7 +18,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
     {
         if (dto is null)
             return null;
-        
+
         Platform entity;
         try
         {
