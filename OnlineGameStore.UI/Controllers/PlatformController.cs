@@ -52,7 +52,6 @@ public class PlatformsController : ControllerBase
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(PaginatedResponse<PlatformDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromQuery] PagingParams pagingParams)
     {
@@ -73,6 +72,19 @@ public class PlatformsController : ControllerBase
         var platform = await _service.GetByIdAsync(id);
 
         return (platform is null) ? NotFound() : Ok(platform);
+    }
+
+    /// <summary>
+    /// Deletes a platform by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the game to delete.</param>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var result = await _service.DeleteAsync(id);
+        return result ? NoContent() : NotFound();
     }
 
     /// <summary>

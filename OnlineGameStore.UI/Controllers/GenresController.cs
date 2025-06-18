@@ -34,7 +34,7 @@ public class GenresController : ControllerBase
     /// Retrieves the list of genres using pagination.
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    [ProducesResponseType(typeof(List<GenreReadDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedResponse<GenreReadDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
