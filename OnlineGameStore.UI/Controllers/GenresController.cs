@@ -21,7 +21,7 @@ public class GenresController : ControllerBase
     /// </summary>
     /// <param name="id">The id of the genre to retrieve.</param>
     [ProducesResponseType(typeof(GenreDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -34,8 +34,8 @@ public class GenresController : ControllerBase
     /// Retrieves the list of genres using pagination.
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    [ProducesResponseType(typeof(List<GenreReadDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PaginatedResponse<GenreReadDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
     {
@@ -78,7 +78,7 @@ public class GenresController : ControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the Genre to update.</param>
     /// <param name="genreDto">The new Genre data.</param>
-    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] GenreCreateDto genreDto)
@@ -97,8 +97,8 @@ public class GenresController : ControllerBase
     /// Deletes a genre by its unique ID.
     /// </summary>
     /// <param name="id">The ID of the genre to delete.</param>
-    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
