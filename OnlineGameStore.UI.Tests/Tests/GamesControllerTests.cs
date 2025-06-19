@@ -295,7 +295,7 @@ public class GamesControllerTests
     public async Task GetAsync_InvalidIncludeValues_ReturnsBadrRequest()
     {
         var getResponse = await _client.GetAsync("api/Games?include=genre,platform");
-        
+
         Assert.Equal(HttpStatusCode.BadRequest, getResponse.StatusCode);
     }
 

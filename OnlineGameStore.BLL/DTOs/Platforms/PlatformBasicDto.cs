@@ -9,7 +9,7 @@ namespace OnlineGameStore.BLL.DTOs.Platforms;
 
 public class PlatformBasicDto
 {
-    [Required] 
+    [Required]
     public required Guid Id { get; set; }
 
     [Required]
