@@ -26,6 +26,12 @@ public class UserRoleService : IUserRoleService
         var userRoles = await _userRoleRepository.GetUserRolesAsync(userId);
         return _mapper.Map<IEnumerable<RoleReadDto>>(userRoles);
     }
+    
+    public async Task<IEnumerable<UserReadDto>> GetUsersByRoleAsync(Guid roleId)
+    {
+        var users = await _userRoleRepository.GetUsersByRoleAsync(roleId);
+        return _mapper.Map<IEnumerable<UserReadDto>>(users);
+    }
 
     public async Task<bool> UserHasRoleAsync(Guid userId, Guid roleId)
     {
