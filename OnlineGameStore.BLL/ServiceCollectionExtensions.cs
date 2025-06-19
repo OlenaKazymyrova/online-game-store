@@ -13,9 +13,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IPlatformService, PlatformService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddAutoMapper(typeof(BllGameMappingProfile));
         services.AddAutoMapper(typeof(BllGenreMappingProfile));
         services.AddAutoMapper(typeof(BllPlatformMappingProfile));
+        services.AddAutoMapper(typeof(BllUserMappingProfile));
+        services.AddAutoMapper(typeof(BllRoleMappingProfile));
         services.AddScoped<GameResolver>(); // no parameterless constructor defined
         services.AddScoped<GenreResolver>();
         services.AddScoped<PlatformResolver>();
