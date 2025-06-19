@@ -59,9 +59,12 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
 
     private async Task<bool> NameExistsAsync(string name, Guid? excludeId = null)
     {
-        string normalizedName = name.Trim().ToLower();
+        if (String.IsNullOrEmpty(name))
+            return false;
+        
+        var normalizedName = name.Trim().ToLower();
         var existing = await _repository.GetAsync(
-            filter: p => p.Name.Trim().ToLower() == normalizedName && p.Id != excludeId);
+            filter: p => p.Name.Trim().ToLower() == normalizedName && (!excludeId.HasValue || p.Id != excludeId.Value));
 
         return existing.Items.Any();
     }
