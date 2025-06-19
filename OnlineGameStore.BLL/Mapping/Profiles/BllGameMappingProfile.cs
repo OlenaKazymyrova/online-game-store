@@ -1,5 +1,5 @@
 using AutoMapper;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.BLL.Mapping.Resolvers;
 using OnlineGameStore.DAL.Entities;
 
@@ -9,6 +9,10 @@ public class BllGameMappingProfile : Profile
 {
     public BllGameMappingProfile()
     {
+        CreateMap<Game, GameDetailedDto>()
+            .ForMember(dest => dest.GenreDtos, opt => opt.MapFrom(src => src.Genres))
+            .ForMember(dest => dest.PlatformDtos, opt => opt.MapFrom(src => src.Platforms));
+
         CreateMap<Game, GameDto>()
             .ForMember(dest => dest.PlatformsIds, opt => opt.MapFrom(src => src.Platforms.Select(p => p.Id)))
             .ForMember(dest => dest.GenresIds, opt => opt.MapFrom(src => src.Genres.Select(g => g.Id)));

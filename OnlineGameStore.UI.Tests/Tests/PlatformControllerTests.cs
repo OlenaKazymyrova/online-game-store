@@ -1,11 +1,11 @@
 using OnlineGameStore.BLL.Tests.DataGenerators;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
+using OnlineGameStore.SharedLogic.Pagination;
+using OnlineGameStore.BLL.DTOs.Platforms;
 using System.Net;
 using System.Net.Http.Json;
-using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 

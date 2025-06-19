@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using Moq;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
 public class PlatformServiceMockCreator
-    : ServiceMockCreator<Platform, PlatformCreateDto, PlatformDto, PlatformDto, IPlatformService>
+    : ServiceMockCreator<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDto, IPlatformService>
 {
     public PlatformServiceMockCreator(List<Platform> data) : base(data)
     {

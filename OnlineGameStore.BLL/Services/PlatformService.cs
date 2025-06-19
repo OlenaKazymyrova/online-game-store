@@ -1,18 +1,16 @@
 using AutoMapper;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto>, IPlatformService
+public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDto>, IPlatformService
 {
     public PlatformService(IPlatformRepository repository, IMapper mapper)
         : base(repository, mapper)
-    {
-    }
+    { }
 
     public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
     {
@@ -61,8 +59,9 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
 
     private async Task<bool> NameExistsAsync(string name, Guid? excludeId = null)
     {
+        string normalizedName = name.Trim().ToLower();
         var existing = await _repository.GetAsync(
-            filter: p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase) && p.Id != excludeId);
+            filter: p => p.Name.Trim().ToLower() == normalizedName && p.Id != excludeId);
 
         return existing.Items.Any();
     }

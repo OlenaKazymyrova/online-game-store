@@ -6,14 +6,14 @@ using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
+public interface IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
     where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
 {
     Task<TReadDto?> GetByIdAsync(Guid id);
-    Task<PaginatedResponse<TReadDto>> GetAsync(
+    Task<PaginatedResponse<TDetailedDto>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,

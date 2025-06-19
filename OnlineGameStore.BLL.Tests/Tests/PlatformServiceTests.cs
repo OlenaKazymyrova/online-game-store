@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
-using OnlineGameStore.BLL.DTOs;
-using OnlineGameStore.BLL.Mapping;
+using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;

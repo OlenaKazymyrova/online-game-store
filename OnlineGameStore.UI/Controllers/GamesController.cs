@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
 using OnlineGameStore.UI.Aggregation;
@@ -43,7 +43,7 @@ public class GamesController : ControllerBase
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     /// <param name="gameFilters"> Specifies the possible filtering and ordering</param>
     [HttpGet]
-    [ProducesResponseType(typeof(PaginatedResponse<GameDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedResponse<GameDetailedDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(
@@ -54,8 +54,10 @@ public class GamesController : ControllerBase
 
         var filter = queryBuilder.BuildFilter(gameFilters);
         var orderBy = queryBuilder.BuildOrderBy(gameFilters);
+        var include = queryBuilder.BuildInclude(gameFilters);
 
         var paginatedResponse = await _service.GetAsync(
+            include: include,
             filter: filter,
             orderBy: orderBy,
             pagingParams: pagingParams

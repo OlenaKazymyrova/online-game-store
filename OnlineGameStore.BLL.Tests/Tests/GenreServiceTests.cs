@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;

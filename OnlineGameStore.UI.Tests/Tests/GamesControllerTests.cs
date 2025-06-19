@@ -4,11 +4,11 @@ using System.Text;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
 using OnlineGameStore.BLL.Tests.DataGenerators;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using OnlineGameStore.SharedLogic.Pagination;
 using OnlineGameStore.UI.Aggregation;
+using OnlineGameStore.BLL.DTOs.Games;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
@@ -297,6 +297,30 @@ public class GamesControllerTests
         var patchRequest = await _client.PatchAsync($"api/Games/{newGame.Id}", content);
 
         Assert.Equal(HttpStatusCode.NotFound, patchRequest.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAsync_InvalidIncludeValues_ReturnsBadRequest()
+    {
+        var getResponse = await _client.GetAsync("api/Games?include=genre,platform");
+
+        Assert.Equal(HttpStatusCode.BadRequest, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAsync_DuplicateIncludeValues_ReturnsBadRequest()
+    {
+        var getResponse = await _client.GetAsync("api/Games?include=genres,genres");
+
+        Assert.Equal(HttpStatusCode.BadRequest, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAsync_ValidIncludeValues_ReturnsSuccessfulStatusCode()
+    {
+        var getResponse = await _client.GetAsync("api/Games?include=genres,platforms");
+
+        getResponse.EnsureSuccessStatusCode();
     }
 
     private GameDto GetGameDto(

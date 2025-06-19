@@ -1,7 +1,7 @@
 using AutoMapper;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.DAL.DBContext;
+using OnlineGameStore.BLL.DTOs.Platforms;
 
 namespace OnlineGameStore.BLL.Mapping.Resolvers;
 
