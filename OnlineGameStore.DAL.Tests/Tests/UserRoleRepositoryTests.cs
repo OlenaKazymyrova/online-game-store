@@ -248,7 +248,7 @@ public class UserRoleRepositoryTests
         var user = new User
         {
             Id = userRole.UserId,
-            UserName = "TestUser",
+            Username = "TestUser",
             Email = "user@example.com",
             PasswordHash = "hashed_password"
         };

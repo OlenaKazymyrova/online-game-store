@@ -69,7 +69,7 @@ public class AdminSeederService : BackgroundService
         var adminUser = new User
         {
             Email = adminEmail,
-            UserName = adminUsername
+            Username = adminUsername
         };
 
         adminUser.PasswordHash = hasher.HashPassword(adminUser, adminPassword);

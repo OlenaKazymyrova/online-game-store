@@ -13,7 +13,7 @@ public class UserEntityGenerator : IDataGenerator<User>
         {
             list.Add(new User
             {
-                UserName = "User " + i,
+                Username = "User " + i,
                 Email = $"user{i}@example.com",
                 PasswordHash = "evojkfqodsfjeovnepaokd" + i
             });

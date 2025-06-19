@@ -21,8 +21,8 @@ public class UserRepositoryTests
 
         Assert.NotNull(result);
         Assert.Equal(2, result.Items.Count());
-        Assert.Contains(result.Items, u => u.UserName == user1.UserName);
-        Assert.Contains(result.Items, u => u.UserName == user2.UserName);
+        Assert.Contains(result.Items, u => u.Username == user1.Username);
+        Assert.Contains(result.Items, u => u.Username == user2.Username);
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class UserRepositoryTests
 
         Assert.NotNull(addedUser);
 
-        addedUser.UserName = newUsername;
+        addedUser.Username = newUsername;
         addedUser.Email = newEmail;
 
         var result = await repository.UpdateAsync(addedUser);
@@ -111,7 +111,7 @@ public class UserRepositoryTests
         var updatedUser = await repository.GetByIdAsync(addedUser.Id);
 
         Assert.NotNull(updatedUser);
-        Assert.Equal(newUsername, updatedUser!.UserName);
+        Assert.Equal(newUsername, updatedUser!.Username);
         Assert.Equal(newEmail, updatedUser.Email);
     }
 
@@ -159,7 +159,7 @@ public class UserRepositoryTests
         return new User
         {
             Id = Guid.NewGuid(),
-            UserName = username,
+            Username = username,
             Email = email,
             PasswordHash = passwordHash,
             CreatedAt = createdAt,

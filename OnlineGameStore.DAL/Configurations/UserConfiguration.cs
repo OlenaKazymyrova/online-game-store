@@ -16,11 +16,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasKey(u => u.Id);
 
-        builder.Property(u => u.UserName)
+        builder.Property(u => u.Username)
             .HasColumnName("username")
             .IsRequired();
 
-        builder.HasIndex(u => u.UserName)
+        builder.HasIndex(u => u.Username)
             .IsUnique()
             .HasDatabaseName("IX_Users_UserName");
 
