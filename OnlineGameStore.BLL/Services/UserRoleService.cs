@@ -27,6 +27,14 @@ public class UserRoleService : IUserRoleService
         return _mapper.Map<IEnumerable<RoleReadDto>>(userRoles);
     }
 
+    public async Task<bool> UserHasRoleAsync(Guid userId, Guid roleId)
+    {
+        CheckGuids(userId, roleId);
+        await CheckEntityExistence(userId, roleId);
+
+        return await _userRoleRepository.UserHasRoleAsync(userId, roleId);
+    }
+
     public async Task<bool> AddUserRoleAsync(Guid userId, Guid roleId)
     {
         CheckGuids(userId, roleId);
@@ -41,14 +49,6 @@ public class UserRoleService : IUserRoleService
         await CheckEntityExistence(userId, roleId);
 
         return await _userRoleRepository.RemoveUserRoleAsync(userId, roleId);
-    }
-
-    public async Task<bool> UserHasRoleAsync(Guid userId, Guid roleId)
-    {
-        CheckGuids(userId, roleId);
-        await CheckEntityExistence(userId, roleId);
-
-        return await _userRoleRepository.UserHasRoleAsync(userId, roleId);
     }
 
     private void CheckGuids(Guid userId, Guid roleId)
