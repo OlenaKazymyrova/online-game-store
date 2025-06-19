@@ -12,19 +12,20 @@ namespace OnlineGameStore.BLL.Tests.Tests;
 public class UserServiceTests
 {
     private readonly UserService _userService;
+    private readonly IMapper _mapper;
     private List<User> _data;
 
     public UserServiceTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<BllUserMappingProfile>());
-        var mapper = config.CreateMapper();
+        _mapper = config.CreateMapper();
 
         var userRoleRepository = SetupUserRoleMock();
 
         var repoMock = new UserRepositoryMockCreator(_data!, userRoleRepository);
         var mockRepository = repoMock.Create();
 
-        _userService = new UserService(mockRepository, mapper);
+        _userService = new UserService(mockRepository, _mapper);
     }
 
     [Fact]
