@@ -12,20 +12,20 @@ namespace OnlineGameStore.BLL.Tests.Tests;
 public class UserServiceTests
 {
     private readonly UserService _userService;
-    private readonly IMapper _mapper;
-    private List<User> _data;
+    private readonly List<User> _data;
 
     public UserServiceTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<BllUserMappingProfile>());
-        _mapper = config.CreateMapper();
+        var mapper = config.CreateMapper();
 
-        var userRoleRepository = SetupUserRoleMock();
+        var userGen = new UserEntityGenerator();
+        _data = userGen.Generate(100);
 
-        var repoMock = new UserRepositoryMockCreator(_data!, userRoleRepository);
+        var repoMock = new UserRepositoryMockCreator(_data);
         var mockRepository = repoMock.Create();
 
-        _userService = new UserService(mockRepository, _mapper);
+        _userService = new UserService(mockRepository, mapper);
     }
 
     [Fact]
@@ -148,22 +148,5 @@ public class UserServiceTests
         var isDeleted = await _userService.DeleteAsync(nonExistentUserId);
 
         Assert.False(isDeleted);
-    }
-
-    private IUserRoleRepository SetupUserRoleMock()
-    {
-        var roleGen = new RoleEntityGenerator();
-        var userGen = new UserEntityGenerator();
-        var userRoleGen = new UserRoleEntityGenerator();
-
-        var roleData = roleGen.Generate(100);
-        _data = userGen.Generate(100);
-
-        var userRoleData = userRoleGen.Generate(100, _data, roleData);
-
-        var userRoleRepoMock = new UserRoleRepositoryMockCreator(userRoleData);
-        var mockUserRoleRepository = userRoleRepoMock.Create();
-
-        return mockUserRoleRepository;
     }
 }
