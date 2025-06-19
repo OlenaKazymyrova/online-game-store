@@ -17,16 +17,16 @@ public class RoleRepositoryMockCreator : RepositoryMockCreator<Role, IRoleReposi
     protected override void SetupDelete(Mock<IRoleRepository> mock)
     {
         mock.Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid roleId) =>
+            .Returns(async (Guid roleId) =>
             {
                 var role = _data.FirstOrDefault(r => r.Id == roleId);
                 if (role == null)
                     return false;
 
-                var users = _userRoleRepository.GetUsersByRoleAsync(roleId).Result;
+                var users = await _userRoleRepository.GetUsersByRoleAsync(roleId);
                 foreach (var user in users)
                 {
-                    _userRoleRepository.RemoveUserRoleAsync(user.Id, role.Id).Wait();
+                    await _userRoleRepository.RemoveUserRoleAsync(user.Id, role.Id);
                 }
 
                 _data.Remove(role);
