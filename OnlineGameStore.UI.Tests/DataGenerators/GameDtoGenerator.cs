@@ -1,4 +1,4 @@
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.UI.Tests.DataGenerators;

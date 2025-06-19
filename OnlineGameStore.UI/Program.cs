@@ -1,6 +1,5 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
 using OnlineGameStore.UI.Services;

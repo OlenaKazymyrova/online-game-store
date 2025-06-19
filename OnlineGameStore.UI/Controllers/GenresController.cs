@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
 

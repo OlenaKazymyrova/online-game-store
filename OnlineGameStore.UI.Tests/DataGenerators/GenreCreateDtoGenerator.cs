@@ -1,4 +1,4 @@
-﻿using OnlineGameStore.BLL.DTOs;
+﻿using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.SharedLogic.Interfaces;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;

@@ -1,6 +1,5 @@
 ﻿using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.BLL.Tests.DataGenerators;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
@@ -9,6 +8,7 @@ using System.Net.Http.Json;
 using OnlineGameStore.SharedLogic.Pagination;
 using Microsoft.AspNetCore.Mvc;
 using Castle.Components.DictionaryAdapter.Xml;
+using OnlineGameStore.BLL.DTOs.Genres;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 

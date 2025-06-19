@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Mapping.Resolvers;
 using OnlineGameStore.DAL.Entities;
 
@@ -9,6 +9,8 @@ public class BllGenreMappingProfile : Profile
 {
     public BllGenreMappingProfile()
     {
+        CreateMap<Genre, GenreBasicDto>();
+
         CreateMap<Genre, GenreDto>()
             .ForMember(dest => dest.GamesIds, opt => opt.MapFrom(src => src.Games.Select(game => game.Id)));
 
