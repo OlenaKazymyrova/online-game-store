@@ -80,6 +80,75 @@ public class UserRoleRepositoryTests
     }
 
     [Fact]
+    public async Task GetUsersByRoleAsync_UserHasRoles_ReturnsRoles()
+    {
+        var userRole = GetUserRole();
+
+        var dbContext = await GetSeededContext(userRole);
+
+        var repository = new UserRoleRepository(dbContext);
+
+        var addedUserRole = await repository.AddUserRoleAsync(userRole.UserId, userRole.RoleId);
+
+        Assert.True(addedUserRole);
+
+        var users = await repository.GetUsersByRoleAsync(userRole.RoleId);
+
+        Assert.NotNull(users);
+        Assert.Contains(userRole.UserId, users.Select(u => u.Id));
+    }
+
+    [Fact]
+    public async Task GetUsersByRoleAsync_UserDeleted_ReturnsEmptyList()
+    {
+        var userRole = GetUserRole();
+
+        var dbContext = await GetSeededContext(userRole);
+
+        var repository = new UserRoleRepository(dbContext);
+
+        await repository.AddUserRoleAsync(userRole.UserId, userRole.RoleId);
+
+        var usersEnum = await repository.GetUsersByRoleAsync(userRole.RoleId);
+        var nonEmptyUsers = usersEnum.ToList();
+
+        Assert.NotEmpty(nonEmptyUsers);
+        Assert.Contains(userRole.UserId, nonEmptyUsers.Select(u => u.Id));
+
+        var userRepository = new UserRepository(dbContext);
+        await userRepository.DeleteAsync(userRole.UserId);
+
+        var users = await repository.GetUsersByRoleAsync(userRole.RoleId);
+
+        Assert.Empty(users);
+    }
+
+    [Fact]
+    public async Task GetUsersByRoleAsync_RoleDeleted_ReturnsEmptyList()
+    {
+        var userRole = GetUserRole();
+
+        var dbContext = await GetSeededContext(userRole);
+
+        var repository = new UserRoleRepository(dbContext);
+
+        await repository.AddUserRoleAsync(userRole.UserId, userRole.RoleId);
+
+        var usersEnum = await repository.GetUsersByRoleAsync(userRole.RoleId);
+        var nonEmptyUsers = usersEnum.ToList();
+
+        Assert.NotEmpty(nonEmptyUsers);
+        Assert.Contains(userRole.UserId, nonEmptyUsers.Select(u => u.Id));
+
+        var roleRepository = new RoleRepository(dbContext);
+        await roleRepository.DeleteAsync(userRole.RoleId);
+
+        var users = await repository.GetUserRolesAsync(userRole.UserId);
+
+        Assert.Empty(users);
+    }
+
+    [Fact]
     public async Task UserHasRoleAsync_RoleExists_ReturnsTrue()
     {
         var repository = _creator.Create();
