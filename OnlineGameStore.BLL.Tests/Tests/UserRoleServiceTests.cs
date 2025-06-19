@@ -143,8 +143,8 @@ public class UserRoleServiceTests
     [Fact]
     public async Task AddUserRoleAsync_ValidUserAndRole_AddsUserRole()
     {
-        var userId = _data[Random.Shared.Next()].UserId;
-        var roleId = _data[Random.Shared.Next()].RoleId;
+        var userId = _data[Random.Shared.Next(_data.Count)].UserId;
+        var roleId = _data[Random.Shared.Next(_data.Count)].RoleId;
 
         var result = await _userRoleService.AddUserRoleAsync(userId, roleId);
 
