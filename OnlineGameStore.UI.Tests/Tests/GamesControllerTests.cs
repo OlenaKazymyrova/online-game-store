@@ -89,8 +89,8 @@ public class GamesControllerTests
         await _client.PostAsJsonAsync("api/Games", game3);
 
         var getRequest = await _client.GetAsync($"api/Games"
-            + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
-            + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
+                                                + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
+                                                + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
 
         var gamesPaginatedResponse = await getRequest.Content.ReadFromJsonAsync<PaginatedResponse<GameDto>>();
 
@@ -111,8 +111,8 @@ public class GamesControllerTests
         };
 
         var getRequest = await _client.GetAsync($"api/Games"
-            + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
-            + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
+                                                + $"?pageSize={pagingParams.PageSize}&pageNumber={pagingParams.Page}"
+                                                + $"&sortBy={gameFilters.SortBy}&sortOrder={gameFilters.SortOrder}");
 
         Assert.Equal(HttpStatusCode.BadRequest, getRequest.StatusCode);
     }
@@ -237,9 +237,17 @@ public class GamesControllerTests
     [Fact]
     public async Task UpdatePutAsync_GameNotValid_ReturnsBadRequest()
     {
+        var gameCreateDto = GetGameCreateDto();
+
+        var postRequest = await _client.PostAsJsonAsync("api/Games", gameCreateDto);
+
+        Assert.Equal(HttpStatusCode.Created, postRequest.StatusCode);
+
+        var createdGame = await postRequest.Content.ReadFromJsonAsync<GameDto>();
+        var gameId = createdGame!.Id;
         var notAGame = new List<GameDto>();
 
-        var putRequest = await _client.PutAsJsonAsync($"api/Games/{Guid.NewGuid()}", notAGame);
+        var putRequest = await _client.PutAsJsonAsync($"api/Games/{gameId}", notAGame);
 
         Assert.Equal(HttpStatusCode.BadRequest, putRequest.StatusCode);
     }
