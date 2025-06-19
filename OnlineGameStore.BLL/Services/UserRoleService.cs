@@ -1,7 +1,6 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Services;
@@ -42,6 +41,14 @@ public class UserRoleService : IUserRoleService
         await CheckEntityExistence(userId, roleId);
 
         return await _userRoleRepository.RemoveUserRoleAsync(userId, roleId);
+    }
+
+    public async Task<bool> UserHasRoleAsync(Guid userId, Guid roleId)
+    {
+        CheckGuids(userId, roleId);
+        await CheckEntityExistence(userId, roleId);
+
+        return await _userRoleRepository.UserHasRoleAsync(userId, roleId);
     }
 
     private void CheckGuids(Guid userId, Guid roleId)
