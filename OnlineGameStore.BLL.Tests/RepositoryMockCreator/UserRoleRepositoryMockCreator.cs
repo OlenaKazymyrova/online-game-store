@@ -17,6 +17,7 @@ public class UserRoleRepositoryMockCreator
     {
         var mock = new Mock<IUserRoleRepository>();
         SetupGetUserRolesAsync(mock);
+        SetupGetUsersByRoleAsync(mock);
         SetupUserHasRoleAsync(mock);
         SetupAddUserRoleAsync(mock);
         SetupRemoveUserRoleAsync(mock);
@@ -28,6 +29,13 @@ public class UserRoleRepositoryMockCreator
         mock.Setup(x => x.GetUserRolesAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Guid userId) =>
                 _data.Where(ur => ur.UserId == userId).Select(ur => ur.Role).ToList());
+    }
+
+    private void SetupGetUsersByRoleAsync(Mock<IUserRoleRepository> mock)
+    {
+        mock.Setup(x => x.GetUsersByRoleAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid roleId) =>
+                _data.Where(ur => ur.RoleId == roleId).Select(ur => ur.User).ToList());
     }
 
     private void SetupUserHasRoleAsync(Mock<IUserRoleRepository> mock)
