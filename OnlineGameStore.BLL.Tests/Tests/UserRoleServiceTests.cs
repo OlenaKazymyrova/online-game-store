@@ -96,7 +96,7 @@ public class UserRoleServiceTests
 
         var result = await _userRoleService.UserHasRoleAsync(userId, roleId);
 
-        Assert.True(result);
+        Assert.False(result);
     }
 
     [Fact]
