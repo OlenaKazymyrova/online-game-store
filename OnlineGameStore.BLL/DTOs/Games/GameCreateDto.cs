@@ -1,7 +1,6 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace OnlineGameStore.BLL.DTOs;
+namespace OnlineGameStore.BLL.DTOs.Games;
 
 public class GameCreateDto
 {

@@ -9,7 +9,7 @@ using OnlineGameStore.SharedLogic.Pagination;
 namespace OnlineGameStore.BLL.Services;
 
 public abstract class
-    Service<TEntity, TCreateDto, TReadDto, TUpdateDto> : IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
+    Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> : IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
     where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
@@ -30,7 +30,7 @@ public abstract class
         return entity == null ? null : _mapper.Map<TReadDto>(entity);
     }
 
-    public virtual async Task<PaginatedResponse<TReadDto>> GetAsync(
+    public virtual async Task<PaginatedResponse<TDetailedDto>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
@@ -38,9 +38,9 @@ public abstract class
     {
         var paginatedResponse = await _repository.GetAsync(filter, orderBy, include, pagingParams);
 
-        return new PaginatedResponse<TReadDto>
+        return new PaginatedResponse<TDetailedDto>
         {
-            Items = _mapper.Map<IEnumerable<TReadDto>>(paginatedResponse.Items),
+            Items = _mapper.Map<IEnumerable<TDetailedDto>>(paginatedResponse.Items),
             Pagination = paginatedResponse.Pagination
         };
     }
