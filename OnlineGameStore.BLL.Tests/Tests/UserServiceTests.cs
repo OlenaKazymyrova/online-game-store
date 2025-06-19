@@ -12,20 +12,19 @@ namespace OnlineGameStore.BLL.Tests.Tests;
 public class UserServiceTests
 {
     private readonly UserService _userService;
-    private readonly IMapper _mapper;
     private List<User> _data;
 
     public UserServiceTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<BllUserMappingProfile>());
-        _mapper = config.CreateMapper();
+        var mapper = config.CreateMapper();
 
         var userRoleRepository = SetupUserRoleMock();
 
         var repoMock = new UserRepositoryMockCreator(_data!, userRoleRepository);
         var mockRepository = repoMock.Create();
 
-        _userService = new UserService(mockRepository, _mapper);
+        _userService = new UserService(mockRepository, mapper);
     }
 
     [Fact]
@@ -126,6 +125,29 @@ public class UserServiceTests
         Assert.False(isUpdated);
     }
 
+    [Fact]
+    public async Task DeleteUserAsync_UserExists_ReturnsTrue()
+    {
+        var user = _data[0];
+
+        var isDeleted = await _userService.DeleteAsync(user.Id);
+
+        Assert.True(isDeleted);
+
+        var deletedUser = await _userService.GetByIdAsync(user.Id);
+
+        Assert.Null(deletedUser);
+    }
+
+    [Fact]
+    public async Task DeleteUserAsync_UserDoesNotExist_ReturnsFalse()
+    {
+        var nonExistentUserId = Guid.NewGuid();
+
+        var isDeleted = await _userService.DeleteAsync(nonExistentUserId);
+
+        Assert.False(isDeleted);
+    }
 
     private IUserRoleRepository SetupUserRoleMock()
     {
