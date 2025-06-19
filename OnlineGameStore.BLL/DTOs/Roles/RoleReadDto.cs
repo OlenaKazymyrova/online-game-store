@@ -1,4 +1,4 @@
-namespace OnlineGameStore.BLL.DTOs;
+namespace OnlineGameStore.BLL.DTOs.Roles;
 
 public class RoleReadDto
 {

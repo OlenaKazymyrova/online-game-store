@@ -1,4 +1,5 @@
 using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Roles;
 using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;

@@ -1,5 +1,6 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs;
+using OnlineGameStore.BLL.DTOs.Roles;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
