@@ -143,10 +143,13 @@ public class UserRoleServiceTests
     [Fact]
     public async Task AddUserRoleAsync_ValidUserAndRole_AddsUserRole()
     {
-        var userId = _data[Random.Shared.Next(_data.Count)].UserId;
-        var roleId = _data[Random.Shared.Next(_data.Count)].RoleId;
+        var userRole = _data[0];
 
-        var result = await _userRoleService.AddUserRoleAsync(userId, roleId);
+        var isDeleted = await _userRoleService.RemoveUserRoleAsync(userRole.UserId, userRole.RoleId);
+
+        Assert.True(isDeleted);
+
+        var result = await _userRoleService.AddUserRoleAsync(userRole.UserId, userRole.RoleId);
 
         Assert.True(result);
     }
@@ -205,12 +208,15 @@ public class UserRoleServiceTests
     [Fact]
     public async Task RemoveUserRoleAsync_UserDoesNotHaveRole_ReturnsFalse()
     {
-        var userId = _data[1].UserId;
-        var roleId = _data[0].RoleId;
+        var userRole = _data[0];
 
-        var result = await _userRoleService.RemoveUserRoleAsync(userId, roleId);
+        var deleted = await _userRoleService.RemoveUserRoleAsync(userRole.UserId, userRole.RoleId);
 
-        Assert.False(result);
+        Assert.True(deleted);
+
+        var isDeleted = await _userRoleService.RemoveUserRoleAsync(userRole.UserId, userRole.RoleId);
+
+        Assert.False(isDeleted);
     }
 
     [Fact]
