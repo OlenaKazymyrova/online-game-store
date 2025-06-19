@@ -12,6 +12,6 @@ public class BllRoleMappingProfile : Profile
         CreateMap<RoleCreateDto, Role>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
 
-        CreateMap<Role, Role>();
+        CreateMap<Role, RoleReadDto>();
     }
 }

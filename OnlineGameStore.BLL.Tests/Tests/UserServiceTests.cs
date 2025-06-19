@@ -28,7 +28,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetUserRolesAsync_UserExists_ReturnUser()
+    public async Task GetUserAsync_UserExists_ReturnUser()
     {
         var user = _data[0];
 
@@ -39,7 +39,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetUserRolesAsync_UserDoesNotExist_ReturnsNull()
+    public async Task GetUserAsync_UserDoesNotExist_ReturnsNull()
     {
         var nonExistentUserId = Guid.NewGuid();
 
