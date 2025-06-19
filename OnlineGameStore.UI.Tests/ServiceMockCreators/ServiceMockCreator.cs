@@ -75,6 +75,11 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
 
                 var entities = _data.Select(d => _mapper.Map<TEntity>(d)).AsQueryable();
 
+                /* NOTE: this include here is pointless as it only work with EF
+                if (include != null)
+                    entities = include(entities);
+                */
+
                 if (filter != null)
                     entities = entities.Where(filter);
 

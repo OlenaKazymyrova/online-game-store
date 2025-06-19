@@ -291,6 +291,30 @@ public class GamesControllerTests
         Assert.Equal(HttpStatusCode.NotFound, patchRequest.StatusCode);
     }
 
+    [Fact]
+    public async Task GetAsync_InvalidIncludeValues_ReturnsBadrRequest()
+    {
+        var getResponse = await _client.GetAsync("api/Games?include=genre,platform");
+        
+        Assert.Equal(HttpStatusCode.BadRequest, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAsync_DuplicateIncludeValues_ReturnsBadrRequest()
+    {
+        var getResponse = await _client.GetAsync("api/Games?include=genres,genres");
+
+        Assert.Equal(HttpStatusCode.BadRequest, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAsync_ValidIncludeValues_ReturnsBadrRequest()
+    {
+        var getResponse = await _client.GetAsync("api/Games?include=genres,platforms");
+
+        getResponse.EnsureSuccessStatusCode();
+    }
+
     private GameDto GetGameDto(
         string name = "Test Game",
         string description = "Test Description",
