@@ -3,6 +3,6 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IRoleService : IService<Role, RoleCreateDto, RoleReadDto, RoleCreateDto>
+public interface IRoleService : IService<Role, RoleCreateDto, RoleReadDto, RoleCreateDto, RoleReadDto>
 {
 }

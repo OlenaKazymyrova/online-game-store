@@ -6,7 +6,7 @@ using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateDto>, IUserService
+public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateDto, UserReadDto>, IUserService
 {
     public UserService(IUserRepository repository, IMapper mapper)
         : base(repository, mapper)

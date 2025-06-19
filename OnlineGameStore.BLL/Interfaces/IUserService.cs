@@ -3,6 +3,6 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IUserService : IService<User, UserCreateDto, UserReadDto, UserCreateDto>
+public interface IUserService : IService<User, UserCreateDto, UserReadDto, UserCreateDto, UserReadDto>
 {
 }
