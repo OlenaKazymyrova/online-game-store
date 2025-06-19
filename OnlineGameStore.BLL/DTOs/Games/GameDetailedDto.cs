@@ -10,7 +10,7 @@ public class GameDetailedDto
     public Guid Id { get; set; }
 
     [Required]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public string? Description { get; set; }
 
