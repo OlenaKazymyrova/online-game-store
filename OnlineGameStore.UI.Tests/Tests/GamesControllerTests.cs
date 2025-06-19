@@ -300,7 +300,7 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAsync_InvalidIncludeValues_ReturnsBadrRequest()
+    public async Task GetAsync_InvalidIncludeValues_ReturnsBadRequest()
     {
         var getResponse = await _client.GetAsync("api/Games?include=genre,platform");
 
@@ -308,7 +308,7 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAsync_DuplicateIncludeValues_ReturnsBadrRequest()
+    public async Task GetAsync_DuplicateIncludeValues_ReturnsBadRequest()
     {
         var getResponse = await _client.GetAsync("api/Games?include=genres,genres");
 
@@ -316,7 +316,7 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAsync_ValidIncludeValues_ReturnsBadrRequest()
+    public async Task GetAsync_ValidIncludeValues_ReturnsSuccessfulStatusCode()
     {
         var getResponse = await _client.GetAsync("api/Games?include=genres,platforms");
 
