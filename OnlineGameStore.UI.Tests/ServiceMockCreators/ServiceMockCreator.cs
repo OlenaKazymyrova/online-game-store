@@ -10,12 +10,12 @@ using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateDto, TService> : IMockCreator<TService>
+public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto, TService> : IMockCreator<TService>
     where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
-    where TService : class, IService<TEntity, TCreateDto, TReadDto, TUpdateDto>
+    where TService : class, IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
 {
     protected readonly List<TEntity> _data;
     protected readonly IMapper _mapper;
@@ -86,9 +86,9 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
 
                 // enhance or override in future for including parameter
 
-                return new PaginatedResponse<TReadDto>
+                return new PaginatedResponse<TDetailedDto>
                 {
-                    Items = _mapper.Map<IEnumerable<TReadDto>>(entities.ToList()),
+                    Items = _mapper.Map<IEnumerable<TDetailedDto>>(entities.ToList()),
                     Pagination = new PaginationMetadata
                     {
                         Page = pagingParams.Page,

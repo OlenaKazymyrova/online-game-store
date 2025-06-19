@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
@@ -19,7 +21,12 @@ public class GameServiceTests
 
     public GameServiceTests()
     {
-        var config = new MapperConfiguration(cfg => { cfg.AddProfile<BllGameMappingProfile>(); });
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<BllGameMappingProfile>();
+            cfg.AddProfile<BllGenreMappingProfile>();
+            cfg.AddProfile<BllPlatformMappingProfile>();
+        });
 
         _mapper = config.CreateMapper();
 
@@ -142,6 +149,32 @@ public class GameServiceTests
         var isPatched = await _gameService.PatchAsync(Guid.NewGuid(), patchDoc);
 
         Assert.False(isPatched);
+    }
+
+    [Fact]
+    public async Task GetAsync_IncludeIsProvidedAndNavigationPropertiesExist_ReturnsDetailedResponse()
+    {
+        // Note: this test highly depends on the current implementation of GameEntityGenerator(especially generation of Navigation properties)
+
+        var gameWithNav = _data[0];
+
+        var resultWithNav = await _gameService.GetAsync(
+            include: query =>
+            {
+                IQueryable<Game> result = query;
+
+                result = result.Include(game => game.Genres);
+
+                result = result.Include(game => game.Platforms);
+
+                return (IIncludableQueryable<Game, object>)result;
+            });
+
+        Assert.NotNull(resultWithNav);
+        Assert.NotNull(resultWithNav.Items.First());
+        Assert.NotNull(resultWithNav.Items.First().PlatformDtos.First());
+        Assert.NotNull(resultWithNav.Items.First().GenreDtos.First());
+        Assert.Equal(gameWithNav.Genres.First().Id, resultWithNav.Items.First().GenreDtos.First().Id);
     }
 
     [Fact]

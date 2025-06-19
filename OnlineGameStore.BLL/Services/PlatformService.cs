@@ -1,18 +1,16 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
-using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto>, IPlatformService
+public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDto>, IPlatformService
 {
     public PlatformService(IPlatformRepository repository, IMapper mapper)
         : base(repository, mapper)
-    {
-    }
+    { }
 
     public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
     {

@@ -9,6 +9,8 @@ public class BllPlatformMappingProfile : Profile
 {
     public BllPlatformMappingProfile()
     {
+        CreateMap<Platform, PlatformBasicDto>();
+
         CreateMap<Platform, PlatformDto>()
             .ForMember(dest => dest.GamesIds, opt => opt.MapFrom(src => src.Games.Select(game => game.Id)));
 

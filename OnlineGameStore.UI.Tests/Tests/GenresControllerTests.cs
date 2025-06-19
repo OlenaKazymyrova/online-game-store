@@ -1,6 +1,5 @@
 ﻿using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.BLL.Tests.DataGenerators;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.DataGenerators;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;

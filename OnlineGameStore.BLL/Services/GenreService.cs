@@ -6,7 +6,7 @@ using OnlineGameStore.BLL.DTOs.Genres;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class GenreService : Service<Genre, GenreCreateDto, GenreReadDto, GenreDto>, IGenreService
+public class GenreService : Service<Genre, GenreCreateDto, GenreReadDto, GenreDto, GenreReadDto>, IGenreService
 {
     public GenreService(IGenreRepository repository, IMapper mapper)
         : base(repository, mapper) { }

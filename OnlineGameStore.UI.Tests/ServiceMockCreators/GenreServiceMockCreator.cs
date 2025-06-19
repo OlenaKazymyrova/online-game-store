@@ -1,12 +1,11 @@
 ﻿using Moq;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto, GenreReadDto, GenreDto, IGenreService>
+public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto, GenreReadDto, GenreDto, GenreReadDto, IGenreService>
 {
     public GenreServiceMockCreator(List<Genre> data) : base(data) { }
 

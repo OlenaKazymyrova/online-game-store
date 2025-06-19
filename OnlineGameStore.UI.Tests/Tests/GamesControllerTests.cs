@@ -4,7 +4,6 @@ using System.Text;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
 using OnlineGameStore.BLL.Tests.DataGenerators;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using OnlineGameStore.SharedLogic.Pagination;
