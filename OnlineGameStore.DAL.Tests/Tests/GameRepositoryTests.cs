@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Repositories;
@@ -20,11 +19,7 @@ public class GameRepositoryTests
 
         Assert.NotNull(result);
         Assert.True(result.Id != Guid.Empty);
-        Assert.Equal(game.Name, result.Name);
-        Assert.Equal(game.Description, result.Description);
-        Assert.Equal(game.PublisherId, result.PublisherId);
-        Assert.Equal(game.Platforms, result.Platforms);
-        Assert.Equal(game.LicenseId, result.LicenseId);
+        Assert.Equivalent(game, result, strict: true);
     }
 
     [Fact]
@@ -36,13 +31,7 @@ public class GameRepositoryTests
         var result = await repository.GetByIdAsync(addedGame!.Id);
 
         Assert.NotNull(result);
-        Assert.Equal(addedGame.Id, result.Id);
-        Assert.Equal(addedGame.Name, result.Name);
-        Assert.Equal(addedGame.Description, result.Description);
-        Assert.Equal(game.PublisherId, result.PublisherId);
-        Assert.Equal(game.Platforms, result.Platforms);
-        Assert.Equal(game.Genres, result.Genres);
-        Assert.Equal(game.LicenseId, result.LicenseId);
+        Assert.Equivalent(addedGame, result, strict: true);
     }
 
     [Fact]
@@ -175,6 +164,7 @@ public class GameRepositoryTests
     }
 
     private Game GetGame(
+        Guid? id = null,
         string name = "Test Game",
         string description = "Test Description",
         decimal price = 59.99m,
@@ -182,7 +172,7 @@ public class GameRepositoryTests
     {
         return new Game
         {
-            Id = Guid.NewGuid(),
+            Id = id ?? Guid.NewGuid(),
             Name = name,
             Description = description,
             PublisherId = Guid.NewGuid(),
