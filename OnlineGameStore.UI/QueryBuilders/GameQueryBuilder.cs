@@ -16,23 +16,21 @@ public class GameQueryBuilder : IQueryBuilder<Game, GameAggregationParams>
 
         if (!string.IsNullOrWhiteSpace(aggregationParams.Q))
         {
-            string searchTerm = aggregationParams.Q.Trim().ToLower();
+            var searchTerm = aggregationParams.Q.Trim().ToLower();
             filters.Add(game =>
                 game.Name.ToLower().Contains(searchTerm) || game.Description.ToLower().Contains(searchTerm));
         }
 
-        if (aggregationParams.GenreId.HasValue)
+        if (aggregationParams.GenreId is Guid genreId)
         {
             RequiredIncludes.Add("genres");
-            Guid genreId = aggregationParams.GenreId.Value;
-            filters.Add(game => game.Genres.Any(genre => genre.Id == genreId));
+            filters.Add(game => game.Genres.Any(g => g.Id == genreId));
         }
 
-        if (aggregationParams.PlatformId.HasValue)
+        if (aggregationParams.PlatformId is Guid platformId)
         {
             RequiredIncludes.Add("platforms");
-            Guid platformId = aggregationParams.PlatformId.Value;
-            filters.Add(game => game.Platforms.Any(platform => platform.Id == platformId));
+            filters.Add(game => game.Platforms.Any(p => p.Id == platformId));
         }
 
         if (!string.IsNullOrWhiteSpace(aggregationParams.Name))
@@ -40,14 +38,14 @@ public class GameQueryBuilder : IQueryBuilder<Game, GameAggregationParams>
             filters.Add(game => game.Name.Contains(aggregationParams.Name));
         }
 
-        if (aggregationParams.MinPrice.HasValue)
+        if (aggregationParams.MinPrice is decimal minPrice)
         {
-            filters.Add(game => game.Price >= aggregationParams.MinPrice);
+            filters.Add(game => game.Price >= minPrice);
         }
 
-        if (aggregationParams.MaxPrice.HasValue)
+        if (aggregationParams.MaxPrice is decimal maxPrice)
         {
-            filters.Add(game => game.Price <= aggregationParams.MaxPrice);
+            filters.Add(game => game.Price <= maxPrice);
         }
 
         return filters.Count > 0 ? CombineFilters(filters) : null;
