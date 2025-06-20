@@ -25,14 +25,16 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
     {
         var paginatedResponse = await _repository.GetAsync(filter, orderBy, include, pagingParams);
 
+        var includeGenres = explicitIncludes?.Contains("genres") == true;
+        var includePlatforms = explicitIncludes?.Contains("platforms") == true;
+
         var mappedItems = _mapper.Map<IEnumerable<GameDetailedDto>>(
             paginatedResponse.Items,
             opts =>
             {
-                opts.Items["IncludeGenres"] = explicitIncludes?.Contains("genres") ?? false;
-                opts.Items["IncludePlatforms"] = explicitIncludes?.Contains("platforms") ?? false;
-            }
-        );
+                opts.Items["IncludeGenres"] = includeGenres;
+                opts.Items["IncludePlatforms"] = includePlatforms;
+            });
 
         return new PaginatedResponse<GameDetailedDto>
         {

@@ -9,8 +9,8 @@ using OnlineGameStore.SharedLogic.Pagination;
 namespace OnlineGameStore.BLL.Services;
 
 public abstract class
-    Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> : IService<TEntity, TCreateDto, TReadDto,
-    TUpdateDto, TDetailedDto>
+    Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> :
+    IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
     where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
