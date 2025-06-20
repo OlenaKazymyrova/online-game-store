@@ -8,11 +8,11 @@ namespace OnlineGameStore.UI.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly IUserService _service;
 
-    public AuthController(IUserService userService)
+    public AuthController(IUserService service)
     {
-        _userService = userService;
+        _service = service ?? throw new ArgumentNullException(nameof(service));
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RegisterUser([FromBody] UserCreateDto userCreateDto)
     {
-        var responseDto = await _userService.AddAsync(userCreateDto);
+        var responseDto = await _service.AddAsync(userCreateDto);
         if (responseDto == null)
             return BadRequest("User registration failed.");
 
