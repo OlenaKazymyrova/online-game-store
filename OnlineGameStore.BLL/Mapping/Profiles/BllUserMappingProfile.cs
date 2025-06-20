@@ -1,0 +1,21 @@
+using System.Security.Cryptography;
+using System.Text;
+using AutoMapper;
+using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.DAL.Entities;
+
+namespace OnlineGameStore.BLL.Mapping.Profiles;
+
+public class BllUserMappingProfile : Profile
+{
+    public BllUserMappingProfile()
+    {
+        CreateMap<UserCreateDto, User>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
+            .ForMember(dest => dest.PasswordHash,
+                opt =>
+                    opt.MapFrom(src => Encoding.UTF8.GetString(SHA256.HashData(Encoding.UTF8.GetBytes(src.Password)))));
+
+        CreateMap<User, UserReadDto>();
+    }
+}

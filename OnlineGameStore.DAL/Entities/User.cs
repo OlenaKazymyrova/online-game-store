@@ -7,7 +7,7 @@ public class User : TEntity
     [Required]
     public override Guid Id { get; set; } = Guid.NewGuid();
     [Required]
-    public required string UserName { get; set; }
+    public required string Username { get; set; }
     [Required]
     public required string Email { get; set; }
     [Required]

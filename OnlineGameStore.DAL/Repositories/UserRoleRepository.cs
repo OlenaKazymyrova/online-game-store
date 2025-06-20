@@ -22,6 +22,14 @@ public class UserRoleRepository : IUserRoleRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<User>> GetUsersByRoleAsync(Guid roleId)
+    {
+        return await _dbContext.UserRoles
+            .Where(ur => ur.RoleId == roleId)
+            .Select(ur => ur.User)
+            .ToListAsync();
+    }
+
     public async Task<bool> UserHasRoleAsync(Guid userId, Guid roleId)
     {
         return await _dbContext.UserRoles

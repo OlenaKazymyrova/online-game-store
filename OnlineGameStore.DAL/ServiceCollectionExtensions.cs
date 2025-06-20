@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlatformRepository, PlatformRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
         return services;
     }
