@@ -7,7 +7,7 @@ public class GameAggregationParams : AggregationParams
     public string? Q { get; set; }
     public Guid? GenreId { get; set; }
     public Guid? PlatformId { get; set; }
-    
+
     [RegularExpression("^(name|price|release[Dd]ate)$", ErrorMessage = "Invalid sortBy value. Allowed values: name, price, releaseDate.")]
     public override string SortBy { get; set; } = "name";
     public override string? Name { get; set; }
