@@ -5,6 +5,7 @@ using OnlineGameStore.BLL.DTOs.Users;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.SharedLogic.Constants;
 
 namespace OnlineGameStore.BLL.Services;
 
@@ -24,7 +25,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
             return null;
         }
 
-        if (user.PasswordHash.Length < 8)
+        if (user.PasswordHash.Length < UserConstants.PasswordMinLength)
         {
             return null;
         }
