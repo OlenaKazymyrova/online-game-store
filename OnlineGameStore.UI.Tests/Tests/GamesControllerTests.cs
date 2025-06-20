@@ -10,9 +10,6 @@ using OnlineGameStore.SharedLogic.Pagination;
 using OnlineGameStore.UI.Aggregation;
 using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.UI.QueryBuilders;
-using Newtonsoft.Json;
-using Xunit.Abstractions;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
@@ -362,7 +359,7 @@ public class GamesControllerTests
 
         var result = await getResponse.Content.ReadFromJsonAsync<PaginatedResponse<GameDetailedDto>>();
 
-        Assert.Single(result.Items);
+        Assert.Single(result!.Items);
         Assert.Equal(testGame.Name, result.Items.First().Name);
         Assert.Equal(genreId, result.Items.First().GenreDtos.Last().Id);
         Assert.Empty(result.Items.First().PlatformDtos);

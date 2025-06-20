@@ -66,13 +66,13 @@ public abstract class
                 It.IsAny<Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>(),
                 It.IsAny<PagingParams>(),
-                It.IsAny<HashSet<string>?>())) // Add explicitIncludes parameter
+                It.IsAny<HashSet<string>?>()))
             .ReturnsAsync((
                 Expression<Func<TEntity, bool>>? filter,
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
                 Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include,
                 PagingParams? pagingParams,
-                HashSet<string>? explicitIncludes) => // Capture explicitIncludes
+                HashSet<string>? explicitIncludes) =>
             {
                 pagingParams ??= new PagingParams();
 
@@ -139,7 +139,6 @@ public abstract class
                 It.IsAny<TCreateDto>()))
             .ReturnsAsync((Guid id, TCreateDto updateDto) =>
             {
-                //var id = (Guid)updateDto.GetType().GetProperty("Id")?.GetValue(updateDto)!;
                 var index = _data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
 
