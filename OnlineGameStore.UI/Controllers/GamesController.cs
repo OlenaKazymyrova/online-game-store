@@ -41,24 +41,22 @@ public class GamesController : ControllerBase
     /// Retrieves a list of games using pagination.
     /// </summary>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    /// <param name="gameFilters"> Specifies the possible filtering and ordering</param>
+    /// <param name="aggregationParams"> Specifies the possible filtering and ordering</param>
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedResponse<GameDetailedDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(
         [FromQuery] PagingParams pagingParams,
-        [FromQuery] GameAggregationParams gameFilters)
+        [FromQuery] GameAggregationParams aggregationParams)
     {
         var queryBuilder = new GameQueryBuilder();
 
-        var filter = queryBuilder.BuildFilter(gameFilters);
-        var orderBy = queryBuilder.BuildOrderBy(gameFilters);
-        var include = queryBuilder.BuildInclude(gameFilters);
+        var filter = queryBuilder.BuildFilter(aggregationParams);
+        var orderBy = queryBuilder.BuildOrderBy(aggregationParams);
+        var include = queryBuilder.BuildInclude(aggregationParams);
 
-        var explicitIncludes = gameFilters.Include?
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .ToHashSet() ?? new HashSet<string>();
+        var explicitIncludes = queryBuilder.GetExplicitIncludeSet(aggregationParams);
 
         var paginatedResponse = await _service.GetAsync(
             include: include,

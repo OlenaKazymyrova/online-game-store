@@ -98,6 +98,13 @@ public class GameQueryBuilder : IQueryBuilder<Game, GameAggregationParams>
         };
     }
 
+    public HashSet<string> GetExplicitIncludeSet(GameAggregationParams aggregationParams)
+    {
+        return aggregationParams.Include?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToHashSet() ?? new HashSet<string>();
+    }
+
     private static Expression<Func<Game, bool>> CombineFilters(List<Expression<Func<Game, bool>>> filters)
     {
         var parameter = Expression.Parameter(typeof(Game));
