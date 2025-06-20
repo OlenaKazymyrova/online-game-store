@@ -9,7 +9,8 @@ using OnlineGameStore.SharedLogic.Pagination;
 namespace OnlineGameStore.BLL.Services;
 
 public abstract class
-    Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> : IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
+    Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> : IService<TEntity, TCreateDto, TReadDto,
+    TUpdateDto, TDetailedDto>
     where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
@@ -34,7 +35,8 @@ public abstract class
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
-        PagingParams? pagingParams = null)
+        PagingParams? pagingParams = null,
+        HashSet<string>? explicitIncludes = null)
     {
         var paginatedResponse = await _repository.GetAsync(filter, orderBy, include, pagingParams);
 

@@ -162,18 +162,16 @@ public class GameServiceTests
             include: query =>
             {
                 IQueryable<Game> result = query;
-
                 result = result.Include(game => game.Genres);
-
                 result = result.Include(game => game.Platforms);
-
                 return (IIncludableQueryable<Game, object>)result;
-            });
+            },
+            explicitIncludes: new HashSet<string> { "genres", "platforms" });
 
         Assert.NotNull(resultWithNav);
         Assert.NotNull(resultWithNav.Items.First());
-        Assert.NotNull(resultWithNav.Items.First().PlatformDtos.First());
-        Assert.NotNull(resultWithNav.Items.First().GenreDtos.First());
+        Assert.NotNull(resultWithNav.Items.First().PlatformDtos);
+        Assert.NotNull(resultWithNav.Items.First().GenreDtos);
         Assert.Equal(gameWithNav.Genres.First().Id, resultWithNav.Items.First().GenreDtos.First().Id);
     }
 

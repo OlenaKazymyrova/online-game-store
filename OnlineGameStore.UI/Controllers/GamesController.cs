@@ -56,11 +56,16 @@ public class GamesController : ControllerBase
         var orderBy = queryBuilder.BuildOrderBy(gameFilters);
         var include = queryBuilder.BuildInclude(gameFilters);
 
+        var explicitIncludes = gameFilters.Include?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToHashSet() ?? new HashSet<string>();
+
         var paginatedResponse = await _service.GetAsync(
             include: include,
             filter: filter,
             orderBy: orderBy,
-            pagingParams: pagingParams
+            pagingParams: pagingParams,
+            explicitIncludes: explicitIncludes
         );
 
         return Ok(paginatedResponse);

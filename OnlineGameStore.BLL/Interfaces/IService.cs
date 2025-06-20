@@ -13,11 +13,14 @@ public interface IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDt
     where TUpdateDto : class
 {
     Task<TReadDto?> GetByIdAsync(Guid id);
+
     Task<PaginatedResponse<TDetailedDto>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
-        PagingParams? pagingParams = null);
+        PagingParams? pagingParams = null,
+        HashSet<string>? explicitIncludes = null);
+
     Task<TReadDto?> AddAsync(TCreateDto dto);
     Task<bool> UpdateAsync(Guid id, TCreateDto dto);
     Task<bool> PatchAsync(Guid id, JsonPatchDocument<TUpdateDto> patchDoc);

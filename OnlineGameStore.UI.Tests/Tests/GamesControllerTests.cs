@@ -9,17 +9,22 @@ using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using OnlineGameStore.SharedLogic.Pagination;
 using OnlineGameStore.UI.Aggregation;
 using OnlineGameStore.BLL.DTOs.Games;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.UI.QueryBuilders;
+using Newtonsoft.Json;
+using Xunit.Abstractions;
 
 namespace OnlineGameStore.UI.Tests.Tests;
 
 public class GamesControllerTests
 {
     private readonly HttpClient _client;
+    private List<Game> _data;
 
     public GamesControllerTests()
     {
-        var data = new GameEntityGenerator().Generate(100);
-        var mockCreator = new GameServiceMockCreator(data);
+        _data = new GameEntityGenerator().Generate(100);
+        var mockCreator = new GameServiceMockCreator(_data);
         var factory = new ControllerTestsHelper<IGameService>(mockCreator);
         _client = factory.CreateClient();
     }
@@ -322,6 +327,47 @@ public class GamesControllerTests
 
         getResponse.EnsureSuccessStatusCode();
     }
+
+
+    [Fact]
+    public async Task GetGames_WithAllFiltersAndSingleInclude_ReturnsFilteredResultsWithOnlyGenres()
+    {
+        var genreId = Guid.NewGuid();
+        var platformId = Guid.NewGuid();
+
+        var testGame = new Game()
+        {
+            Name = "The Witcher 3: Wild Hunt",
+            Description = "Action role-playing game set in an open world environment",
+            Price = 49.99m,
+            ReleaseDate = new DateTime(2015, 5, 19),
+            Platforms = new List<Platform>
+            {
+                new Platform { Id = platformId, Name = "PC" },
+                new Platform { Id = Guid.NewGuid(), Name = "PlayStation 4" }
+            },
+            Genres = new List<Genre>
+            {
+                new Genre { Id = Guid.NewGuid(), Name = "RPG", Description = "Role-playing game" },
+                new Genre { Id = genreId, Name = "Action", Description = "Action game" }
+            }
+        };
+
+        _data.Add(testGame);
+
+        var getResponse = await _client.GetAsync(
+            $"/api/games?q=witcher&genreId={genreId}&platformId={platformId}&include=genres");
+
+        getResponse.EnsureSuccessStatusCode();
+
+        var result = await getResponse.Content.ReadFromJsonAsync<PaginatedResponse<GameDetailedDto>>();
+
+        Assert.Single(result.Items);
+        Assert.Equal(testGame.Name, result.Items.First().Name);
+        Assert.Equal(genreId, result.Items.First().GenreDtos.Last().Id);
+        Assert.Empty(result.Items.First().PlatformDtos);
+    }
+
 
     private GameDto GetGameDto(
         string name = "Test Game",
