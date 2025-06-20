@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.DTOs.Users;
 using OnlineGameStore.BLL.Interfaces;
@@ -12,5 +13,33 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
     public UserService(IUserRepository repository, IMapper mapper)
         : base(repository, mapper)
     {
+    }
+
+    public override async Task<UserReadDto?> AddAsync(UserCreateDto dto)
+    {
+        var user = _mapper.Map<User>(dto);
+
+        if (user.PasswordHash.Length < 8)
+        {
+            return null;
+        }
+
+        User? responseDto;
+        try
+        {
+            responseDto = await _repository.AddAsync(user);
+        }
+        catch (DbUpdateException ex)
+        {
+            Console.WriteLine($"Error adding user: {ex.Message}");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+            return null;
+        }
+
+        return _mapper.Map<UserReadDto>(responseDto);
     }
 }
