@@ -18,7 +18,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
     public override async Task<UserReadDto?> AddAsync(UserCreateDto dto)
     {
         var user = _mapper.Map<User>(dto);
-        
+
         if (user == null)
         {
             return null;
