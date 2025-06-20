@@ -18,16 +18,21 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
     public override async Task<UserReadDto?> AddAsync(UserCreateDto dto)
     {
         var user = _mapper.Map<User>(dto);
+        
+        if (user == null)
+        {
+            return null;
+        }
 
         if (user.PasswordHash.Length < 8)
         {
             return null;
         }
 
-        User? responseDto;
         try
         {
-            responseDto = await _repository.AddAsync(user);
+            var responseDto = await _repository.AddAsync(user);
+            return _mapper.Map<UserReadDto>(responseDto);
         }
         catch (DbUpdateException ex)
         {
@@ -39,7 +44,5 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
             Console.WriteLine($"Unexpected error: {ex.Message}");
             return null;
         }
-
-        return _mapper.Map<UserReadDto>(responseDto);
     }
 }
