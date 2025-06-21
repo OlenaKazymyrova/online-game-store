@@ -1,6 +1,7 @@
 ﻿using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.DTOs.Platforms;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace OnlineGameStore.BLL.DTOs.Games;
 
@@ -26,9 +27,10 @@ public class GameDetailedDto
     public DateTime ReleaseDate { get; set; }
 
     [Required]
-    public ICollection<GenreBasicDto> GenreDtos { get; set; } = new List<GenreBasicDto>();
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ICollection<GenreBasicDto>? GenreDtos { get; set; }
 
     [Required]
-    public ICollection<PlatformBasicDto> PlatformDtos { get; set; } = new List<PlatformBasicDto>();
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ICollection<PlatformBasicDto>? PlatformDtos { get; set; }
 }
-

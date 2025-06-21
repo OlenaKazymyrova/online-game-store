@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace OnlineGameStore.BLL.DTOs.Games;
 
@@ -16,7 +17,9 @@ public class GameDto
     [Required]
     public DateTime ReleaseDate { get; set; }
     [Required]
-    public ICollection<Guid> GenresIds { get; set; } = new List<Guid>();
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ICollection<Guid>? GenresIds { get; set; } 
     [Required]
-    public ICollection<Guid> PlatformsIds { get; set; } = new List<Guid>();
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ICollection<Guid>? PlatformsIds { get; set; }
 }
