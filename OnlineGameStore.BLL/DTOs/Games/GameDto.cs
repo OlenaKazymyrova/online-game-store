@@ -18,8 +18,8 @@ public class GameDto
     public DateTime ReleaseDate { get; set; }
     [Required]
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public ICollection<Guid>? GenresIds { get; set; } 
+    public ICollection<Guid>? GenresIds { get; set; } = new List<Guid>();
     [Required]
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public ICollection<Guid>? PlatformsIds { get; set; }
+    public ICollection<Guid>? PlatformsIds { get; set; } = new List<Guid>();
 }

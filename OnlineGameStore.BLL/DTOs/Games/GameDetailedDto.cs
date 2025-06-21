@@ -28,9 +28,9 @@ public class GameDetailedDto
 
     [Required]
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public ICollection<GenreBasicDto>? GenreDtos { get; set; }
+    public ICollection<GenreBasicDto>? GenreDtos { get; set; } = new List<GenreBasicDto>();
 
     [Required]
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public ICollection<PlatformBasicDto>? PlatformDtos { get; set; }
+    public ICollection<PlatformBasicDto>? PlatformDtos { get; set; } = new List<PlatformBasicDto>();
 }
