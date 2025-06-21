@@ -34,6 +34,8 @@ public abstract class
             cfg.AddProfile<BllGameMappingProfile>();
             cfg.AddProfile<BllGenreMappingProfile>();
             cfg.AddProfile<BllPlatformMappingProfile>();
+            cfg.AddProfile<BllUserMappingProfile>();
+            cfg.AddProfile<BllRoleMappingProfile>();
         });
 
         configuration.AssertConfigurationIsValid();
