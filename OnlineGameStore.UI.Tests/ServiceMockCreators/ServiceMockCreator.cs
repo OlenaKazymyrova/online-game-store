@@ -10,7 +10,8 @@ using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto, TService> : IMockCreator<TService>
+public abstract class
+    ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto, TService> : IMockCreator<TService>
     where TEntity : DAL.Entities.TEntity
     where TCreateDto : class
     where TReadDto : class
@@ -64,12 +65,14 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
                 It.IsAny<Expression<Func<TEntity, bool>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>?>(),
                 It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>?>(),
-                It.IsAny<PagingParams>()))
+                It.IsAny<PagingParams>(),
+                It.IsAny<HashSet<string>?>()))
             .ReturnsAsync((
                 Expression<Func<TEntity, bool>>? filter,
                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy,
                 Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include,
-                PagingParams? pagingParams) =>
+                PagingParams? pagingParams,
+                HashSet<string>? explicitIncludes) =>
             {
                 pagingParams ??= new PagingParams();
 
@@ -86,20 +89,31 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
                 if (orderBy != null)
                     entities = orderBy(entities);
 
-                int skip = (pagingParams.Page - 1) * pagingParams.PageSize;
-                entities = entities.Skip(skip).Take(pagingParams.PageSize);
+                var totalCount = entities.Count();
 
-                // enhance or override in future for including parameter
+                var pagedEntities = entities
+                    .Skip((pagingParams.Page - 1) * pagingParams.PageSize)
+                    .Take(pagingParams.PageSize)
+                    .ToList();
+
+                var mappedItems = _mapper.Map<IEnumerable<TDetailedDto>>(
+                    pagedEntities,
+                    opts =>
+                    {
+                        opts.Items["IncludeGenres"] = explicitIncludes?.Contains("genres") ?? false;
+                        opts.Items["IncludePlatforms"] = explicitIncludes?.Contains("platforms") ?? false;
+                    }
+                );
 
                 return new PaginatedResponse<TDetailedDto>
                 {
-                    Items = _mapper.Map<IEnumerable<TDetailedDto>>(entities.ToList()),
+                    Items = mappedItems,
                     Pagination = new PaginationMetadata
                     {
                         Page = pagingParams.Page,
                         PageSize = pagingParams.PageSize,
-                        TotalItems = _data.Count(),
-                        TotalPages = (int)Math.Ceiling((double)_data.Count() / pagingParams.PageSize)
+                        TotalItems = totalCount,
+                        TotalPages = (int)Math.Ceiling((double)totalCount / pagingParams.PageSize)
                     }
                 };
             });
@@ -125,7 +139,6 @@ public abstract class ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateD
                 It.IsAny<TCreateDto>()))
             .ReturnsAsync((Guid id, TCreateDto updateDto) =>
             {
-                //var id = (Guid)updateDto.GetType().GetProperty("Id")?.GetValue(updateDto)!;
                 var index = _data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
 
