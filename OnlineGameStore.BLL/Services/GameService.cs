@@ -36,9 +36,18 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
                 opts.Items["IncludePlatforms"] = includePlatforms;
             });
 
+        var items = mappedItems.Select(game =>
+        {
+            if (!includeGenres)
+                game.GenreDtos = null;
+            if (!includePlatforms)
+                game.PlatformDtos = null;
+            return game;
+        });
+
         return new PaginatedResponse<GameDetailedDto>
         {
-            Items = mappedItems,
+            Items = items,
             Pagination = paginatedResponse.Pagination
         };
     }
