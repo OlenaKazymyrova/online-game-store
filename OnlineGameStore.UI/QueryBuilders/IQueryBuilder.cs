@@ -1,11 +1,13 @@
-﻿using OnlineGameStore.UI.Aggregation;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using OnlineGameStore.DAL.Entities;
 using System.Linq.Expressions;
 
 namespace OnlineGameStore.UI.QueryBuilders;
 
-public interface IQueryBuilder<TEntity, AggregationParams>
+public interface IQueryBuilder<TEntity, in TAggregationParams>
     where TEntity : DAL.Entities.TEntity
 {
-    public Expression<Func<TEntity, bool>>? BuildFilter(AggregationParams aggregationParams);
-    public Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> BuildOrderBy(AggregationParams aggregationParams);
+    public Expression<Func<TEntity, bool>>? BuildFilter(TAggregationParams aggregationParams);
+
+    public Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? BuildInclude(TAggregationParams aggregationParams);
 }

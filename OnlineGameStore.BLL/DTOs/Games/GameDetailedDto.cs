@@ -27,10 +27,10 @@ public class GameDetailedDto
     public DateTime ReleaseDate { get; set; }
 
     [Required]
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("genres", NullValueHandling = NullValueHandling.Ignore)]
     public ICollection<GenreBasicDto>? GenreDtos { get; set; } = new List<GenreBasicDto>();
 
     [Required]
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("platforms", NullValueHandling = NullValueHandling.Ignore)]
     public ICollection<PlatformBasicDto>? PlatformDtos { get; set; } = new List<PlatformBasicDto>();
 }
