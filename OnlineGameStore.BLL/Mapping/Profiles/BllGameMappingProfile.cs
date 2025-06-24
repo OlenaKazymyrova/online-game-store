@@ -24,6 +24,8 @@ public class BllGameMappingProfile : Profile
                 opt.MapFrom(src => src.Platforms ?? new List<Platform>());
             });
 
+        CreateMap<Game, GameBasicDto>();
+
         CreateMap<Game, GameDto>()
             .ForMember(dest => dest.PlatformsIds, opt => opt.MapFrom(src => src.Platforms.Select(p => p.Id)))
             .ForMember(dest => dest.GenresIds, opt => opt.MapFrom(src => src.Genres.Select(g => g.Id)));
