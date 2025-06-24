@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
+using OnlineGameStore.UI.Aggregation;
+using OnlineGameStore.UI.QueryBuilders;
 
 namespace OnlineGameStore.UI.Controllers;
 
@@ -50,12 +52,19 @@ public class PlatformsController : ControllerBase
     /// <summary>
     /// Retrieves the list of platforms using pagination.
     /// </summary>
+    /// <param name="aggregationParams"> Specifies possible include parameters.</param>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     [ProducesResponseType(typeof(PaginatedResponse<PlatformDto>), StatusCodes.Status200OK)]
     [HttpGet]
-    public async Task<IActionResult> GetAsync([FromQuery] PagingParams pagingParams)
+    public async Task<IActionResult> GetAsync([FromQuery] PlatformAggregationParams aggregationParams, [FromQuery] PagingParams pagingParams)
     {
-        var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
+        var queryBuilder = new PlatformQueryBuilder();
+
+        var include = queryBuilder.BuildInclude(aggregationParams);
+
+        var paginatedResponse = await _service.GetAsync(
+            include: include, 
+            pagingParams: pagingParams);
 
         return Ok(paginatedResponse);
     }

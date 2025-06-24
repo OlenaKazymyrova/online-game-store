@@ -3,14 +3,37 @@ using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
+using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDto>, IPlatformService
+public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDetailedDto>, IPlatformService
 {
     public PlatformService(IPlatformRepository repository, IMapper mapper)
         : base(repository, mapper)
     { }
+
+    public override async Task<PaginatedResponse<PlatformDetailedDto>> GetAsync(
+        Expression<Func<Platform, bool>>? filter = null,
+        Func<IQueryable<Platform>, IOrderedQueryable<Platform>>? orderBy = null,
+        Func<IQueryable<Platform>, IIncludableQueryable<Platform, object>>? include = null,
+        PagingParams? pagingParams = null,
+        HashSet<string>? explicitIncludes = null)
+    {
+        var paginatedResponse = await _repository.GetAsync(filter, orderBy, include, pagingParams);
+
+        var mappedItems = _mapper.Map<IEnumerable<PlatformDetailedDto>>(paginatedResponse.Items);
+
+        
+
+        return new PaginatedResponse<PlatformDetailedDto>
+        {
+            Items = _mapper.Map<IEnumerable<PlatformDetailedDto>>(paginatedResponse.Items),
+            Pagination = paginatedResponse.Pagination
+        };
+    }
 
     public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
     {
