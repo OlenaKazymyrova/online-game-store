@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.DAL.DBContext;
+using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Repositories;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
 namespace OnlineGameStore.DAL.Tests.Tests;
@@ -128,6 +132,27 @@ public class PlatformRepositoryTests
         var result = await repository.DeleteAsync(nonExistentId);
 
         Assert.False(result);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_PlatformWithGamesReferencePresent_ReturnsPlatfromWithReference()
+    {
+        var repository = _creator.Create();
+        var platform = GetPlatform();
+        platform.Games.Add(new Game
+        {
+            Id = Guid.NewGuid(),
+            Name = "cool game",
+            Description = "cool desc",
+            Price = 0,
+            ReleaseDate = DateTime.Now
+        });
+
+        var addedPlatform = await repository.AddAsync(platform);
+
+        var retrievedPlatform = await repository.GetByIdAsync(addedPlatform!.Id);
+
+        Assert.NotEmpty(retrievedPlatform!.Games);
     }
 
     private Platform GetPlatform(string name = "Test Platform")
