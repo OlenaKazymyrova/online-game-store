@@ -38,7 +38,7 @@ public class GenresController : ControllerBase
     /// </summary>
     /// <param name="aggregationParams"> Specifies the possible filtering and logic.</param>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    [ProducesResponseType(typeof(PaginatedResponse<GenreReadDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedResponse<GenreDetailedDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] GenreAggregationParams aggregationParams, [FromQuery] PagingParams pagingParams)

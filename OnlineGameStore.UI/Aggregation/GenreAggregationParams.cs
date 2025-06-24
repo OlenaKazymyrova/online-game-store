@@ -6,6 +6,9 @@ public class GenreAggregationParams
 {
     public Guid? ParentId { get; set; }
 
+    /// <summary>
+    /// Optional include parameter. Allowed values: games.
+    /// </summary>
     [RegularExpression(@"^([Gg]ames)", ErrorMessage = "Invalid include value. Allowed value: games.")]
     public string? Include { get; set; }
 }

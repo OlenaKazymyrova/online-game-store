@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto, GenreReadDto, GenreDto, GenreReadDto, IGenreService>
+public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto, GenreReadDto, GenreDto, GenreDetailedDto, IGenreService>
 {
     public GenreServiceMockCreator(List<Genre> data) : base(data) { }
 
