@@ -170,9 +170,9 @@ public class GameServiceTests
 
         Assert.NotNull(resultWithNav);
         Assert.NotNull(resultWithNav.Items.First());
-        Assert.NotNull(resultWithNav.Items.First().PlatformDtos);
-        Assert.NotNull(resultWithNav.Items.First().GenreDtos);
-        Assert.Equal(gameWithNav.Genres.First().Id, resultWithNav.Items.First().GenreDtos.First().Id);
+        Assert.NotNull(resultWithNav.Items.First().Platforms);
+        Assert.NotNull(resultWithNav.Items.First().Genres);
+        Assert.Equal(gameWithNav.Genres.First().Id, resultWithNav.Items.First().Genres.First().Id);
     }
 
     [Fact]

@@ -361,8 +361,8 @@ public class GamesControllerTests
 
         Assert.Single(result!.Items);
         Assert.Equal(testGame.Name, result.Items.First().Name);
-        Assert.Equal(genreId, result.Items.First().GenreDtos.Last().Id);
-        Assert.Empty(result.Items.First().PlatformDtos);
+        Assert.Equal(genreId, result.Items.First().Genres.Last().Id);
+        Assert.Empty(result.Items.First().Platforms);
     }
 
 

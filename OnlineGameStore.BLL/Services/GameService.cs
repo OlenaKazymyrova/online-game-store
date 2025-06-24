@@ -39,9 +39,9 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         var items = mappedItems.Select(game =>
         {
             if (!includeGenres)
-                game.GenreDtos = null;
+                game.Genres = null;
             if (!includePlatforms)
-                game.PlatformDtos = null;
+                game.Platforms = null;
             return game;
         });
 
