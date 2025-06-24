@@ -30,7 +30,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         {
             if (include is null)
                 platform.Games = null;
-            
+
             return platform;
         });
 

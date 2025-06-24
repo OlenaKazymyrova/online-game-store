@@ -63,7 +63,7 @@ public class PlatformsController : ControllerBase
         var include = queryBuilder.BuildInclude(aggregationParams);
 
         var paginatedResponse = await _service.GetAsync(
-            include: include, 
+            include: include,
             pagingParams: pagingParams);
 
         return Ok(paginatedResponse);
