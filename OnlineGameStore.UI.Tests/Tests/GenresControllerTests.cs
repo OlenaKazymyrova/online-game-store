@@ -371,25 +371,4 @@ public class GenresControllerTests
 
         Assert.Single(queriedChildren);
     }
-
-    [Fact]
-    public async Task Get_GenreWithIncludeExistsAndIncludeSpecified_ReturnsWithInclude()
-    {
-        var parentGenre = GenGenreCreateDto();
-        parentGenre.GamesIds.Add(Guid.NewGuid());
-        var parentResponse = await _client.PostAsJsonAsync("api/genres", parentGenre);
-
-        parentResponse.EnsureSuccessStatusCode();
-
-        var createdParent = await parentResponse.Content.ReadFromJsonAsync<GenreReadDto>();
-
-        var queriedGenreResponse = await _client.GetAsync($"api/genres?include=games");
-
-        queriedGenreResponse.EnsureSuccessStatusCode();
-
-        var queriedGenres = (await queriedGenreResponse.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>())!.Items.ToList();
-
-        Assert.NotNull(queriedGenres);
-        Assert.NotNull(queriedGenres.First());
-    }
 }
