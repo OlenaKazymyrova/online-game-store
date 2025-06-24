@@ -20,5 +20,4 @@ public class GameAggregationParams : AggregationParams
 
     [RegularExpression(@"^(genres|platforms)(,(?!\1)(genres|platforms))?$", ErrorMessage = "Invalid include value. Allowed values: genres, platforms.")]
     public string? Include { get; set; }
-
 }

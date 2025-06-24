@@ -26,11 +26,17 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
 
         var mappedItems = _mapper.Map<IEnumerable<PlatformDetailedDto>>(paginatedResponse.Items);
 
-        
+        var itemsWithInclude = mappedItems.Select(platform =>
+        {
+            if (include is null)
+                platform.Games = null;
+            
+            return platform;
+        });
 
         return new PaginatedResponse<PlatformDetailedDto>
         {
-            Items = _mapper.Map<IEnumerable<PlatformDetailedDto>>(paginatedResponse.Items),
+            Items = itemsWithInclude,
             Pagination = paginatedResponse.Pagination
         };
     }
