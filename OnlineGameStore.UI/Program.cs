@@ -3,7 +3,6 @@ using Microsoft.OpenApi.Models;
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
 using OnlineGameStore.UI.Services;
-using OnlineGameStore.DAL.DBContext;
 
 const string apiVersion = "1.0.0";
 const string documentName = "online-game-store-api";

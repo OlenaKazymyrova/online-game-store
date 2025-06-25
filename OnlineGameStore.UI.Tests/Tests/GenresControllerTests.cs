@@ -6,8 +6,6 @@ using OnlineGameStore.UI.Tests.ServiceMockCreators;
 using System.Net;
 using System.Net.Http.Json;
 using OnlineGameStore.SharedLogic.Pagination;
-using Microsoft.AspNetCore.Mvc;
-using Castle.Components.DictionaryAdapter.Xml;
 using OnlineGameStore.BLL.DTOs.Genres;
 
 namespace OnlineGameStore.UI.Tests.Tests;
@@ -339,5 +337,38 @@ public class GenresControllerTests
         Assert.NotNull(paginatedResponse2);
         Assert.NotEqual(paginatedResponse2.Items.Count(), paginatedResponse1.Items.Count());
         Assert.Equal(paginatedResponse1.Pagination.Page, paginatedResponse2.Pagination.Page);
+    }
+
+    [Fact]
+    public async Task Get_GenreWithParentIdPresentQueried_ReturnsGenreWithSpecifiedParentId()
+    {
+        var parentGenre = GenGenreCreateDto();
+
+        var parentResponse = await _client.PostAsJsonAsync("api/genres", parentGenre);
+
+        parentResponse.EnsureSuccessStatusCode();
+
+        var createdParent = await parentResponse.Content.ReadFromJsonAsync<GenreReadDto>();
+
+        Assert.NotNull(createdParent);
+
+        var childGenre = new GenreCreateDto
+        {
+            Name = "Child Genre",
+            Description = "Child Description",
+            ParentId = createdParent.Id
+        };
+
+        var childResponse = await _client.PostAsJsonAsync("api/genres", childGenre);
+
+        childResponse.EnsureSuccessStatusCode();
+
+        var queriedChildGenreResponse = await _client.GetAsync($"api/genres?parentId={createdParent.Id}");
+
+        queriedChildGenreResponse.EnsureSuccessStatusCode();
+
+        var queriedChildren = (await queriedChildGenreResponse.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>())!.Items;
+
+        Assert.Single(queriedChildren);
     }
 }

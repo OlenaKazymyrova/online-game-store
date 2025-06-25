@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Pagination;
+using OnlineGameStore.UI.Aggregation;
+using OnlineGameStore.UI.QueryBuilders;
 
 namespace OnlineGameStore.UI.Controllers;
 
@@ -33,13 +36,22 @@ public class GenresController : ControllerBase
     /// <summary>
     /// Retrieves the list of genres using pagination.
     /// </summary>
+    /// <param name="aggregationParams"> Specifies the possible filtering and logic.</param>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
-    [ProducesResponseType(typeof(PaginatedResponse<GenreReadDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PaginatedResponse<GenreDetailedDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] PagingParams pagingParams)
+    public async Task<IActionResult> Get([FromQuery] GenreAggregationParams aggregationParams, [FromQuery] PagingParams pagingParams)
     {
-        var paginatedResponse = await _service.GetAsync(pagingParams: pagingParams);
+        var queryBuilder = new GenreQueryBuilder();
+
+        var filter = queryBuilder.BuildFilter(aggregationParams);
+        var include = queryBuilder.BuildInclude(aggregationParams);
+
+        var paginatedResponse = await _service.GetAsync(
+            filter: filter,
+            include: include,
+            pagingParams: pagingParams);
 
         return Ok(paginatedResponse);
     }

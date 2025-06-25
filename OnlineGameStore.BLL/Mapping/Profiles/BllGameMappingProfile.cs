@@ -11,13 +11,13 @@ public class BllGameMappingProfile : Profile
     public BllGameMappingProfile()
     {
         CreateMap<Game, GameDetailedDto>()
-            .ForMember(dest => dest.GenreDtos, opt =>
+            .ForMember(dest => dest.Genres, opt =>
             {
                 opt.PreCondition((src, ctx) =>
                     ctx.Items.TryGetValue("IncludeGenres", out var include) && (bool)include);
                 opt.MapFrom(src => src.Genres ?? new List<Genre>());
             })
-            .ForMember(dest => dest.PlatformDtos, opt =>
+            .ForMember(dest => dest.Platforms, opt =>
             {
                 opt.PreCondition((src, ctx) =>
                     ctx.Items.TryGetValue("IncludePlatforms", out var include) && (bool)include);

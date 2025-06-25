@@ -2,15 +2,20 @@
 
 namespace OnlineGameStore.UI.Aggregation;
 
-public class GameAggregationParams : AggregationParams
+public class GameAggregationParams
 {
     public string? Q { get; set; }
+
     public Guid? GenreId { get; set; }
+
     public Guid? PlatformId { get; set; }
 
+    [RegularExpression("^(asc|desc)$", ErrorMessage = "Invalid sortOrder value. Allowed values: asc, desc.")]
+    public string SortOrder { get; set; } = "asc";
+
     [RegularExpression("^(name|price|release[Dd]ate)$", ErrorMessage = "Invalid sortBy value. Allowed values: name, price, releaseDate.")]
-    public override string SortBy { get; set; } = "name";
-    public override string? Name { get; set; }
+    public string SortBy { get; set; } = "name";
+    public string? Name { get; set; }
 
     [Range(0, double.MaxValue, ErrorMessage = "minPrice must be a non-negative number.")]
     public decimal? MinPrice { get; set; }

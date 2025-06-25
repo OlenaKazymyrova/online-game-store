@@ -1,11 +1,17 @@
-﻿using Moq;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using Moq;
 using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Interfaces;
+using OnlineGameStore.BLL.Services;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Pagination;
+using System.Linq.Expressions;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
-public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto, GenreReadDto, GenreDto, GenreReadDto, IGenreService>
+public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto, GenreReadDto, GenreDto, GenreDetailedDto, IGenreService>
 {
     public GenreServiceMockCreator(List<Genre> data) : base(data) { }
 
