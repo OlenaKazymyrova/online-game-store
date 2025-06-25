@@ -51,7 +51,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         var entity = HandleMappingException(dto);
 
         if (await NameExistsAsync(entity.Name))
-            throw new ValidationException("Name already exists.");
+            throw new ValidationException("Platform name already exists.");
 
         var addedEntity = await _repository.AddAsync(entity);
         return addedEntity == null ? null : _mapper.Map<PlatformDto>(addedEntity);
