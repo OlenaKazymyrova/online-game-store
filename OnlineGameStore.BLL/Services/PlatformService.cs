@@ -9,11 +9,13 @@ using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDetailedDto>, IPlatformService
+public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDetailedDto>,
+    IPlatformService
 {
     public PlatformService(IPlatformRepository repository, IMapper mapper)
         : base(repository, mapper)
-    { }
+    {
+    }
 
     public override async Task<PaginatedResponse<PlatformDetailedDto>> GetAsync(
         Expression<Func<Platform, bool>>? filter = null,
@@ -46,27 +48,10 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         if (dto is null)
             return null;
 
-        Platform entity;
-        try
-        {
-            entity = _mapper.Map<Platform>(dto);
-        }
-        catch (AutoMapperMappingException e)
-        {
-            Exception? inner = e.InnerException;
-
-            if (inner is AggregateException agg)
-                inner = agg.Flatten().InnerExceptions
-                    .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
-
-            if (inner is KeyNotFoundException)
-                return null;
-
-            throw;
-        }
+        var entity = HandleMappingException(dto);
 
         if (await NameExistsAsync(entity.Name))
-            throw new ValidationException("Platform name already exists.");
+            throw new ValidationException("Name already exists.");
 
         var addedEntity = await _repository.AddAsync(entity);
         return addedEntity == null ? null : _mapper.Map<PlatformDto>(addedEntity);
@@ -77,7 +62,8 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         if (dto is null)
             return false;
 
-        var entity = _mapper.Map<Platform>(dto);
+        var entity = HandleMappingException(dto);
+
         entity.Id = id;
 
         if (await NameExistsAsync(entity.Name, id))
@@ -96,5 +82,26 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
             filter: p => p.Name.Trim().ToLower() == normalizedName && (!excludeId.HasValue || p.Id != excludeId.Value));
 
         return existing.Items.Any();
+    }
+
+    private Platform HandleMappingException(PlatformCreateDto dto)
+    {
+        try
+        {
+            return _mapper.Map<Platform>(dto);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            Exception? inner = e.InnerException;
+
+            if (inner is AggregateException agg)
+                inner = agg.Flatten().InnerExceptions
+                    .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
+
+            if (inner is KeyNotFoundException knf)
+                throw new KeyNotFoundException($"Invalid reference: {knf.Message}");
+
+            throw;
+        }
     }
 }
