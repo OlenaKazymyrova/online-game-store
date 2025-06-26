@@ -144,9 +144,7 @@ public class UserRepositoryTests
     {
         var repository = _creator.Create();
 
-        var result = await repository.DeleteAsync(Guid.NewGuid());
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
     }
 
     private static User GetUser(

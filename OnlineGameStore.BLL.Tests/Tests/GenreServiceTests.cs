@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Genres;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -48,9 +49,7 @@ public class GenreServiceTests
     [Fact]
     public async Task GetByIdAsync_GenreDoesNotExist_ReturnsNull()
     {
-        var result = await _genreService.GetByIdAsync(Guid.NewGuid());
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _genreService.GetByIdAsync(Guid.NewGuid()));
     }
 
     [Fact]

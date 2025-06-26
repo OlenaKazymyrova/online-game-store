@@ -1,4 +1,5 @@
 using AutoMapper;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -124,7 +125,7 @@ public class UserRoleServiceTests
     {
         var userRole = _data[0];
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.UserHasRoleAsync(userRole.UserId, userRole.UserId));
     }
 
@@ -133,10 +134,10 @@ public class UserRoleServiceTests
     {
         var userRole = _data[0];
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.UserHasRoleAsync(Guid.Empty, userRole.RoleId));
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.UserHasRoleAsync(userRole.UserId, Guid.Empty));
     }
 
@@ -170,7 +171,7 @@ public class UserRoleServiceTests
         var nonExistentUserId = Guid.NewGuid();
         var nonExistentRoleId = Guid.NewGuid();
 
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () =>
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
             await _userRoleService.AddUserRoleAsync(nonExistentUserId, nonExistentRoleId));
     }
 
@@ -179,7 +180,7 @@ public class UserRoleServiceTests
     {
         var userRole = _data[0];
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.AddUserRoleAsync(userRole.UserId, userRole.UserId));
     }
 
@@ -188,10 +189,10 @@ public class UserRoleServiceTests
     {
         var userRole = _data[0];
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.AddUserRoleAsync(Guid.Empty, userRole.RoleId));
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.AddUserRoleAsync(userRole.UserId, Guid.Empty));
     }
 
@@ -225,7 +226,7 @@ public class UserRoleServiceTests
         var nonExistentUserId = Guid.NewGuid();
         var nonExistentRoleId = Guid.NewGuid();
 
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () =>
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
             await _userRoleService.RemoveUserRoleAsync(nonExistentUserId, nonExistentRoleId));
     }
 
@@ -234,7 +235,7 @@ public class UserRoleServiceTests
     {
         var userRole = _data[0];
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.RemoveUserRoleAsync(userRole.UserId, userRole.UserId));
     }
 
@@ -243,10 +244,10 @@ public class UserRoleServiceTests
     {
         var userRole = _data[0];
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.RemoveUserRoleAsync(Guid.Empty, userRole.RoleId));
 
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        await Assert.ThrowsAsync<ValidationException>(async () =>
             await _userRoleService.RemoveUserRoleAsync(userRole.UserId, Guid.Empty));
     }
 }

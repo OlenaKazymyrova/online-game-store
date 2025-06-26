@@ -153,9 +153,7 @@ public class GenreRepositoryTests
     {
         var repository = _creator.Create();
 
-        var result = await repository.UpdateAsync(_testParentGenre);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await repository.UpdateAsync(_testParentGenre));
     }
 
     [Fact]
@@ -175,9 +173,7 @@ public class GenreRepositoryTests
     {
         var repository = _creator.Create();
 
-        var result = await repository.DeleteAsync(Guid.NewGuid());
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
     }
 
     [Fact]

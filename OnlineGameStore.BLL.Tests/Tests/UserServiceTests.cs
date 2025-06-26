@@ -1,5 +1,6 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -44,9 +45,7 @@ public class UserServiceTests
     {
         var nonExistentUserId = Guid.NewGuid();
 
-        var result = await _userService.GetByIdAsync(nonExistentUserId);
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.GetByIdAsync(nonExistentUserId));
     }
 
     [Fact]
@@ -70,9 +69,7 @@ public class UserServiceTests
     {
         UserCreateDto? invalidUser = null;
 
-        var addedUser = await _userService.AddAsync(invalidUser);
-
-        Assert.Null(addedUser);
+        await Assert.ThrowsAsync<ValidationException>(async () => await _userService.AddAsync(invalidUser));
     }
 
     [Fact]
@@ -104,9 +101,8 @@ public class UserServiceTests
 
         UserCreateDto? invalidUserDto = null;
 
-        var isUpdated = await _userService.UpdateAsync(user.Id, invalidUserDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<ValidationException>(async () =>
+            await _userService.UpdateAsync(user.Id, invalidUserDto));
     }
 
     [Fact]
@@ -135,9 +131,7 @@ public class UserServiceTests
 
         Assert.True(isDeleted);
 
-        var deletedUser = await _userService.GetByIdAsync(user.Id);
-
-        Assert.Null(deletedUser);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.GetByIdAsync(user.Id));
     }
 
     [Fact]
