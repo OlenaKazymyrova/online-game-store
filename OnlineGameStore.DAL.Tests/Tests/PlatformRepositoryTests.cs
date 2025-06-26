@@ -124,7 +124,7 @@ public class PlatformRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_ReturnsFalseForNonExistentId()
+    public async Task DeleteAsync_NonExistentId_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
         var nonExistentId = Guid.NewGuid();

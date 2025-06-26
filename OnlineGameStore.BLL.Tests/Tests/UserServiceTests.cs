@@ -41,7 +41,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetUserAsync_UserDoesNotExist_ReturnsNull()
+    public async Task GetUserAsync_UserDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentUserId = Guid.NewGuid();
 
@@ -65,7 +65,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task AddUserAsync_InvalidUser_ReturnsNull()
+    public async Task AddUserAsync_InvalidUser_ThrowsValidationException()
     {
         UserCreateDto? invalidUser = null;
 
@@ -95,7 +95,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task UpdateUserAsync_InvalidData_ReturnsFalse()
+    public async Task UpdateUserAsync_InvalidData_ThrowsValidationException()
     {
         var user = _data[0];
 
@@ -123,7 +123,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task DeleteUserAsync_UserExists_ReturnsTrue()
+    public async Task DeleteUserAsync_UserExists_ThrowsNotFoundException()
     {
         var user = _data[0];
 

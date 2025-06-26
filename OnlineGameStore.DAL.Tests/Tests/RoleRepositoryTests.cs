@@ -116,7 +116,7 @@ public class RoleRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateAsync_RoleDoesNotExist_ReturnsException()
+    public async Task UpdateAsync_RoleDoesNotExist_ThrowsException()
     {
         var repository = _creator.Create();
         var role = GetRole();
@@ -140,7 +140,7 @@ public class RoleRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_RoleDoesNotExist_DoesNothing()
+    public async Task DeleteAsync_RoleDoesNotExist_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
 

@@ -40,7 +40,7 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task GetRoleAsync_RoleDoesNotExist_ReturnsNull()
+    public async Task GetRoleAsync_RoleDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentRoleId = Guid.NewGuid();
 
@@ -63,7 +63,7 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task AddRoleAsync_InvalidRole_ReturnsNull()
+    public async Task AddRoleAsync_InvalidRole_ThrowsValidationException()
     {
         RoleCreateDto? invalidRole = null;
 
@@ -92,7 +92,7 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task UpdateRoleAsync_InvalidData_ReturnsFalse()
+    public async Task UpdateRoleAsync_InvalidData_ThrowsValidationException()
     {
         var role = _data[0];
 
@@ -119,7 +119,7 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task DeleteRoleAsync_RoleExists_ReturnsTrue()
+    public async Task DeleteRoleAsync_RoleExists_ThrowsNotFoundException()
     {
         var role = _data[0];
 

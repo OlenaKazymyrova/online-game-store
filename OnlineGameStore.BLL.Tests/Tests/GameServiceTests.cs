@@ -53,7 +53,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_GameDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
         await Assert.ThrowsAsync<NotFoundException>(async () => await _gameService.GetByIdAsync(Guid.NewGuid()));
     }
@@ -140,7 +140,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task PatchAsync_GameDoesNotExist_ReturnsFalse()
+    public async Task PatchAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
         var patchDoc = new JsonPatchDocument<GameDto>();
         patchDoc.Replace(g => g.Name, "Non-existent Game");

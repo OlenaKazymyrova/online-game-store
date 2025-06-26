@@ -40,7 +40,7 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_PlatformDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_PlatformDoesNotExist_ThrowsNotFoundException()
     {
         await Assert.ThrowsAsync<NotFoundException>(async () => await _platformService.GetByIdAsync(Guid.NewGuid()));
     }
@@ -56,7 +56,7 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task AddAsync_ExistingPlatformName_ReturnsNull()
+    public async Task AddAsync_ExistingPlatformName_ThrowsValidationException()
     {
         var existing = _data[0];
         var duplicateDto = new PlatformCreateDto { Name = existing.Name };
@@ -77,7 +77,7 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_DuplicateName_ReturnsFalse()
+    public async Task UpdateAsync_DuplicateName_ThrowsConflictException()
     {
         var first = _data[0];
         var second = _data[1];

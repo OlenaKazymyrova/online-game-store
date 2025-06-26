@@ -149,7 +149,7 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateAsync_UpdateNonExistingGenre_Fails()
+    public async Task UpdateAsync_UpdateNonExistingGenre_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
 
@@ -169,7 +169,7 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_DeleteNonExistingGenre_Fails()
+    public async Task DeleteAsync_DeleteNonExistingGenre_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
 
@@ -209,7 +209,7 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task AddAsync_MultipleSameGenres_Fails()
+    public async Task AddAsync_MultipleSameGenres_ThrowsArgumentException()
     {
         var repository = _creator.Create();
 

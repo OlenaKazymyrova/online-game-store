@@ -47,7 +47,7 @@ public class GenreServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_GenreDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_GenreDoesNotExist_ThrowsNotFoundException()
     {
         await Assert.ThrowsAsync<NotFoundException>(async () => await _genreService.GetByIdAsync(Guid.NewGuid()));
     }

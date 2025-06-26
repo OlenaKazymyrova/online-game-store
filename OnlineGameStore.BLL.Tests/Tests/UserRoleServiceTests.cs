@@ -101,27 +101,27 @@ public class UserRoleServiceTests
     }
 
     [Fact]
-    public async Task UserHasRoleAsync_NonExistingUser_ThrowsException()
+    public async Task UserHasRoleAsync_NonExistingUser_ThrowsNotFoundException()
     {
         var userRole = _data[0];
         var nonExistentUserId = Guid.NewGuid();
 
-        await Assert.ThrowsAnyAsync<Exception>(async () =>
+        await Assert.ThrowsAnyAsync<NotFoundException>(async () =>
             await _userRoleService.AddUserRoleAsync(nonExistentUserId, userRole.RoleId));
     }
 
     [Fact]
-    public async Task UserHasRoleAsync_NonExistingRole_ThrowsKeyNotFoundException()
+    public async Task UserHasRoleAsync_NonExistingRole_ThrowsNotFoundException()
     {
         var userRole = _data[0];
         var nonExistentRoleId = Guid.NewGuid();
 
-        await Assert.ThrowsAnyAsync<Exception>(async () =>
+        await Assert.ThrowsAnyAsync<NotFoundException>(async () =>
             await _userRoleService.AddUserRoleAsync(userRole.UserId, nonExistentRoleId));
     }
 
     [Fact]
-    public async Task UserHasRoleAsync_UserIdAndRoleIdAreEqual_ThrowsArgumentException()
+    public async Task UserHasRoleAsync_UserIdAndRoleIdAreEqual_ThrowsValidationException()
     {
         var userRole = _data[0];
 
@@ -130,7 +130,7 @@ public class UserRoleServiceTests
     }
 
     [Fact]
-    public async Task UserHasRoleAsync_UserIdOrRoleIdIsEmpty_ThrowsArgumentException()
+    public async Task UserHasRoleAsync_UserIdOrRoleIdIsEmpty_ThrowsValidationException()
     {
         var userRole = _data[0];
 
