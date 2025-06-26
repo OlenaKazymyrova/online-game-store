@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.OpenApi.Models;
 using OnlineGameStore.BLL;
 using OnlineGameStore.DAL;
+using OnlineGameStore.UI.Middleware;
 using OnlineGameStore.UI.Services;
 
 const string apiVersion = "1.0.0";
@@ -22,12 +23,11 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDalServices(builder.Configuration);
 builder.Services.AddBllServices();
-builder.Services.AddHostedService<RoleSeederService>();
 
+builder.Services.AddHostedService<RoleSeederService>();
 builder.Services.AddHostedService<AdminSeederService>();
 
 var app = builder.Build();
@@ -41,6 +41,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 //app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
