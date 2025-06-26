@@ -72,10 +72,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<TEntity?> AddAsync(TEntity entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        ArgumentNullException.ThrowIfNull(entity);
 
         try
         {
@@ -97,10 +94,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        ArgumentNullException.ThrowIfNull(entity);
 
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
@@ -128,7 +122,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
         if (entity is null)
         {
-            return false;
+            throw new ArgumentNullException(nameof(entity), "Entity not found.");
         }
 
         try
