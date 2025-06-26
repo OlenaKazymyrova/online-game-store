@@ -44,7 +44,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         };
     }
 
-    public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
+    public override async Task<PlatformDto> AddAsync(PlatformCreateDto? dto)
     {
         if (dto is null)
             throw new ValidationException("PlatformCreateDto is required for create.");
@@ -105,7 +105,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         entity.Id = id;
 
         if (await NameExistsAsync(entity.Name, id))
-            throw new ValidationException("Platform name already exists.");
+            throw new ConflictException("Platform name already exists.");
 
         return await _repository.UpdateAsync(entity);
     }

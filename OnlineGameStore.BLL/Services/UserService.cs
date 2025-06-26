@@ -17,7 +17,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
     {
     }
 
-    public override async Task<UserReadDto?> AddAsync(UserCreateDto dto)
+    public override async Task<UserReadDto> AddAsync(UserCreateDto dto)
     {
         if (dto == null)
             throw new ValidationException("UserCreateDto is required for create.");

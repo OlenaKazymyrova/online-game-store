@@ -27,6 +27,8 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddDalServices(builder.Configuration);
 builder.Services.AddBllServices();
 
+builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
+
 builder.Services.AddHostedService<RoleSeederService>();
 builder.Services.AddHostedService<AdminSeederService>();
 

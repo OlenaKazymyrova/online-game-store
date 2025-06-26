@@ -1,7 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using Moq;
 using OnlineGameStore.BLL.DTOs.Platforms;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
@@ -44,7 +45,7 @@ public class PlatformServiceMockCreator
                         p.Name.Equals(updateDto.Name, StringComparison.OrdinalIgnoreCase)
                         && p.Id != id))
                 {
-                    throw new ValidationException("Platform name already exists.");
+                    throw new ConflictException("Platform name already exists.");
                 }
 
                 var entity = _mapper.Map<Platform>(updateDto);
