@@ -29,8 +29,7 @@ public class GenresController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var dto = await _service.GetByIdAsync(id);
-
-        return (dto is null) ? NotFound() : Ok(dto);
+        return Ok(dto);
     }
 
     /// <summary>
@@ -65,18 +64,7 @@ public class GenresController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] GenreCreateDto dto)
     {
-        if (dto is null)
-        {
-            return BadRequest("Genre data is invalid or not present");
-        }
-
         var createdGenre = await _service.AddAsync(dto);
-
-        if (createdGenre is null)
-        {
-            return BadRequest();
-        }
-
         return CreatedAtAction(
             nameof(GetById),
             new { id = createdGenre.Id },
@@ -96,14 +84,8 @@ public class GenresController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] GenreCreateDto genreDto)
     {
-        if (genreDto is null)
-        {
-            return BadRequest("Genre data is required");
-        }
-
         var isUpdated = await _service.UpdateAsync(id, genreDto);
-
-        return (isUpdated) ? Ok() : NotFound();
+        return isUpdated ? Ok() : NotFound();
     }
 
     /// <summary>
