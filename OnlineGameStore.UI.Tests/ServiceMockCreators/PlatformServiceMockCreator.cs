@@ -20,7 +20,7 @@ public class PlatformServiceMockCreator
             {
                 if (_data.Any(p => p.Name.Equals(createDto.Name, StringComparison.OrdinalIgnoreCase)))
                 {
-                    throw new ValidationException("Platform name already exists.");
+                    throw new ConflictException("Platform name already exists.");
                 }
 
                 var entity = _mapper.Map<Platform>(createDto);
@@ -38,7 +38,7 @@ public class PlatformServiceMockCreator
                 int index = _data.FindIndex(p => p.Id == id);
                 if (index == -1)
                 {
-                    return false;
+                    throw new NotFoundException($"Platform with ID {id} not found.");
                 }
 
                 if (_data.Any(p =>

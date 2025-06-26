@@ -83,7 +83,7 @@ public class PlatformServiceTests
         var second = _data[1];
 
         var updateDto = new PlatformCreateDto { Name = first.Name };
-        var exception = await Assert.ThrowsAsync<Exceptions.ValidationException>(() => _platformService.UpdateAsync(second.Id, updateDto));
+        var exception = await Assert.ThrowsAsync<ConflictException>(() => _platformService.UpdateAsync(second.Id, updateDto));
 
         Assert.Equal("Platform name already exists.", exception.Message);
     }

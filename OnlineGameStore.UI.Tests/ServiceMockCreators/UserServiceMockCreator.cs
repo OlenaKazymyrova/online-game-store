@@ -1,5 +1,6 @@
 using Moq;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 
@@ -22,12 +23,12 @@ public class UserServiceMockCreator :
 
                 if (_data.Any(u => u.Username == user.Username))
                 {
-                    return null;
+                    throw new ConflictException("Username already exists.");
                 }
 
                 if (_data.Any(u => u.Email == user.Email))
                 {
-                    return null;
+                    throw new ConflictException("Email already exists.");
                 }
 
                 _data.Add(user);
