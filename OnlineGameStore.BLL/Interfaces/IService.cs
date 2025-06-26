@@ -21,7 +21,7 @@ public interface IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDt
         PagingParams? pagingParams = null,
         HashSet<string>? explicitIncludes = null);
 
-    Task<TReadDto?> AddAsync(TCreateDto dto);
+    Task<TReadDto> AddAsync(TCreateDto dto);
     Task<bool> UpdateAsync(Guid id, TCreateDto dto);
     Task<bool> PatchAsync(Guid id, JsonPatchDocument<TUpdateDto> patchDoc);
     Task<bool> DeleteAsync(Guid id);

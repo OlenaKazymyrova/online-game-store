@@ -52,7 +52,7 @@ public abstract class
         };
     }
 
-    public virtual async Task<TReadDto?> AddAsync(TCreateDto dto)
+    public virtual async Task<TReadDto> AddAsync(TCreateDto dto)
     {
         if (dto is null)
             throw new ValidationException("DTO is required for create.");
