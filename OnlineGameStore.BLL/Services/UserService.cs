@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
@@ -18,17 +19,13 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
 
     public override async Task<UserReadDto?> AddAsync(UserCreateDto dto)
     {
+        if (dto == null)
+            throw new ValidationException("UserCreateDto is required for create.");
+
         var user = _mapper.Map<User>(dto);
 
         if (user == null)
-        {
-            return null;
-        }
-
-        if (user.PasswordHash.Length < UserConstants.PasswordMinLength)
-        {
-            return null;
-        }
+            throw new ValidationException("Failed to map UserCreateDto to User entity.");
 
         try
         {
@@ -38,12 +35,13 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         catch (DbUpdateException ex)
         {
             Console.WriteLine($"Error adding user: {ex.Message}");
-            return null;
+            throw new ConflictException("Failed to add user. Please check the data and try again.");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Unexpected error: {ex.Message}");
-            return null;
+            throw new InternalErrorException(
+                "An unexpected error occurred while adding the user. Please try again later.");
         }
     }
 }

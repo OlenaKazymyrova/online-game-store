@@ -2,18 +2,21 @@ using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Services;
 
-public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDetailedDto>, IPlatformService
+public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDetailedDto>,
+    IPlatformService
 {
     public PlatformService(IPlatformRepository repository, IMapper mapper)
         : base(repository, mapper)
-    { }
+    {
+    }
 
     public override async Task<PaginatedResponse<PlatformDetailedDto>> GetAsync(
         Expression<Func<Platform, bool>>? filter = null,
@@ -44,7 +47,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
     public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
     {
         if (dto is null)
-            return null;
+            throw new ValidationException("PlatformCreateDto is required for create.");
 
         Platform entity;
         try
@@ -60,16 +63,37 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
                     .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                return null;
+                throw new NotFoundException("One or more properties in the DTO were not found in the entity.");
 
-            throw;
+            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.");
         }
 
         if (await NameExistsAsync(entity.Name))
             throw new ValidationException("Platform name already exists.");
 
-        var addedEntity = await _repository.AddAsync(entity);
-        return addedEntity == null ? null : _mapper.Map<PlatformDto>(addedEntity);
+        Platform? addedEntity;
+        try
+        {
+            addedEntity = await _repository.AddAsync(entity);
+        }
+        catch (ArgumentNullException)
+        {
+            throw new ValidationException("PlatformCreateDto cannot be null.");
+        }
+        catch (DbUpdateException)
+        {
+            throw new ConflictException("Failed to add platform. Please check the data and try again.");
+        }
+        catch (Exception)
+        {
+            throw new InternalErrorException(
+                "An unexpected error occurred while adding the platform. Please try again later.");
+        }
+
+        if (addedEntity == null)
+            throw new BadRequestException("An unexpected error occurred while adding the platform.");
+
+        return _mapper.Map<PlatformDto>(addedEntity);
     }
 
     public override async Task<bool> UpdateAsync(Guid id, PlatformCreateDto? dto)
