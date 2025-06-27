@@ -107,7 +107,27 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         if (await NameExistsAsync(entity.Name, id))
             throw new ConflictException("Platform name already exists.");
 
-        return await _repository.UpdateAsync(entity);
+        try
+        {
+            return await _repository.UpdateAsync(entity);
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("PlatformCreateDto cannot be null.", ex);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new NotFoundException("Platform not found or has been modified by another user.", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("Failed to update platform. Please check the data and try again.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException(
+                "An unexpected error occurred while updating the platform. Please try again later.", ex);
+        }
     }
 
     private async Task<bool> NameExistsAsync(string name, Guid? excludeId = null)

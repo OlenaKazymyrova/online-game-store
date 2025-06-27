@@ -122,7 +122,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
         if (entity is null)
         {
-            throw new NullReferenceException("Entity not found.");
+            throw new KeyNotFoundException("Entity not found.");
         }
 
         try

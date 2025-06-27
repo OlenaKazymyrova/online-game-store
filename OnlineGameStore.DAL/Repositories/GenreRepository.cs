@@ -15,7 +15,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
 
         if (!isParentGenreValid)
         {
-            throw new NullReferenceException("Parent genre not found.");
+            throw new KeyNotFoundException("Parent genre not found.");
         }
 
         try
@@ -51,7 +51,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         var existingGenre = await _dbSet.FindAsync(entity.Id);
 
         if (existingGenre is null)
-            throw new NullReferenceException("Genre not found.");
+            throw new KeyNotFoundException("Genre not found.");
 
         var isParentGenreValid = await IsParentGenreValidAsync(entity.Id, entity.ParentId);
 
@@ -84,7 +84,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         var existingGenre = await _dbSet.FindAsync(id);
 
         if (existingGenre is null)
-            throw new NullReferenceException("Genre not found.");
+            throw new KeyNotFoundException("Genre not found.");
 
         if (existingGenre.ParentId is null)
         {

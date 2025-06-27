@@ -117,7 +117,7 @@ public abstract class
         {
             throw new ValidationException("Entity cannot be null.", ex);
         }
-        catch (NullReferenceException ex)
+        catch (KeyNotFoundException ex)
         {
             throw new NotFoundException("Entity not found.", ex);
         }
@@ -155,7 +155,7 @@ public abstract class
         {
             throw new ValidationException("Entity cannot be null.", ex);
         }
-        catch (NullReferenceException ex)
+        catch (KeyNotFoundException ex)
         {
             throw new NotFoundException("Entity not found.", ex);
         }
@@ -179,7 +179,7 @@ public abstract class
         {
             throw new ValidationException("ID is required for deletion.", ex);
         }
-        catch (NullReferenceException ex)
+        catch (KeyNotFoundException ex)
         {
             throw new NotFoundException("Entity not found.", ex);
         }

@@ -24,7 +24,12 @@ public class ExceptionHandlingMiddleware : IMiddleware
         }
         catch (HttpException ex)
         {
-            _logger.LogError(ex, "Unhandled exception occurred. TraceId: {TraceId}", traceId);
+            _logger.LogError(ex, "Exception occurred. TraceId: {TraceId}", traceId);
+            if (ex.InnerException != null)
+            {
+                _logger.LogError("Inner Exception: {InnerException}", ex.InnerException);
+            }
+
             await HandleExceptionAsync(context, ex, traceId);
         }
     }
