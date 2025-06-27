@@ -63,9 +63,9 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
                     .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more properties in the DTO were not found in the entity.");
+                throw new NotFoundException("One or more properties in the DTO were not found in the entity.", inner);
 
-            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.");
+            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.", inner);
         }
 
         if (await NameExistsAsync(entity.Name))
@@ -76,18 +76,18 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         {
             addedEntity = await _repository.AddAsync(entity);
         }
-        catch (ArgumentNullException)
+        catch (ArgumentNullException ex)
         {
-            throw new ValidationException("PlatformCreateDto cannot be null.");
+            throw new ValidationException("PlatformCreateDto cannot be null.", ex);
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException ex)
         {
-            throw new ConflictException("Failed to add platform. Please check the data and try again.");
+            throw new ConflictException("Failed to add platform. Please check the data and try again.", ex);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             throw new InternalErrorException(
-                "An unexpected error occurred while adding the platform. Please try again later.");
+                "An unexpected error occurred while adding the platform. Please try again later.", ex);
         }
 
         if (addedEntity == null)

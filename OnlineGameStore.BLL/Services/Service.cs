@@ -72,9 +72,9 @@ public abstract class
                     .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more properties in the DTO were not found in the entity.");
+                throw new NotFoundException("One or more properties in the DTO were not found in the entity.", inner);
 
-            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.");
+            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.", inner);
         }
 
         TEntity? addedEntity;
@@ -82,17 +82,17 @@ public abstract class
         {
             addedEntity = await _repository.AddAsync(entity);
         }
-        catch (ArgumentNullException)
+        catch (ArgumentNullException ex)
         {
-            throw new ValidationException("Entity cannot be null.");
+            throw new ValidationException("Entity cannot be null.", ex);
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException ex)
         {
-            throw new ConflictException("An error occurred while adding the entity. It may already exist.");
+            throw new ConflictException("An error occurred while adding the entity. It may already exist.", ex);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new InternalErrorException("An unexpected error occurred while adding the entity.");
+            throw new InternalErrorException("An unexpected error occurred while adding the entity.", ex);
         }
 
         if (addedEntity == null)
@@ -113,17 +113,21 @@ public abstract class
         {
             return await _repository.UpdateAsync(entity);
         }
-        catch (ArgumentNullException)
+        catch (ArgumentNullException ex)
         {
-            throw new NotFoundException("Entity not found.");
+            throw new ValidationException("Entity cannot be null.", ex);
         }
-        catch (DbUpdateException)
+        catch (NullReferenceException ex)
         {
-            throw new ConflictException("An error occurred while updating the entity.");
+            throw new NotFoundException("Entity not found.", ex);
         }
-        catch (Exception)
+        catch (DbUpdateException ex)
         {
-            throw new InternalErrorException("An unexpected error occurred while updating the entity.");
+            throw new ConflictException("An error occurred while updating the entity.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while updating the entity.", ex);
         }
     }
 
@@ -147,17 +151,21 @@ public abstract class
         {
             return await _repository.UpdateAsync(entity);
         }
-        catch (ArgumentNullException)
+        catch (ArgumentNullException ex)
         {
-            throw new ValidationException("Entity cannot be null.");
+            throw new ValidationException("Entity cannot be null.", ex);
         }
-        catch (DbUpdateException)
+        catch (NullReferenceException ex)
         {
-            throw new ConflictException("An error occurred while updating the entity.");
+            throw new NotFoundException("Entity not found.", ex);
         }
-        catch (Exception)
+        catch (DbUpdateException ex)
         {
-            throw new InternalErrorException("An unexpected error occurred while updating the entity.");
+            throw new ConflictException("An error occurred while updating the entity.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while updating the entity.", ex);
         }
     }
 
@@ -167,17 +175,21 @@ public abstract class
         {
             return await _repository.DeleteAsync(id);
         }
-        catch (ArgumentNullException)
+        catch (ArgumentNullException ex)
         {
-            throw new NotFoundException("Entity not found.");
+            throw new ValidationException("ID is required for deletion.", ex);
         }
-        catch (DbUpdateException)
+        catch (NullReferenceException ex)
         {
-            throw new ConflictException("An error occurred while deleting the entity.");
+            throw new NotFoundException("Entity not found.", ex);
         }
-        catch (Exception)
+        catch (DbUpdateException ex)
         {
-            throw new InternalErrorException("An unexpected error occurred while deleting the entity.");
+            throw new ConflictException("An error occurred while deleting the entity.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while deleting the entity.", ex);
         }
     }
 }

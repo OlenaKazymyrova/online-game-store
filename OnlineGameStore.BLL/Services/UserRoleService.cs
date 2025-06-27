@@ -1,4 +1,6 @@
+using System.Runtime.CompilerServices;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.DTOs.Roles;
 using OnlineGameStore.BLL.DTOs.Users;
@@ -49,7 +51,18 @@ public class UserRoleService : IUserRoleService
         CheckGuids(userId, roleId);
         await CheckEntityExistence(userId, roleId);
 
-        return await _userRoleRepository.AddUserRoleAsync(userId, roleId);
+        try
+        {
+            return await _userRoleRepository.AddUserRoleAsync(userId, roleId);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("Failed to remove user role due to a database update error.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while removing the user role.", ex);
+        }
     }
 
     public async Task<bool> RemoveUserRoleAsync(Guid userId, Guid roleId)
@@ -57,7 +70,18 @@ public class UserRoleService : IUserRoleService
         CheckGuids(userId, roleId);
         await CheckEntityExistence(userId, roleId);
 
-        return await _userRoleRepository.RemoveUserRoleAsync(userId, roleId);
+        try
+        {
+            return await _userRoleRepository.RemoveUserRoleAsync(userId, roleId);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("Failed to remove user role due to a database update error.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while removing the user role.", ex);
+        }
     }
 
     private void CheckGuids(Guid userId, Guid roleId)

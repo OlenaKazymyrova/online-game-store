@@ -32,16 +32,18 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
             var responseDto = await _repository.AddAsync(user);
             return _mapper.Map<UserReadDto>(responseDto);
         }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("UserCreateDto cannot be null. Please provide valid user data.", ex);
+        }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine($"Error adding user: {ex.Message}");
-            throw new ConflictException("Failed to add user. Please check the data and try again.");
+            throw new ConflictException("Failed to add user. Please check the data and try again.", ex);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
             throw new InternalErrorException(
-                "An unexpected error occurred while adding the user. Please try again later.");
+                "An unexpected error occurred while adding the user. Please try again later.", ex);
         }
     }
 }
