@@ -57,9 +57,8 @@ public class GenreRepositoryTests
 
         var genre = _testParentGenre;
         genre.ParentId = genre.Id;
-        var result = await repository.AddAsync(genre);
 
-        Assert.Null(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.AddAsync(genre));
     }
 
     [Fact]
@@ -153,7 +152,7 @@ public class GenreRepositoryTests
     {
         var repository = _creator.Create();
 
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await repository.UpdateAsync(_testParentGenre));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.UpdateAsync(_testParentGenre));
     }
 
     [Fact]
@@ -173,7 +172,7 @@ public class GenreRepositoryTests
     {
         var repository = _creator.Create();
 
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
     }
 
     [Fact]
@@ -229,10 +228,7 @@ public class GenreRepositoryTests
     {
         var repository = _creator.Create();
 
-
-        var result = await repository.AddAsync(_testChildGenre);
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.AddAsync(_testChildGenre));
     }
 
     // #####################

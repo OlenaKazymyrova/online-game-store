@@ -144,7 +144,7 @@ public class UserRepositoryTests
     {
         var repository = _creator.Create();
 
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
     }
 
     private static User GetUser(

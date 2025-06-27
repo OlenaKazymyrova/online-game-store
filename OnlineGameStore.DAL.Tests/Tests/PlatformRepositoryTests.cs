@@ -129,7 +129,7 @@ public class PlatformRepositoryTests
         var repository = _creator.Create();
         var nonExistentId = Guid.NewGuid();
 
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await repository.DeleteAsync(nonExistentId));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.DeleteAsync(nonExistentId));
     }
 
     [Fact]
