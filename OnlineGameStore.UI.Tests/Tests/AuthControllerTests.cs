@@ -51,7 +51,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Register_UsernameAlreadyExists_ReturnsBadRequest()
+    public async Task Register_UsernameAlreadyExists_ReturnsConflict()
     {
         var request1 = new UserCreateDto
         {
@@ -77,7 +77,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Register_EmailAlreadyExists_ReturnsBadRequest()
+    public async Task Register_EmailAlreadyExists_ReturnsConflict()
     {
         var request1 = new UserCreateDto
         {

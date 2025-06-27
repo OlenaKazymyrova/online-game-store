@@ -7,8 +7,8 @@ public abstract class HttpException : Exception
     public int StatusCode { get; }
     public string? TraceId { get; }
 
-    protected HttpException(string message, int statusCode, string? traceId = null)
-        : base(message)
+    protected HttpException(string message, int statusCode, Exception? inner = null, string? traceId = null)
+        : base(message, inner)
     {
         StatusCode = statusCode;
         TraceId = traceId ?? Activity.Current?.Id;
