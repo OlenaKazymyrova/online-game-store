@@ -36,7 +36,7 @@ public class BllGameMappingProfile : Profile
 
         CreateMap<GameCreateDto, Game>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
-            .ForMember(dest => dest.Platforms, opt => opt.MapFrom<GameResolver>())
-            .ForMember(dest => dest.Genres, opt => opt.MapFrom<GameResolver>());
+            .ForMember(dest => dest.Platforms, opt => opt.Ignore())
+            .ForMember(dest => dest.Genres, opt => opt.Ignore());
     }
 }

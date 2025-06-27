@@ -1,5 +1,6 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Platforms;
+using OnlineGameStore.BLL.Mapping.Converters;
 using OnlineGameStore.BLL.Mapping.Resolvers;
 
 namespace OnlineGameStore.BLL.Mapping.Profiles;
@@ -22,6 +23,6 @@ public class BllPlatformMappingProfile : Profile
             .ForMember(dest => dest.Games, opt => opt.MapFrom<PlatformResolver>());
 
         CreateMap<Guid, Platform>()
-            .ConvertUsing<PlatformResolver>();
+            .ConvertUsing<GuidToPlatformConverter>();
     }
 }

@@ -5,6 +5,6 @@ namespace OnlineGameStore.BLL.Interfaces;
 
 public interface IGameService : IService<Game, GameCreateDto, GameDto, GameDto, GameDetailedDto>
 {
-    public Task UpdateGenresAsync(Guid gameId, List<Guid> genresIds);
-    public Task UpdatePlatformsAsync(Guid gameId, List<Guid> platformIds);
+    public Task UpdateGenreRefsAsync(Guid gameId, List<Guid> genresIds);
+    public Task UpdatePlatformRefsAsync(Guid gameId, List<Guid> platformIds);
 }
