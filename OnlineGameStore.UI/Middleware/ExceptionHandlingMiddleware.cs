@@ -24,6 +24,7 @@ public class ExceptionHandlingMiddleware : IMiddleware
         }
         catch (HttpException ex)
         {
+            _logger.LogError("Request: {Method} {Path}", context.Request.Method, context.Request.Path);
             _logger.LogError(ex, "Exception occurred. TraceId: {TraceId}", traceId);
             if (ex.InnerException != null)
             {
@@ -31,6 +32,14 @@ public class ExceptionHandlingMiddleware : IMiddleware
             }
 
             await HandleExceptionAsync(context, ex, traceId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Request: {Method} {Path}", context.Request.Method, context.Request.Path);
+            _logger.LogError(ex, "Unhandled exception occurred. TraceId: {TraceId}", traceId);
+
+            var httpException = new InternalErrorException("An unexpected internal error occurred.", ex);
+            await HandleExceptionAsync(context, httpException, traceId);
         }
     }
 
