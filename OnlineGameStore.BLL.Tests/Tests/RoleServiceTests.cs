@@ -67,7 +67,7 @@ public class RoleServiceTests
     {
         RoleCreateDto? invalidRole = null;
 
-        await Assert.ThrowsAsync<ValidationException>(async () => await _roleService.AddAsync(invalidRole));
+        await Assert.ThrowsAsync<ValidationException>(async () => await _roleService.AddAsync(invalidRole!));
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class RoleServiceTests
         RoleCreateDto? invalidRoleDto = null;
 
         await Assert.ThrowsAsync<ValidationException>(async () =>
-            await _roleService.UpdateAsync(role.Id, invalidRoleDto));
+            await _roleService.UpdateAsync(role.Id, invalidRoleDto!));
     }
 
     [Fact]
