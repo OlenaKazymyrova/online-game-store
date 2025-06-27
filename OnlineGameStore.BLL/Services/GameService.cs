@@ -51,4 +51,16 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
             Pagination = paginatedResponse.Pagination
         };
     }
+
+    public async Task UpdateGenresAsync(Guid gameId, List<Guid> genresIds)
+    {
+
+    }
+
+    public async Task UpdatePlatformsAsync(Guid gameId, List<Guid> platformIds)
+    {
+        var platformEntities = _mapper.Map<List<Platform>>(platformIds);
+
+    } 
+
 }

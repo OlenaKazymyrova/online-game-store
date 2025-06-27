@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
@@ -95,6 +96,31 @@ public class GamesController : ControllerBase
 
         return NoContent();
     }
+
+    /// <summary>
+    /// Updates the list of referenced genres for a specified game.
+    /// </summary>
+    /// <returns></returns>
+    /// <param name="id"> The id go the Game to update.</param>
+    /// <param name="genreIds"> The updated list of Genres ids.</param>
+    [HttpPut("{id:guid}/genres")]
+    public async Task<IActionResult> UpdateGenresAsync([FromRoute] Guid id, [FromBody] List<Guid> genreIds)
+    {
+        _service
+    }
+
+    /// <summary>
+    /// Updates the list of referenced genres for a specified game.
+    /// </summary>
+    /// <returns></returns>
+    /// <param name="id"> The id go the Game to update.</param>
+    /// <param name="platformIds"> The updated list of Genres ids.</param>
+    [HttpPut("{id:guid}/platforms")]
+    public async Task<IActionResult> UpdatePlatformsAsync([FromRoute] Guid id, [FromBody] List<Guid> platformIds)
+    {
+        _service
+    }
+
 
     /// <summary>
     /// Updates all game fields.
