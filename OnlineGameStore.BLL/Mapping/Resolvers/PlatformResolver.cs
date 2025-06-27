@@ -40,6 +40,6 @@ public class PlatformResolver :
             return games;
 
         var missingIds = gameIds.Except(games.Select(g => g.Id));
-        throw new KeyNotFoundException($"Games with IDs: [{string.Join(", ", missingIds)}] were not found.");
+        throw new KeyNotFoundException($"Games with IDs [{string.Join(", ", missingIds)}] were not found.");
     }
 }
