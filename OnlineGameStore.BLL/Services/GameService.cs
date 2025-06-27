@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using System.Reflection.Metadata;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -92,7 +91,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         {
             throw new NotFoundException("Entity not be found", e);
         }
-        catch (DbUpdateException e)
+        catch (DbUpdateConcurrencyException e)
         {
             throw new ConflictException("An error occured while updating", e);
         }
@@ -140,7 +139,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         {
             throw new NotFoundException("Entity cannot be found", e);
         }
-        catch (DbUpdateException e)
+        catch (DbUpdateConcurrencyException e)
         {
             throw new ConflictException("An error occured while updating", e);
         }

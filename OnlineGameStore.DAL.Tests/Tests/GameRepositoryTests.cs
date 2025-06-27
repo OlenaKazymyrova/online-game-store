@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.DAL.Migrations;
 using OnlineGameStore.DAL.Repositories;
 using OnlineGameStore.DAL.Tests.RepositoryCreators;
 
@@ -161,6 +162,167 @@ public class GameRepositoryTests
         var addedPlatform = await platformRepo.GetByIdAsync(game.Platforms.First().Id);
 
         Assert.NotNull(addedPlatform);
+    }
+
+    [Fact]
+    public async Task UpdatePlatformRefsAsync_GameIsPresentPlatformPresent_UpdatesGame()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new OnlineGameStoreDbContext(options);
+        var gameRepo = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
+        var platformRepo = (PlatformRepository)Activator.CreateInstance(typeof(PlatformRepository), context)!;
+
+        var game = GetGame();
+
+        Assert.NotNull(await gameRepo.AddAsync(game));
+
+        var platform = new Platform
+        {
+            Id = Guid.NewGuid(),
+            Name = "name"
+        };
+
+        Assert.NotNull(await platformRepo.AddAsync(platform));
+
+        var ex = await Record.ExceptionAsync(() =>
+            gameRepo.UpdatePlatformRefsAsync(game.Id, new List<Platform> { platform }));
+
+        Assert.Null(ex);
+
+        var updated = await gameRepo.GetByIdAsync(game.Id);
+
+        Assert.Single(updated!.Platforms);
+        Assert.Equal(platform.Id, updated.Platforms.First().Id);
+    }
+
+    [Fact]
+    public async Task UpdatePlatformRefsAsync_GameNotFound_ThrowsKeyNotFoundException()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var ctx = new OnlineGameStoreDbContext(options);
+        var repo = new GameRepository(ctx);
+
+        var missingGameId = Guid.NewGuid();
+        var dummyPlatform = new Platform { Id = Guid.NewGuid(), Name = "X" };
+
+        var ex = await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            repo.UpdatePlatformRefsAsync(missingGameId, new List<Platform> { dummyPlatform }));
+
+        Assert.Contains($"Could not find the Game with ID {missingGameId}", ex.Message);
+    }
+
+    [Fact]
+    public async Task UpdatePlatformRefsAsync_PlatformNotFound_ThrowsDbUpdateConcurrencyException()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var ctx = new OnlineGameStoreDbContext(options);
+        var gameRepo = new GameRepository(ctx);
+
+        var game = GetGame();
+        await gameRepo.AddAsync(game);
+
+        var missingPlatform = new Platform
+        {
+            Id = Guid.NewGuid(),
+            Name = "Nonexistent"
+        };
+
+        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() =>
+            gameRepo.UpdatePlatformRefsAsync(game.Id, new List<Platform> { missingPlatform }));
+    }
+
+    [Fact]
+    public async Task UpdateGenreRefsAsync_GameNotFound_ThrowsKeyNotFoundException()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var ctx = new OnlineGameStoreDbContext(options);
+        var gameRepo = new GameRepository(ctx);
+
+        var missingGameId = Guid.NewGuid();
+        var genre = new Genre
+        {
+            Id = Guid.NewGuid(),
+            Name = "abac",
+            Description = "abac",
+            ParentId = null
+        };
+
+        var ex = await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            gameRepo.UpdateGenreRefsAsync(missingGameId, new List<Genre> { genre }));
+
+        Assert.Contains($"Could not find the Game with ID {missingGameId}", ex.Message);
+    }
+
+    [Fact]
+    public async Task UpdateGenreRefsAsync_GenreNotFound_ThrowsDbUpdateConcurrencyException()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var ctx = new OnlineGameStoreDbContext(options);
+        var gameRepo = new GameRepository(ctx);
+
+        var game = GetGame();
+        await gameRepo.AddAsync(game);
+
+        var missingGenre = new Genre
+        {
+            Id = Guid.NewGuid(),
+            Name = "abac",
+            Description = "abac",
+        };
+
+        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() =>
+        gameRepo.UpdateGenreRefsAsync(game.Id, new List<Genre> { missingGenre }));
+    }
+
+    [Fact]
+    public async Task UpdateGenreRefsAsync_GameFoundGenreFound_UpdatesGame()
+    {
+
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        var context = new OnlineGameStoreDbContext(options);
+        var gameRepo = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
+        var genreRepo = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
+
+        var game = GetGame();
+        var genre = new Genre
+        {
+            Id = Guid.NewGuid(),
+            Name = "abac",
+            Description = "abac",
+            ParentId = null
+        };
+
+        Assert.NotNull(await gameRepo.AddAsync(game));
+        Assert.NotNull(await genreRepo.AddAsync(genre));
+
+        var ex = await Record.ExceptionAsync(() =>
+            gameRepo.UpdateGenreRefsAsync(game.Id, new List<Genre> { genre }));
+
+        Assert.Null(ex);
+
+        var updated = await gameRepo.GetByIdAsync(game.Id);
+
+        Assert.NotNull(updated);
+        Assert.Single(updated.Genres);
+        Assert.Equal(genre.Id, updated.Genres.First().Id);
     }
 
     private Game GetGame(

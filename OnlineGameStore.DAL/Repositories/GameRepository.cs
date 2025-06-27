@@ -34,7 +34,7 @@ public class GameRepository : Repository<Game>, IGameRepository
         {
             await _dbContext.SaveChangesAsync();
         }
-        catch (DbUpdateException ex)
+        catch (DbUpdateConcurrencyException ex)
         {
             Console.WriteLine($"Error updating game: {ex.Message}, possibly Genre ID is invalid");
             throw;
@@ -63,7 +63,7 @@ public class GameRepository : Repository<Game>, IGameRepository
         {
             await _dbContext.SaveChangesAsync();
         }
-        catch (DbUpdateException ex)
+        catch (DbUpdateConcurrencyException ex)
         {
             Console.WriteLine($"Error updating game: {ex.Message}, possibly Platform ID is not found");
             throw;
