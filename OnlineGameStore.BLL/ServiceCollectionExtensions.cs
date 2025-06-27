@@ -19,13 +19,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
-        
+
         services.AddAutoMapper(typeof(BllGameMappingProfile));
         services.AddAutoMapper(typeof(BllGenreMappingProfile));
         services.AddAutoMapper(typeof(BllPlatformMappingProfile));
         services.AddAutoMapper(typeof(BllUserMappingProfile));
         services.AddAutoMapper(typeof(BllRoleMappingProfile));
-        
+
         services.AddScoped<GameResolver>();
         services.AddScoped<GenreResolver>();
         services.AddScoped<PlatformResolver>();

@@ -72,7 +72,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
                     .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more entities were not found in the DB.");
+                throw new NotFoundException("One or more Genres were not found.");
 
             throw new InternalErrorException("An error occurred while mapping the GUID to the Genre entity.");
         }
@@ -119,7 +119,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
                     .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more entities were not found in the DB.");
+                throw new NotFoundException("One or more Platforms were not found.");
 
             throw new InternalErrorException("An error occurred while mapping the GUID to the Platform entity.");
         }
@@ -148,6 +148,6 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         {
             throw new InternalErrorException("An unexpected error occurred while updating the entity.", e);
         }
-        
-    } 
+
+    }
 }
