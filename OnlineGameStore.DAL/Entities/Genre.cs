@@ -9,7 +9,7 @@ public class Genre : TEntity
     [Required]
     public required string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public Guid? ParentId { get; set; } = Guid.Empty;
+    public Guid? ParentId { get; set; } = null;
     public Genre? ParentGenre { get; set; } = default;
     public ICollection<Game> Games { get; set; } = new List<Game>();
 
