@@ -3,4 +3,7 @@ using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Interfaces;
 
-public interface IPlatformService : IService<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDetailedDto> { }
+public interface IPlatformService : IService<Platform, PlatformCreateDto, PlatformDto, PlatformDto, PlatformDetailedDto>
+{
+    public Task UpdateGameRefsAsync(Guid platfromId, List<Guid> platformIds);
+}
