@@ -9,16 +9,13 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
 {
     public override async Task<Genre?> AddAsync(Genre entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        ArgumentNullException.ThrowIfNull(entity);
 
         var isParentGenreValid = await IsParentGenreValidAsync(entity.Id, entity.ParentId);
 
         if (!isParentGenreValid)
         {
-            return null;
+            throw new KeyNotFoundException("Parent genre not found.");
         }
 
         try
@@ -49,17 +46,12 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
 
     public override async Task<bool> UpdateAsync(Genre entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        ArgumentNullException.ThrowIfNull(entity);
 
         var existingGenre = await _dbSet.FindAsync(entity.Id);
 
         if (existingGenre is null)
-        {
-            return false;
-        }
+            throw new KeyNotFoundException("Genre not found.");
 
         var isParentGenreValid = await IsParentGenreValidAsync(entity.Id, entity.ParentId);
 
@@ -92,9 +84,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         var existingGenre = await _dbSet.FindAsync(id);
 
         if (existingGenre is null)
-        {
-            return false;
-        }
+            throw new KeyNotFoundException("Genre not found.");
 
         if (existingGenre.ParentId is null)
         {

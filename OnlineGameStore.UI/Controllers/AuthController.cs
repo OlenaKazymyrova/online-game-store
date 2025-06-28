@@ -26,9 +26,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> RegisterUser([FromBody] UserCreateDto userCreateDto)
     {
         var responseDto = await _service.AddAsync(userCreateDto);
-        if (responseDto == null)
-            return BadRequest("User registration failed.");
-
         return CreatedAtAction(nameof(RegisterUser), responseDto);
     }
 }

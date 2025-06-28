@@ -124,14 +124,12 @@ public class PlatformRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_ReturnsFalseForNonExistentId()
+    public async Task DeleteAsync_NonExistentId_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
         var nonExistentId = Guid.NewGuid();
 
-        var result = await repository.DeleteAsync(nonExistentId);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.DeleteAsync(nonExistentId));
     }
 
     [Fact]

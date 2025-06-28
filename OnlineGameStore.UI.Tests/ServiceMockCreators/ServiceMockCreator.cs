@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.SharedLogic.Interfaces;
@@ -57,8 +58,15 @@ public abstract class
     protected virtual void SetupGetById(Mock<TService> mock)
     {
         mock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((Guid id) => _mapper.Map<TReadDto>(_data.FirstOrDefault(d =>
-                (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id)));
+            .ReturnsAsync((Guid id) =>
+            {
+                var entity = _data.FirstOrDefault(d =>
+                    (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
+                if (entity == null)
+                    throw new NotFoundException("Entity not found.");
+
+                return _mapper.Map<TReadDto>(entity);
+            });
     }
 
     protected virtual void SetupGet(Mock<TService> mock)
@@ -126,8 +134,15 @@ public abstract class
         mock.Setup(x => x.AddAsync(It.IsAny<TCreateDto>()))
             .ReturnsAsync((TCreateDto createDto) =>
             {
+                if (createDto == null)
+                    throw new ValidationException("Create DTO cannot be null.");
+
                 var entity = _mapper.Map<TEntity>(createDto);
 
+                if (entity == null)
+                    throw new ValidationException("Failed to map DTO to entity.");
+
+                entity.Id = Guid.NewGuid();
                 _data.Add(entity);
 
                 return _mapper.Map<TReadDto>(entity);
@@ -141,11 +156,14 @@ public abstract class
                 It.IsAny<TCreateDto>()))
             .ReturnsAsync((Guid id, TCreateDto updateDto) =>
             {
+                if (updateDto == null)
+                    throw new ValidationException("Update DTO cannot be null.");
+
                 var index = _data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
 
                 if (index == -1)
-                    return false;
+                    throw new NotFoundException($"Entity with ID {id} not found.");
 
                 _mapper.Map(updateDto, _data[index]);
                 _data[index].Id = id;
@@ -159,18 +177,19 @@ public abstract class
         mock.Setup(x => x.PatchAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<TUpdateDto>>()))
             .ReturnsAsync((Guid id, JsonPatchDocument<TUpdateDto> patchDoc) =>
             {
+                if (patchDoc == null)
+                    throw new ValidationException("Patch document cannot be null.");
+
                 var index = _data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
 
                 if (index == -1)
-                    return false;
+                    throw new NotFoundException($"Entity with ID {id} not found.");
 
                 var entity = _data[index];
-
                 var dto = _mapper.Map<TUpdateDto>(entity);
 
                 patchDoc.ApplyTo(dto);
-
                 _mapper.Map(dto, entity);
 
                 _data[index] = entity;
@@ -186,7 +205,8 @@ public abstract class
                 var index = _data.FindIndex(d =>
                     (Guid)d.GetType().GetProperty("Id")?.GetValue(d)! == id);
 
-                if (index == -1) return false;
+                if (index == -1)
+                    throw new NotFoundException($"Entity with ID {id} not found.");
 
                 _data.RemoveAt(index);
                 return true;

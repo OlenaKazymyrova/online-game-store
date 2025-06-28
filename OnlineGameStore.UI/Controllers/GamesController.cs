@@ -29,11 +29,6 @@ public class GamesController : ControllerBase
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var game = await _service.GetByIdAsync(id);
-        if (game == null)
-        {
-            return NotFound();
-        }
-
         return Ok(game);
     }
 
@@ -76,18 +71,9 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] GameCreateDto? gameDto)
+    public async Task<IActionResult> CreateAsync([FromBody] GameCreateDto gameDto)
     {
-        if (gameDto == null)
-        {
-            return BadRequest("Game data is required.");
-        }
-
         var createdGame = await _service.AddAsync(gameDto);
-        if (createdGame == null)
-        {
-            return BadRequest("Failed to create the game.");
-        }
 
         return Created($"api/Games/{createdGame.Id}", createdGame);
     }
@@ -153,8 +139,6 @@ public class GamesController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> UpdatePatchAsync(Guid id, [FromBody] JsonPatchDocument<GameDto> patchDoc)
     {
-        if (patchDoc == null) return BadRequest("Patch document is required.");
-
         var result = await _service.PatchAsync(id, patchDoc);
 
         if (!result) return NotFound();

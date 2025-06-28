@@ -1,10 +1,11 @@
-using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Platforms;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.BLL.Tests.DataGenerators;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
@@ -39,10 +40,9 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_PlatformDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_PlatformDoesNotExist_ThrowsNotFoundException()
     {
-        var result = await _platformService.GetByIdAsync(Guid.NewGuid());
-        Assert.Null(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _platformService.GetByIdAsync(Guid.NewGuid()));
     }
 
     [Fact]
@@ -56,12 +56,13 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task AddAsync_ExistingPlatformName_ReturnsNull()
+    public async Task AddAsync_ExistingPlatformName_ThrowsValidationException()
     {
         var existing = _data[0];
         var duplicateDto = new PlatformCreateDto { Name = existing.Name };
 
-        var exception = await Assert.ThrowsAsync<ValidationException>(() => _platformService.AddAsync(duplicateDto));
+        var exception =
+            await Assert.ThrowsAsync<Exceptions.ValidationException>(() => _platformService.AddAsync(duplicateDto));
 
         Assert.Equal("Platform name already exists.", exception.Message);
     }
@@ -77,13 +78,14 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_DuplicateName_ReturnsFalse()
+    public async Task UpdateAsync_DuplicateName_ThrowsConflictException()
     {
         var first = _data[0];
         var second = _data[1];
 
         var updateDto = new PlatformCreateDto { Name = first.Name };
-        var exception = await Assert.ThrowsAsync<ValidationException>(() => _platformService.UpdateAsync(second.Id, updateDto));
+        var exception =
+            await Assert.ThrowsAsync<ConflictException>(() => _platformService.UpdateAsync(second.Id, updateDto));
 
         Assert.Equal("Platform name already exists.", exception.Message);
     }
@@ -97,9 +99,8 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_PlatformDoesNotExist_ReturnsFalse()
+    public async Task DeleteAsync_PlatformDoesNotExist_ThrowsNotFoundException()
     {
-        var result = await _platformService.DeleteAsync(Guid.NewGuid());
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _platformService.DeleteAsync(Guid.NewGuid()));
     }
 }

@@ -2,9 +2,10 @@ using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Services;
@@ -43,18 +44,56 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         };
     }
 
-    public override async Task<PlatformDto?> AddAsync(PlatformCreateDto? dto)
+    public override async Task<PlatformDto> AddAsync(PlatformCreateDto? dto)
     {
         if (dto is null)
-            return null;
+            throw new ValidationException("PlatformCreateDto is required for create.");
 
-        var entity = HandleMappingException(dto);
+        Platform entity;
+        try
+        {
+            entity = _mapper.Map<Platform>(dto);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            Exception? inner = e.InnerException;
+
+            if (inner is AggregateException agg)
+                inner = agg.Flatten().InnerExceptions
+                    .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
+
+            if (inner is KeyNotFoundException)
+                throw new NotFoundException("One or more properties in the DTO were not found in the entity.", inner);
+
+            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.", inner);
+        }
 
         if (await NameExistsAsync(entity.Name))
             throw new ValidationException("Platform name already exists.");
 
-        var addedEntity = await _repository.AddAsync(entity);
-        return addedEntity == null ? null : _mapper.Map<PlatformDto>(addedEntity);
+        Platform? addedEntity;
+        try
+        {
+            addedEntity = await _repository.AddAsync(entity);
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("PlatformCreateDto cannot be null.", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("Failed to add platform. Please check the data and try again.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException(
+                "An unexpected error occurred while adding the platform. Please try again later.", ex);
+        }
+
+        if (addedEntity == null)
+            throw new BadRequestException("An unexpected error occurred while adding the platform.");
+
+        return _mapper.Map<PlatformDto>(addedEntity);
     }
 
     public override async Task<bool> UpdateAsync(Guid id, PlatformCreateDto? dto)
@@ -62,14 +101,33 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         if (dto is null)
             return false;
 
-        var entity = HandleMappingException(dto);
-
+        var entity = _mapper.Map<Platform>(dto);
         entity.Id = id;
 
         if (await NameExistsAsync(entity.Name, id))
-            throw new ValidationException("Platform name already exists.");
+            throw new ConflictException("Platform name already exists.");
 
-        return await _repository.UpdateAsync(entity);
+        try
+        {
+            return await _repository.UpdateAsync(entity);
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("PlatformCreateDto cannot be null.", ex);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new NotFoundException("Platform not found or has been modified by another user.", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("Failed to update platform. Please check the data and try again.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException(
+                "An unexpected error occurred while updating the platform. Please try again later.", ex);
+        }
     }
 
     private async Task<bool> NameExistsAsync(string name, Guid? excludeId = null)
@@ -82,26 +140,5 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
             filter: p => p.Name.Trim().ToLower() == normalizedName && (!excludeId.HasValue || p.Id != excludeId.Value));
 
         return existing.Items.Any();
-    }
-
-    private Platform HandleMappingException(PlatformCreateDto dto)
-    {
-        try
-        {
-            return _mapper.Map<Platform>(dto);
-        }
-        catch (AutoMapperMappingException e)
-        {
-            Exception? inner = e.InnerException;
-
-            if (inner is AggregateException agg)
-                inner = agg.Flatten().InnerExceptions
-                    .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
-
-            if (inner is KeyNotFoundException knf)
-                throw new KeyNotFoundException($"Invalid reference: {knf.Message}");
-
-            throw;
-        }
     }
 }

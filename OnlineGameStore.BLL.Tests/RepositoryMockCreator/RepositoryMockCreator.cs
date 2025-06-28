@@ -99,14 +99,16 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
             .ReturnsAsync((TEntity entity) =>
             {
                 var property = typeof(TEntity).GetProperty("Id");
-                if (property == null) return false;
+                if (property == null)
+                    throw new ArgumentNullException(nameof(entity), "Entity must have an Id property.");
 
                 var id = (Guid)property.GetValue(entity)!;
 
                 var index = _data.FindIndex(x =>
                     (Guid)property.GetValue(x)! == id);
 
-                if (index == -1) return false;
+                if (index == -1)
+                    throw new KeyNotFoundException("Entity not found.");
 
                 _data[index] = entity;
                 return true;
@@ -119,12 +121,14 @@ public abstract class RepositoryMockCreator<TEntity, TRepository> : IMockCreator
             .ReturnsAsync((Guid id) =>
             {
                 var property = typeof(TEntity).GetProperty("Id");
-                if (property == null) return false;
+                if (property == null)
+                    throw new ArgumentNullException(nameof(id), "Entity must have an Id property.");
 
                 var index = _data.FindIndex(x =>
                     (Guid)property.GetValue(x)! == id);
 
-                if (index == -1) return false;
+                if (index == -1)
+                    throw new KeyNotFoundException("Entity not found.");
 
                 _data.RemoveAt(index);
                 return true;

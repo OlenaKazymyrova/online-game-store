@@ -8,6 +8,7 @@ using OnlineGameStore.SharedLogic.Pagination;
 using System.Linq.Expressions;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata;
+using OnlineGameStore.BLL.Exceptions;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
@@ -23,7 +24,7 @@ public class GenreServiceMockCreator : ServiceMockCreator<Genre, GenreCreateDto,
                 var index = _data.FindIndex(x => x.Id == id);
                 if (index == -1)
                 {
-                    return false;
+                    throw new NotFoundException("Genre not found.");
                 }
 
                 _data.RemoveAt(index);

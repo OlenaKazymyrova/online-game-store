@@ -29,24 +29,8 @@ public class PlatformsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create([FromBody] PlatformCreateDto? platformDto)
     {
-        if (platformDto == null)
-            return BadRequest("Platform data is required.");
-
-        try
-        {
-            var createdPlatform = await _service.AddAsync(platformDto);
-            return createdPlatform == null
-                ? BadRequest("Failed to create platform.")
-                : Created($"api/platforms/{createdPlatform.Id}", createdPlatform);
-        }
-        catch (ValidationException ex)
-        {
-            return Conflict(ex.Message);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var createdPlatform = await _service.AddAsync(platformDto);
+        return Created($"api/platforms/{createdPlatform.Id}", createdPlatform);
     }
 
     /// <summary>
@@ -80,8 +64,7 @@ public class PlatformsController : ControllerBase
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var platform = await _service.GetByIdAsync(id);
-
-        return (platform is null) ? NotFound() : Ok(platform);
+        return Ok(platform);
     }
 
     /// <summary>
@@ -109,24 +92,7 @@ public class PlatformsController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] PlatformCreateDto platformDto)
     {
-        if (platformDto is null)
-        {
-            return BadRequest("Platform data is required.");
-        }
-
-        try
-        {
-            var isUpdated = await _service.UpdateAsync(id, platformDto);
-
-            return isUpdated ? Ok() : NotFound();
-        }
-        catch (ValidationException ex)
-        {
-            return Conflict(ex.Message);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var isUpdated = await _service.UpdateAsync(id, platformDto);
+        return (isUpdated) ? Ok() : NotFound();
     }
 }
