@@ -62,19 +62,6 @@ public class UserRoleRepository : IUserRoleRepository
 
     private async Task<bool> SaveChangesAsync()
     {
-        try
-        {
-            return await _dbContext.SaveChangesAsync() > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error saving changes: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error saving changes: {ex.Message}");
-            throw;
-        }
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 }

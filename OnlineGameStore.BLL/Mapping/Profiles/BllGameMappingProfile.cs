@@ -1,6 +1,6 @@
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL.DTOs.Games;
+using OnlineGameStore.BLL.Mapping.Converters;
 using OnlineGameStore.BLL.Mapping.Resolvers;
 using OnlineGameStore.DAL.Entities;
 
@@ -38,5 +38,8 @@ public class BllGameMappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
             .ForMember(dest => dest.Platforms, opt => opt.Ignore())
             .ForMember(dest => dest.Genres, opt => opt.Ignore());
+
+        CreateMap<Guid, Game>()
+            .ConvertUsing<GuidToGameConverter>();
     }
 }
