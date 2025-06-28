@@ -69,7 +69,7 @@ public class UserServiceTests
     {
         UserCreateDto? invalidUser = null;
 
-        await Assert.ThrowsAsync<ValidationException>(async () => await _userService.AddAsync(invalidUser));
+        await Assert.ThrowsAsync<ValidationException>(async () => await _userService.AddAsync(invalidUser!));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class UserServiceTests
         UserCreateDto? invalidUserDto = null;
 
         await Assert.ThrowsAsync<ValidationException>(async () =>
-            await _userService.UpdateAsync(user.Id, invalidUserDto));
+            await _userService.UpdateAsync(user.Id, invalidUserDto!));
     }
 
     [Fact]
