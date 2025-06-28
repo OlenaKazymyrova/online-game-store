@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.UI.Aggregation;
 
 namespace OnlineGameStore.UI.QueryBuilders;

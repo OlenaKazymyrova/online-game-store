@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OnlineGameStore.DAL.DBContext;
+using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Mapping.Converters;
 public class GuidToPlatformConverter : ITypeConverter<Guid, Platform>

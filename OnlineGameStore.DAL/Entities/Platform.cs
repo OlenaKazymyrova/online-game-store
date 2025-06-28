@@ -1,4 +1,4 @@
-using OnlineGameStore.DAL.Entities;
+namespace OnlineGameStore.DAL.Entities;
 
 public class Platform : TEntity
 {
@@ -7,7 +7,7 @@ public class Platform : TEntity
     public ICollection<Game> Games { get; set; } = new List<Game>();
 
     public override bool Equals(object? obj) =>
-       Equals(obj as Platform);
+        Equals(obj as Platform);
 
     public override int GetHashCode() =>
         HashCode.Combine(Id, Name);

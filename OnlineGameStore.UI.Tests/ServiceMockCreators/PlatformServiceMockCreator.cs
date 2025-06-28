@@ -2,7 +2,7 @@ using Moq;
 using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
+using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 

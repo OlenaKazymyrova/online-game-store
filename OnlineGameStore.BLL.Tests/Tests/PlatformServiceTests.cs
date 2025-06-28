@@ -5,7 +5,7 @@ using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.BLL.Tests.DataGenerators;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
+using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
