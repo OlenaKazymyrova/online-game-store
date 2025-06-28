@@ -30,20 +30,7 @@ public class GameRepository : Repository<Game>, IGameRepository
 
         entityToUpdate.Genres = genres;
 
-        try
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            Console.WriteLine($"Error updating game: {ex.Message}, possibly Genre ID is invalid");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating game: {ex.Message}");
-            throw;
-        }
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task UpdatePlatformRefsAsync(Guid id, List<Platform> platforms)
@@ -59,19 +46,6 @@ public class GameRepository : Repository<Game>, IGameRepository
 
         entityToUpdate.Platforms = platforms;
 
-        try
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            Console.WriteLine($"Error updating game: {ex.Message}, possibly Platform ID is not found");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating game: {ex.Message}");
-            throw;
-        }
+        await _dbContext.SaveChangesAsync();
     }
 }

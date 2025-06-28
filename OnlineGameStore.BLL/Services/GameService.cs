@@ -77,7 +77,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         }
 
         if (_repository is not IGameRepository gameRepo)
-            throw new InvalidOperationException("Repository does not support genre updates");
+            throw new InvalidOperationException("Repository does not support genre updates.");
 
         try
         {
@@ -85,15 +85,15 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         }
         catch (ArgumentNullException e)
         {
-            throw new ValidationException("The argument cannot be null", e);
+            throw new ValidationException("The argument cannot be null.", e);
         }
         catch (KeyNotFoundException e)
         {
-            throw new NotFoundException("Entity cannot be found", e);
+            throw new NotFoundException("Game cannot be found.", e);
         }
         catch (DbUpdateConcurrencyException e)
         {
-            throw new ConflictException("An error occured while updating", e);
+            throw new ConflictException("An error occured while updating.", e);
         }
         catch (Exception e)
         {
@@ -124,7 +124,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         }
 
         if (_repository is not IGameRepository gameRepo)
-            throw new InvalidOperationException("Repository does not support genre updates");
+            throw new InvalidOperationException("Repository does not support platform updates.");
 
         try
         {
@@ -133,15 +133,15 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         catch (ArgumentNullException e)
         {
 
-            throw new ValidationException("The argument cannot be null", e);
+            throw new ValidationException("The argument cannot be null.", e);
         }
         catch (KeyNotFoundException e)
         {
-            throw new NotFoundException("Entity cannot be found", e);
+            throw new NotFoundException("Game cannot be found.", e);
         }
         catch (DbUpdateConcurrencyException e)
         {
-            throw new ConflictException("An error occured while updating", e);
+            throw new ConflictException("An error occured while updating.", e);
         }
         catch (Exception e)
         {

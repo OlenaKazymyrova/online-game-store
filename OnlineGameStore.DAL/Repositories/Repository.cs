@@ -74,24 +74,12 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        try
-        {
-            await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error adding {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error adding {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
+        await _dbSet.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
+        
+        return entity;
+        
     }
-
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
@@ -99,21 +87,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
 
-        try
-        {
-            int affected = await _dbContext.SaveChangesAsync();
-            return affected > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error updating {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error adding {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
+        int affected = await _dbContext.SaveChangesAsync();
+        
+        return affected > 0;
     }
 
     public virtual async Task<bool> DeleteAsync(Guid id)
@@ -125,20 +101,8 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
             throw new KeyNotFoundException("Entity not found.");
         }
 
-        try
-        {
-            _dbSet.Remove(entity);
-            return await _dbContext.SaveChangesAsync() > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error deleting game: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error deleting game: {ex.Message}");
-            throw;
-        }
+        _dbSet.Remove(entity);
+
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 }
