@@ -153,6 +153,78 @@ public class PlatformRepositoryTests
         Assert.NotEmpty(retrievedPlatform!.Games);
     }
 
+    [Fact]
+    public async Task UpdateGameRefsAsync_PlatformNotFound_ThrowsKeyNotFoundException()
+    {
+        var ctx = GetOnlineGameStoreDbContext();
+        var repo = new PlatformRepository(ctx);
+        var missingPlatformId = Guid.NewGuid();
+        var game = GetGame();
+
+        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            repo.UpdateGameRefsAsync(missingPlatformId, new List<Game> { game }));
+    }
+
+    [Fact]
+    public async Task UpdateGameRefsAsync_GameNotFoundOnExistingPlatform_ThrowsDbUpdateException()
+    {
+        var ctx = GetOnlineGameStoreDbContext();
+        var repo = new PlatformRepository(ctx);
+        var platform = GetPlatform();
+        await repo.AddAsync(platform);
+
+        var missingGame = GetGame();
+
+        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() =>
+            repo.UpdateGameRefsAsync(platform.Id, new List<Game> { missingGame }));
+    }
+
+    [Fact]
+    public async Task UpdateGameRefsAsync_PlatformAndGameExist_UpdatesPlatform()
+    {
+        var ctx = GetOnlineGameStoreDbContext();
+        var platformRepo = new PlatformRepository(ctx);
+        var gameRepo = new GameRepository(ctx);
+
+        var platform = GetPlatform();
+        var game = GetGame();
+
+        await platformRepo.AddAsync(platform);
+        await gameRepo.AddAsync(game);
+
+        var ex = await Record.ExceptionAsync(() =>
+            platformRepo.UpdateGameRefsAsync(platform.Id, new List<Game> { game }));
+
+        Assert.Null(ex);
+
+        // reload and verify
+        var updated = await platformRepo.GetByIdAsync(platform.Id);
+
+        Assert.NotNull(updated);
+        Assert.Single(updated.Games);
+        Assert.Equal(game.Id, updated.Games.First().Id);
+    }
+
+    private OnlineGameStoreDbContext GetOnlineGameStoreDbContext()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        return new OnlineGameStoreDbContext(options);
+    }
+
+    private static Game GetGame() =>
+        new Game
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Game",
+            Description = "Desc",
+            LicenseId = Guid.NewGuid(),
+            Price = 1,
+            ReleaseDate = DateTime.Now
+        };
+
     private Platform GetPlatform(string name = "Test Platform")
     {
         return new Platform
