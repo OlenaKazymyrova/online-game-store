@@ -72,6 +72,17 @@ public class GenresController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Updates the list of referenced games for a specified genre.
+    /// </summary>
+    /// <param name="id"> The id of the genre to update.</param>>
+    /// <param name="gameIds"> The update list of Games Ids.</param>>
+    [HttpPut("{id:guid}/games")]
+    public async Task<IActionResult> UpdateGames(Guid id, List<Guid> gameIds)
+    {
+        await _service.UpdateGameRefsAsync(id, gameIds);
+        return Ok();
+    }
 
     /// <summary>
     /// Updates all Genre fields
