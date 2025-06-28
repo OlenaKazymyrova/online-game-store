@@ -71,7 +71,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
                     .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more Genres were not found.");
+                throw new NotFoundException("One or more Genres were not found.", inner);
 
             throw new InternalErrorException("An error occurred while mapping the GUID to the Genre entity.");
         }
@@ -89,7 +89,7 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
         }
         catch (KeyNotFoundException e)
         {
-            throw new NotFoundException("Entity not be found", e);
+            throw new NotFoundException("Entity cannot be found", e);
         }
         catch (DbUpdateConcurrencyException e)
         {
