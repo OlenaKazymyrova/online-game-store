@@ -2,6 +2,7 @@ using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Platforms;
 using OnlineGameStore.BLL.Mapping.Converters;
 using OnlineGameStore.BLL.Mapping.Resolvers;
+using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Mapping.Profiles;
 

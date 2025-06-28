@@ -1,3 +1,4 @@
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Tests.RepositoryMockCreator;

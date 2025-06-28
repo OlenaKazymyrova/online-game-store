@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using OnlineGameStore.BLL.Exceptions;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.BLL.Services;
