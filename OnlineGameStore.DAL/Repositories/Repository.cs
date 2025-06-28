@@ -2,12 +2,13 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using OnlineGameStore.DAL.DBContext;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entities.Entity
+public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 {
     protected readonly OnlineGameStoreDbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;
@@ -20,7 +21,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<bool> ExistsAsync(Guid id)
     {
-        return await _dbSet.AnyAsync(e => e.Id == id);
+        return await _dbSet.AnyAsync(e => EF.Property<Guid>(e, "Id") == id);
     }
 
     public virtual async Task<PaginatedResponse<TEntity>> GetAsync(
@@ -95,7 +96,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        if (await _dbSet.FindAsync(entity.Id) is null)
+        if (await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == entity.Id) is null)
         {
             throw new KeyNotFoundException("Entity not found.");
         }
