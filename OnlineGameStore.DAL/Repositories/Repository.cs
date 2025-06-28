@@ -76,9 +76,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
         await _dbSet.AddAsync(entity);
         await _dbContext.SaveChangesAsync();
-        
+
         return entity;
-        
+
     }
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
@@ -88,7 +88,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         _dbContext.Entry(entity).State = EntityState.Modified;
 
         int affected = await _dbContext.SaveChangesAsync();
-        
+
         return affected > 0;
     }
 
