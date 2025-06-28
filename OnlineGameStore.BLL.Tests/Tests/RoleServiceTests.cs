@@ -103,7 +103,7 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task UpdateRoleAsync_RoleDoesNotExist_ReturnsFalse()
+    public async Task UpdateRoleAsync_RoleDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentRoleId = Guid.NewGuid();
 
@@ -113,9 +113,8 @@ public class RoleServiceTests
             Description = "Test description"
         };
 
-        var isUpdated = await _roleService.UpdateAsync(nonExistentRoleId, roleDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await _roleService.UpdateAsync(nonExistentRoleId, roleDto));
     }
 
     [Fact]
@@ -131,12 +130,10 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task DeleteRoleAsync_RoleDoesNotExist_ReturnsFalse()
+    public async Task DeleteRoleAsync_RoleDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentRoleId = Guid.NewGuid();
 
-        var isDeleted = await _roleService.DeleteAsync(nonExistentRoleId);
-
-        Assert.False(isDeleted);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _roleService.DeleteAsync(nonExistentRoleId));
     }
 }

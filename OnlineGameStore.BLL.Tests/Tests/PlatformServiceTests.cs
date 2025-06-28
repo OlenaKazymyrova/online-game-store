@@ -61,7 +61,8 @@ public class PlatformServiceTests
         var existing = _data[0];
         var duplicateDto = new PlatformCreateDto { Name = existing.Name };
 
-        var exception = await Assert.ThrowsAsync<Exceptions.ValidationException>(() => _platformService.AddAsync(duplicateDto));
+        var exception =
+            await Assert.ThrowsAsync<Exceptions.ValidationException>(() => _platformService.AddAsync(duplicateDto));
 
         Assert.Equal("Platform name already exists.", exception.Message);
     }
@@ -83,7 +84,8 @@ public class PlatformServiceTests
         var second = _data[1];
 
         var updateDto = new PlatformCreateDto { Name = first.Name };
-        var exception = await Assert.ThrowsAsync<ConflictException>(() => _platformService.UpdateAsync(second.Id, updateDto));
+        var exception =
+            await Assert.ThrowsAsync<ConflictException>(() => _platformService.UpdateAsync(second.Id, updateDto));
 
         Assert.Equal("Platform name already exists.", exception.Message);
     }
@@ -97,9 +99,8 @@ public class PlatformServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_PlatformDoesNotExist_ReturnsFalse()
+    public async Task DeleteAsync_PlatformDoesNotExist_ThrowsNotFoundException()
     {
-        var result = await _platformService.DeleteAsync(Guid.NewGuid());
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _platformService.DeleteAsync(Guid.NewGuid()));
     }
 }

@@ -105,14 +105,13 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_GameDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentGameDto = GetGameCreateDto();
         var id = Guid.NewGuid();
 
-        var isUpdated = await _gameService.UpdateAsync(id, nonExistentGameDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await _gameService.UpdateAsync(id, nonExistentGameDto));
     }
 
     [Fact]
@@ -195,22 +194,18 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_GameDoesNotExist_ReturnsFalse()
+    public async Task DeleteAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
-        var result = await _gameService.DeleteAsync(Guid.NewGuid());
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _gameService.DeleteAsync(Guid.NewGuid()));
     }
 
     [Fact]
-    public async Task DeleteAsync_GameAlreadyDeleted_ReturnsFalse()
+    public async Task DeleteAsync_GameAlreadyDeleted_ThrowsNotFoundException()
     {
         var game = _data[0];
         await _gameService.DeleteAsync(game.Id);
 
-        var result = await _gameService.DeleteAsync(game.Id);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _gameService.GetByIdAsync(game.Id));
     }
 
     private GameDto GetGameDto(

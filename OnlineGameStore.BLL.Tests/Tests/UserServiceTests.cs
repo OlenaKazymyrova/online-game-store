@@ -106,7 +106,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task UpdateUserAsync_UserDoesNotExist_ReturnsFalse()
+    public async Task UpdateUserAsync_UserDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentUserId = Guid.NewGuid();
 
@@ -117,9 +117,7 @@ public class UserServiceTests
             Password = "hashedpassword"
         };
 
-        var isUpdated = await _userService.UpdateAsync(nonExistentUserId, userDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.UpdateAsync(nonExistentUserId, userDto));
     }
 
     [Fact]
@@ -135,12 +133,10 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task DeleteUserAsync_UserDoesNotExist_ReturnsFalse()
+    public async Task DeleteUserAsync_UserDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentUserId = Guid.NewGuid();
 
-        var isDeleted = await _userService.DeleteAsync(nonExistentUserId);
-
-        Assert.False(isDeleted);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.DeleteAsync(nonExistentUserId));
     }
 }

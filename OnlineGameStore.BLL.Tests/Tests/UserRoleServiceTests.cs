@@ -207,7 +207,7 @@ public class UserRoleServiceTests
     }
 
     [Fact]
-    public async Task RemoveUserRoleAsync_UserDoesNotHaveRole_ReturnsFalse()
+    public async Task RemoveUserRoleAsync_UserDoesNotHaveRole_ThrowsInternalErrorException()
     {
         var userRole = _data[0];
 
@@ -215,9 +215,8 @@ public class UserRoleServiceTests
 
         Assert.True(deleted);
 
-        var isDeleted = await _userRoleService.RemoveUserRoleAsync(userRole.UserId, userRole.RoleId);
-
-        Assert.False(isDeleted);
+        await Assert.ThrowsAsync<InternalErrorException>(async () =>
+            await _userRoleService.RemoveUserRoleAsync(userRole.UserId, userRole.RoleId));
     }
 
     [Fact]

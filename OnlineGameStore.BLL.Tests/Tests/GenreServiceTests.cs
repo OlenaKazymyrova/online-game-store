@@ -102,20 +102,17 @@ public class GenreServiceTests
 
         Assert.NotNull(result);
         Assert.Equal(dataPaginatedExpected.Count(), result.Items.Count());
-
     }
 
     [Fact]
-    public async Task DeleteAsync_GenreExists_Deletes()
+    public async Task DeleteAsync_GenreExists_ThrowsNotFoundException()
     {
         var genre = _data[0];
 
         var resultBeforeDeletion = await _genreService.DeleteAsync(genre.Id);
 
-        var resultAfterDeletion = await _genreService.DeleteAsync(genre.Id);
-
-
         Assert.True(resultBeforeDeletion);
-        Assert.False(resultAfterDeletion);
+
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _genreService.GetByIdAsync(genre.Id));
     }
 }

@@ -66,7 +66,7 @@ public class UserRoleRepositoryMockCreator
             {
                 var userRole = _data.FirstOrDefault(ur => ur.UserId == userId && ur.RoleId == roleId);
                 if (userRole == null)
-                    return false;
+                    throw new KeyNotFoundException("User role not found.");
 
                 _data.Remove(userRole);
                 return true;
