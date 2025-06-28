@@ -97,7 +97,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         return _mapper.Map<PlatformDto>(addedEntity);
     }
 
-    public async Task UpdateGameRefsAsync(Guid id, List<Guid> gameIds)
+    public async Task UpdateGameRefsAsync(Guid platformId, List<Guid> gameIds)
     {
         List<Game> gameEntities;
 
@@ -124,7 +124,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
 
         try
         {
-            await platformRepository.UpdateGameRefsAsync(id, gameEntities);
+            await platformRepository.UpdateGameRefsAsync(platformId, gameEntities);
         }
         catch (ArgumentNullException e)
         {
@@ -132,7 +132,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         }
         catch (KeyNotFoundException e)
         {
-            throw new NotFoundException("Genre cannot be found.", e);
+            throw new NotFoundException("Platform cannot be found.", e);
         }
         catch (DbUpdateConcurrencyException e)
         {

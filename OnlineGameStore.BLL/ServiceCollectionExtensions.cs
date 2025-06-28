@@ -28,10 +28,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<GameResolver>();
 
-        services.AddScoped<GenreResolver>();
-
-        services.AddScoped<PlatformResolver>();
-
         services.AddScoped<ITypeConverter<Guid, Genre>, GuidToGenreConverter>();
         services.AddScoped<ITypeConverter<Guid, Platform>, GuidToPlatformConverter>();
         services.AddScoped<ITypeConverter<Guid, Game>, GuidToGameConverter>();
