@@ -13,7 +13,7 @@ namespace OnlineGameStore.BLL.Services;
 public abstract class
     Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> :
     IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
-    where TEntity : DAL.Entities.TEntity
+    where TEntity : DAL.Entities.Entity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class

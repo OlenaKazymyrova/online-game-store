@@ -7,7 +7,7 @@ using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entities.TEntity
+public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entities.Entity
 {
     protected readonly OnlineGameStoreDbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;

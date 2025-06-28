@@ -2,7 +2,7 @@
 
 namespace OnlineGameStore.DAL.Entities;
 
-public class Genre : TEntity
+public class Genre : Entity
 {
     [Required]
     public override Guid Id { get; set; } = Guid.NewGuid();

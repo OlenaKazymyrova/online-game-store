@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace OnlineGameStore.UI.QueryBuilders;
 
 public interface IQueryBuilder<TEntity, in TAggregationParams>
-    where TEntity : DAL.Entities.TEntity
+    where TEntity : Entity
 {
     public Expression<Func<TEntity, bool>>? BuildFilter(TAggregationParams aggregationParams);
 
