@@ -14,8 +14,4 @@ public class GameCreateDto
     public decimal Price { get; set; }
     [Required]
     public DateTime ReleaseDate { get; set; }
-    //[Required]
-    //public ICollection<Guid> GenresIds { get; set; } = new List<Guid>();
-    //[Required]
-    //public ICollection<Guid> PlatformsIds { get; set; } = new List<Guid>();
 }
