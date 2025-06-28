@@ -367,8 +367,39 @@ public class GenresControllerTests
 
         queriedChildGenreResponse.EnsureSuccessStatusCode();
 
-        var queriedChildren = (await queriedChildGenreResponse.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>())!.Items;
+        var queriedChildren =
+            (await queriedChildGenreResponse.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>())!.Items;
 
         Assert.Single(queriedChildren);
+    }
+
+    [Fact]
+    public async Task Get_GenreWithQPresentQueried_ReturnsGenreWithSpecifiedQ()
+    {
+        var searchedTerm = "searchedTerm";
+        var firstGenre = GenGenreCreateDto();
+        var secondGenre = GenGenreCreateDto();
+        firstGenre.Name = $"Name contain {searchedTerm}";
+        secondGenre.Description = $"Description contain {searchedTerm}";
+
+        var firstResponse = await _client.PostAsJsonAsync("api/genres", firstGenre);
+        var firstCreated = await firstResponse.Content.ReadFromJsonAsync<GenreReadDto>();
+
+        firstResponse.EnsureSuccessStatusCode();
+
+        var secondResponse = await _client.PostAsJsonAsync("api/genres", firstGenre);
+        var secondCreated = await secondResponse.Content.ReadFromJsonAsync<GenreReadDto>();
+
+        secondResponse.EnsureSuccessStatusCode();
+
+        var queriedQGenreResponse = await _client.GetAsync($"api/genres?q={searchedTerm}");
+        var queriedGetResponse =
+            (await queriedQGenreResponse.Content.ReadFromJsonAsync<PaginatedResponse<GenreReadDto>>())!.Items.ToList();
+
+        queriedQGenreResponse.EnsureSuccessStatusCode();
+
+        Assert.Equal(2, queriedGetResponse.Count());
+        Assert.Equal(queriedGetResponse[0].Id, firstCreated!.Id);
+        Assert.Equal(queriedGetResponse[1].Id, secondCreated!.Id);
     }
 }
