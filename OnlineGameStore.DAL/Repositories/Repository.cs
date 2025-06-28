@@ -7,7 +7,7 @@ using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entities.TEntity
 {
     protected readonly OnlineGameStoreDbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;
@@ -20,8 +20,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<bool> ExistsAsync(Guid id)
     {
-        return await _dbSet.AnyAsync(e =>
-            EF.Property<Guid>(e, "Id") == id);
+        return await _dbSet.AnyAsync(e => e.Id == id);
     }
 
     public virtual async Task<PaginatedResponse<TEntity>> GetAsync(
@@ -95,6 +94,11 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
+
+        if (await _dbSet.FindAsync(entity.Id) is null)
+        {
+            throw new KeyNotFoundException("Entity not found.");
+        }
 
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
