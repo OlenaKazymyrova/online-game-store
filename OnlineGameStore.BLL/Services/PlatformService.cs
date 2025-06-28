@@ -97,7 +97,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         return _mapper.Map<PlatformDto>(addedEntity);
     }
 
-    public async Task UpdateGameRefsAsync(Guid platfromId, List<Guid> gameIds)
+    public async Task UpdateGameRefsAsync(Guid id, List<Guid> gameIds)
     {
         List<Game> gameEntities;
 
@@ -114,29 +114,29 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
                     .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more Genres were not found.", inner);
+                throw new NotFoundException("One or more Games were not found.");
 
-            throw new InternalErrorException("An error occurred while mapping the GUID to the Genre entity.");
+            throw new InternalErrorException("An error occurred while mapping the GUID to the Game entity.");
         }
 
-        if (_repository is not IGameRepository gameRepo)
-            throw new InvalidOperationException("Repository does not support genre updates");
+        if (_repository is not IPlatformRepository platformRepository)
+            throw new InvalidOperationException("Repository does not support game updates.");
 
         try
         {
-            await gameRepo.UpdateGenreRefsAsync(gameId, gameEntities);
+            await platformRepository.UpdateGameRefsAsync(id, gameEntities);
         }
         catch (ArgumentNullException e)
         {
-            throw new ValidationException("The argument cannot be null", e);
+            throw new ValidationException("The argument cannot be null.", e);
         }
         catch (KeyNotFoundException e)
         {
-            throw new NotFoundException("Entity cannot be found", e);
+            throw new NotFoundException("Genre cannot be found.", e);
         }
         catch (DbUpdateConcurrencyException e)
         {
-            throw new ConflictException("An error occured while updating", e);
+            throw new ConflictException("An error occured while updating.", e);
         }
         catch (Exception e)
         {
