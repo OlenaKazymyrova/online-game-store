@@ -79,11 +79,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task AddAsync_GameWithNewGenreReference_CreatesNewGenre()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var context = new OnlineGameStoreDbContext(options);
+        var context = GetOnlineGameStoreDbContext();
         var genreRepository = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
         var gameRepository = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
 
@@ -110,11 +106,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task AddAsync_GameWithValidGenre_Success()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var context = new OnlineGameStoreDbContext(options);
+        var context = GetOnlineGameStoreDbContext();
         var genreRepo = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
         var gameRepo = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
 
@@ -140,11 +132,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task AddAsync_GameWithNewPlatformReference_CreatesNewPlatform()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var context = new OnlineGameStoreDbContext(options);
+        var context = GetOnlineGameStoreDbContext();
         var gameRepo = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
         var platformRepo = (PlatformRepository)Activator.CreateInstance(typeof(PlatformRepository), context)!;
 
@@ -167,11 +155,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task UpdatePlatformRefsAsync_GameIsPresentPlatformPresent_UpdatesGame()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var context = new OnlineGameStoreDbContext(options);
+        var context = GetOnlineGameStoreDbContext();
         var gameRepo = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
         var platformRepo = (PlatformRepository)Activator.CreateInstance(typeof(PlatformRepository), context)!;
 
@@ -201,11 +185,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task UpdatePlatformRefsAsync_GameNotFound_ThrowsKeyNotFoundException()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        await using var ctx = new OnlineGameStoreDbContext(options);
+        var ctx = GetOnlineGameStoreDbContext();
         var repo = new GameRepository(ctx);
 
         var missingGameId = Guid.NewGuid();
@@ -220,11 +200,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task UpdatePlatformRefsAsync_PlatformNotFound_ThrowsDbUpdateConcurrencyException()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        await using var ctx = new OnlineGameStoreDbContext(options);
+        var ctx = GetOnlineGameStoreDbContext();
         var gameRepo = new GameRepository(ctx);
 
         var game = GetGame();
@@ -243,11 +219,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task UpdateGenreRefsAsync_GameNotFound_ThrowsKeyNotFoundException()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var ctx = new OnlineGameStoreDbContext(options);
+        var ctx = GetOnlineGameStoreDbContext();
         var gameRepo = new GameRepository(ctx);
 
         var missingGameId = Guid.NewGuid();
@@ -268,11 +240,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task UpdateGenreRefsAsync_GenreNotFound_ThrowsDbUpdateConcurrencyException()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var ctx = new OnlineGameStoreDbContext(options);
+        var ctx = GetOnlineGameStoreDbContext();
         var gameRepo = new GameRepository(ctx);
 
         var game = GetGame();
@@ -292,12 +260,7 @@ public class GameRepositoryTests
     [Fact]
     public async Task UpdateGenreRefsAsync_GameFoundGenreFound_UpdatesGame()
     {
-
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var context = new OnlineGameStoreDbContext(options);
+        var context = GetOnlineGameStoreDbContext();
         var gameRepo = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
         var genreRepo = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
 
@@ -323,6 +286,15 @@ public class GameRepositoryTests
         Assert.NotNull(updated);
         Assert.Single(updated.Genres);
         Assert.Equal(genre.Id, updated.Genres.First().Id);
+    }
+
+    private OnlineGameStoreDbContext GetOnlineGameStoreDbContext()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        return new OnlineGameStoreDbContext(options);
     }
 
     private Game GetGame(
