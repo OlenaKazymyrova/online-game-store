@@ -24,6 +24,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddControllers().AddNewtonsoftJson();
+
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
+
 builder.Services.AddDalServices(builder.Configuration);
 builder.Services.AddBllServices();
 

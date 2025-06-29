@@ -43,8 +43,8 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(
-        [FromQuery] PagingParams pagingParams,
-        [FromQuery] GameAggregationParams aggregationParams)
+        [FromQuery] GameAggregationParams aggregationParams,
+        [FromQuery] PagingParams pagingParams)
     {
         var queryBuilder = new GameQueryBuilder();
 
