@@ -50,24 +50,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         if (dto is null)
             throw new ValidationException("PlatformCreateDto is required for create.");
 
-        Platform entity;
-        try
-        {
-            entity = _mapper.Map<Platform>(dto);
-        }
-        catch (AutoMapperMappingException e)
-        {
-            Exception? inner = e.InnerException;
-
-            if (inner is AggregateException agg)
-                inner = agg.Flatten().InnerExceptions
-                    .FirstOrDefault(ex => ex is KeyNotFoundException) ?? agg;
-
-            if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more properties in the DTO were not found in the entity.", inner);
-
-            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.", inner);
-        }
+        var entity = TryMap(dto);
 
         if (await NameExistsAsync(entity.Name))
             throw new ValidationException("Platform name already exists.");
@@ -149,7 +132,7 @@ public class PlatformService : Service<Platform, PlatformCreateDto, PlatformDto,
         if (dto is null)
             return false;
 
-        var entity = _mapper.Map<Platform>(dto);
+        var entity = TryMap(dto);
         entity.Id = id;
 
         if (await NameExistsAsync(entity.Name, id))

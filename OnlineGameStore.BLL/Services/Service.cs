@@ -13,7 +13,7 @@ namespace OnlineGameStore.BLL.Services;
 public abstract class
     Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> :
     IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
-    where TEntity : DAL.Entities.TEntity
+    where TEntity : DAL.Entities.Entity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
@@ -57,25 +57,7 @@ public abstract class
         if (dto is null)
             throw new ValidationException("DTO is required for create.");
 
-        TEntity entity;
-
-        try
-        {
-            entity = _mapper.Map<TEntity>(dto);
-        }
-        catch (AutoMapperMappingException e)
-        {
-            Exception? inner = e.InnerException;
-
-            if (inner is AggregateException agg)
-                inner = agg.Flatten().InnerExceptions
-                    .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
-
-            if (inner is KeyNotFoundException)
-                throw new NotFoundException("One or more properties in the DTO were not found in the entity.", inner);
-
-            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.", inner);
-        }
+        var entity = TryMap(dto);
 
         TEntity? addedEntity;
         try
@@ -106,7 +88,7 @@ public abstract class
         if (dto is null)
             throw new ValidationException("DTO is required for update.");
 
-        var entity = _mapper.Map<TEntity>(dto);
+        var entity = TryMap(dto);
         entity.Id = id;
 
         try
@@ -190,6 +172,27 @@ public abstract class
         catch (Exception ex)
         {
             throw new InternalErrorException("An unexpected error occurred while deleting the entity.", ex);
+        }
+    }
+
+    protected virtual TEntity TryMap(TCreateDto dto)
+    {
+        try
+        {
+            return _mapper.Map<TEntity>(dto);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            Exception? inner = e.InnerException;
+
+            if (inner is AggregateException agg)
+                inner = agg.Flatten().InnerExceptions
+                    .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
+
+            if (inner is KeyNotFoundException)
+                throw new NotFoundException("One or more properties in the DTO were not found in the entity.", inner);
+
+            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.", inner);
         }
     }
 }

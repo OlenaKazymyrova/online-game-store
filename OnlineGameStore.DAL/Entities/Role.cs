@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OnlineGameStore.DAL.Entities;
 
-public class Role : TEntity
+public class Role : Entity
 {
     [Required]
     public override Guid Id { get; set; } = Guid.NewGuid();

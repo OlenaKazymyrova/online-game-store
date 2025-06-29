@@ -1,6 +1,6 @@
 namespace OnlineGameStore.DAL.Entities;
 
-public class Platform : TEntity
+public class Platform : Entity
 {
     public override Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;

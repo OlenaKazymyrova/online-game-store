@@ -13,7 +13,7 @@ namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
 public abstract class
     ServiceMockCreator<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto, TService> : IMockCreator<TService>
-    where TEntity : DAL.Entities.TEntity
+    where TEntity : DAL.Entities.Entity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
