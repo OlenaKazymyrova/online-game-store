@@ -37,7 +37,7 @@ public class GameAggregationParams
     public string SortBy { get; set; } = "name";
 
     /// <summary>
-    /// Filters games by exact name match.
+    /// Filters games by partial name match.
     /// </summary>
     public string? Name { get; set; }
 
