@@ -1,12 +1,10 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.DTOs.Users;
 using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
-using OnlineGameStore.SharedLogic.Constants;
 
 namespace OnlineGameStore.BLL.Services;
 
@@ -22,7 +20,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         if (dto == null)
             throw new ValidationException("UserCreateDto is required for create.");
 
-        var user = _mapper.Map<User>(dto);
+        var user = TryMap(dto);
 
         if (user == null)
             throw new ValidationException("Failed to map UserCreateDto to User entity.");

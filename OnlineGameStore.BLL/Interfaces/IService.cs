@@ -7,7 +7,7 @@ using OnlineGameStore.SharedLogic.Pagination;
 namespace OnlineGameStore.BLL.Interfaces;
 
 public interface IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
-    where TEntity : DAL.Entities.TEntity
+    where TEntity : Entity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
