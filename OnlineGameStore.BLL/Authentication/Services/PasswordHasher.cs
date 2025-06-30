@@ -2,7 +2,7 @@ using OnlineGameStore.BLL.Authentication.Interface;
 
 namespace OnlineGameStore.BLL.Authentication.Services;
 
-public class PasswordHasherer : IPasswordHasher
+public class PasswordHasher : IPasswordHasher
 {
     public string Generate(string password) =>
         BCrypt.Net.BCrypt.EnhancedHashPassword(password);
