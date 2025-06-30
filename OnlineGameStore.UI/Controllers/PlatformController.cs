@@ -32,24 +32,8 @@ public class PlatformsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create([FromBody] PlatformCreateDto? platformDto)
     {
-        if (platformDto == null)
-        {
-            return BadRequest("Platform data is required.");
-        }
-
-        try
-        {
-            var createdPlatform = await _service.AddAsync(platformDto);
-
-            if (createdPlatform is null)
-                return BadRequest("Failed to create platform.");
-
-            return Created($"api/platforms/{createdPlatform.Id}", createdPlatform);
-        }
-        catch (ValidationException ex)
-        {
-            return Conflict(ex.Message);
-        }
+        var createdPlatform = await _service.AddAsync(platformDto);
+        return Created($"api/platforms/{createdPlatform.Id}", createdPlatform);
     }
 
     /// <summary>
@@ -84,8 +68,7 @@ public class PlatformsController : ControllerBase
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var platform = await _service.GetByIdAsync(id);
-
-        return (platform is null) ? NotFound() : Ok(platform);
+        return Ok(platform);
     }
 
     /// <summary>
@@ -103,6 +86,18 @@ public class PlatformsController : ControllerBase
     }
 
     /// <summary>
+    /// Updates the list of referenced games of the specified Platform.
+    /// </summary>
+    /// <param name="id"> The id of the Platform to update.</param>
+    /// <param name="gameIds">The updated list of Games IDs.</param>
+    [HttpPut("{id:guid}/games")]
+    public async Task<IActionResult> UpdateGames([FromRoute] Guid id, [FromBody] List<Guid> gameIds)
+    {
+        await _service.UpdateGameRefsAsync(id, gameIds);
+        return Ok();
+    }
+
+    /// <summary>
     /// Updates all Platform fields
     /// </summary>
     /// <param name="id">The unique identifier of the Platform to update.</param>
@@ -115,20 +110,7 @@ public class PlatformsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] PlatformCreateDto platformDto)
     {
-        if (platformDto is null)
-        {
-            return BadRequest("Platform data is required.");
-        }
-
-        try
-        {
-            var isUpdated = await _service.UpdateAsync(id, platformDto);
-
-            return (isUpdated) ? Ok() : NotFound();
-        }
-        catch (ValidationException ex)
-        {
-            return Conflict(ex.Message);
-        }
+        var isUpdated = await _service.UpdateAsync(id, platformDto);
+        return (isUpdated) ? Ok() : NotFound();
     }
 }

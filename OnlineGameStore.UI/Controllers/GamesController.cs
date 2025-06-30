@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OnlineGameStore.BLL.DTOs.Games;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
@@ -31,11 +32,6 @@ public class GamesController : ControllerBase
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var game = await _service.GetByIdAsync(id);
-        if (game == null)
-        {
-            return NotFound();
-        }
-
         return Ok(game);
     }
 
@@ -49,8 +45,8 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get(
-        [FromQuery] PagingParams pagingParams,
-        [FromQuery] GameAggregationParams aggregationParams)
+        [FromQuery] GameAggregationParams aggregationParams,
+        [FromQuery] PagingParams pagingParams)
     {
         var queryBuilder = new GameQueryBuilder();
 
@@ -78,18 +74,9 @@ public class GamesController : ControllerBase
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] GameCreateDto? gameDto)
+    public async Task<IActionResult> CreateAsync([FromBody] GameCreateDto gameDto)
     {
-        if (gameDto == null)
-        {
-            return BadRequest("Game data is required.");
-        }
-
         var createdGame = await _service.AddAsync(gameDto);
-        if (createdGame == null)
-        {
-            return BadRequest("Failed to create the game.");
-        }
 
         return Created($"api/Games/{createdGame.Id}", createdGame);
     }
@@ -111,6 +98,33 @@ public class GamesController : ControllerBase
 
         return NoContent();
     }
+
+    /// <summary>
+    /// Updates the list of referenced genres for a specified game.
+    /// </summary>
+    /// <returns></returns>
+    /// <param name="id"> The id of the Game to update.</param>
+    /// <param name="genreIds"> The updated list of Genres ids.</param>
+    [HttpPut("{id:guid}/genres")]
+    public async Task<IActionResult> UpdateGenresAsync([FromRoute] Guid id, [FromBody] List<Guid> genreIds)
+    {
+        await _service.UpdateGenreRefsAsync(id, genreIds);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Updates the list of referenced genres for a specified game.
+    /// </summary>
+    /// <returns></returns>
+    /// <param name="id"> The id go the Game to update.</param>
+    /// <param name="platformIds"> The updated list of Genres ids.</param>
+    [HttpPut("{id:guid}/platforms")]
+    public async Task<IActionResult> UpdatePlatformsAsync([FromRoute] Guid id, [FromBody] List<Guid> platformIds)
+    {
+        await _service.UpdatePlatformRefsAsync(id, platformIds);
+        return Ok();
+    }
+
 
     /// <summary>
     /// Updates all game fields.
@@ -155,8 +169,6 @@ public class GamesController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<IActionResult> UpdatePatchAsync(Guid id, [FromBody] JsonPatchDocument<GameDto> patchDoc)
     {
-        if (patchDoc == null) return BadRequest("Patch document is required.");
-
         var result = await _service.PatchAsync(id, patchDoc);
 
         if (!result) return NotFound();

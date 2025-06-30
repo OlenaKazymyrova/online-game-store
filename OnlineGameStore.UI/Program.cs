@@ -8,6 +8,7 @@ using OnlineGameStore.BLL.Authorization;
 using OnlineGameStore.DAL;
 using OnlineGameStore.SharedLogic.Enums;
 using OnlineGameStore.SharedLogic.Settings;
+using OnlineGameStore.UI.Middleware;
 using OnlineGameStore.UI.Services;
 
 const string apiVersion = "1.0.0";
@@ -54,12 +55,19 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 builder.Services.AddControllers().AddNewtonsoftJson();
+
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
+
 builder.Services.AddDalServices(builder.Configuration);
 builder.Services.AddBllServices();
-builder.Services.AddHostedService<RoleSeederService>();
 
+builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
+
+builder.Services.AddHostedService<RoleSeederService>();
 builder.Services.AddHostedService<AdminSeederService>();
 
 
@@ -108,6 +116,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.MapControllers();
 app.Run();
 

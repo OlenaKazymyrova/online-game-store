@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL.DTOs.Games;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -52,11 +53,9 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetByIdAsync_GameDoesNotExist_ReturnsNull()
+    public async Task GetByIdAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
-        var emptyGame = await _gameService.GetByIdAsync(Guid.NewGuid());
-
-        Assert.Null(emptyGame);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _gameService.GetByIdAsync(Guid.NewGuid()));
     }
 
     [Fact]
@@ -106,14 +105,13 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task UpdateAsync_GameDoesNotExist_ReturnsFalse()
+    public async Task UpdateAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentGameDto = GetGameCreateDto();
         var id = Guid.NewGuid();
 
-        var isUpdated = await _gameService.UpdateAsync(id, nonExistentGameDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await _gameService.UpdateAsync(id, nonExistentGameDto));
     }
 
     [Fact]
@@ -141,14 +139,13 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task PatchAsync_GameDoesNotExist_ReturnsFalse()
+    public async Task PatchAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
         var patchDoc = new JsonPatchDocument<GameDto>();
         patchDoc.Replace(g => g.Name, "Non-existent Game");
 
-        var isPatched = await _gameService.PatchAsync(Guid.NewGuid(), patchDoc);
-
-        Assert.False(isPatched);
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await _gameService.PatchAsync(Guid.NewGuid(), patchDoc));
     }
 
     [Fact]
@@ -197,22 +194,18 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task DeleteAsync_GameDoesNotExist_ReturnsFalse()
+    public async Task DeleteAsync_GameDoesNotExist_ThrowsNotFoundException()
     {
-        var result = await _gameService.DeleteAsync(Guid.NewGuid());
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _gameService.DeleteAsync(Guid.NewGuid()));
     }
 
     [Fact]
-    public async Task DeleteAsync_GameAlreadyDeleted_ReturnsFalse()
+    public async Task DeleteAsync_GameAlreadyDeleted_ThrowsNotFoundException()
     {
         var game = _data[0];
         await _gameService.DeleteAsync(game.Id);
 
-        var result = await _gameService.DeleteAsync(game.Id);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _gameService.GetByIdAsync(game.Id));
     }
 
     private GameDto GetGameDto(

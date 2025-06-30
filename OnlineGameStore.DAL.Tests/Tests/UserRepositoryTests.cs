@@ -116,7 +116,7 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateAsync_UserDoesNotExist_ReturnsException()
+    public async Task UpdateAsync_UserDoesNotExist_ThrowsException()
     {
         var repository = _creator.Create();
         var user = GetUser();
@@ -140,13 +140,11 @@ public class UserRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_UserDoesNotExist_DoesNothing()
+    public async Task DeleteAsync_UserDoesNotExist_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
 
-        var result = await repository.DeleteAsync(Guid.NewGuid());
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
     }
 
     private static User GetUser(

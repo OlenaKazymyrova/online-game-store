@@ -2,12 +2,13 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using OnlineGameStore.DAL.DBContext;
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 {
     protected readonly OnlineGameStoreDbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;
@@ -20,8 +21,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<bool> ExistsAsync(Guid id)
     {
-        return await _dbSet.AnyAsync(e =>
-            EF.Property<Guid>(e, "Id") == id);
+        return await _dbSet.AnyAsync(e => EF.Property<Guid>(e, "Id") == id);
     }
 
     public virtual async Task<PaginatedResponse<TEntity>> GetAsync(
@@ -72,54 +72,31 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<TEntity?> AddAsync(TEntity entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        ArgumentNullException.ThrowIfNull(entity);
 
-        try
-        {
-            await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error adding {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error adding {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
+        await _dbSet.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
+
+        return entity;
+
     }
-
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
-        if (entity is null)
+        ArgumentNullException.ThrowIfNull(entity);
+
+        if (await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == entity.Id) is null)
         {
-            throw new ArgumentNullException(nameof(entity));
+            throw new KeyNotFoundException("Entity not found.");
         }
 
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
 
-        try
-        {
-            int affected = await _dbContext.SaveChangesAsync();
-            return affected > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error updating {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error adding {typeof(TEntity).Name}: {ex.Message}");
-            throw;
-        }
+        int affected = await _dbContext.SaveChangesAsync();
+
+        return affected > 0;
     }
 
     public virtual async Task<bool> DeleteAsync(Guid id)
@@ -128,23 +105,11 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
         if (entity is null)
         {
-            return false;
+            throw new KeyNotFoundException("Entity not found.");
         }
 
-        try
-        {
-            _dbSet.Remove(entity);
-            return await _dbContext.SaveChangesAsync() > 0;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error deleting game: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error deleting game: {ex.Message}");
-            throw;
-        }
+        _dbSet.Remove(entity);
+
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 }

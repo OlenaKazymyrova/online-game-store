@@ -13,6 +13,26 @@ public class GenreRepositoryTests
     private Genre _testParentGenre;
     private Genre _testChildGenre;
 
+    private OnlineGameStoreDbContext GetOnlineGameStoreDbContext()
+    {
+        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        return new OnlineGameStoreDbContext(options);
+    }
+
+    private static Game GetGame() =>
+        new Game
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Game",
+            Description = "Desc",
+            LicenseId = Guid.NewGuid(),
+            Price = 1,
+            ReleaseDate = DateTime.Now
+        };
+
     public GenreRepositoryTests()
     {
         _testParentGenre = new Genre
@@ -57,9 +77,8 @@ public class GenreRepositoryTests
 
         var genre = _testParentGenre;
         genre.ParentId = genre.Id;
-        var result = await repository.AddAsync(genre);
 
-        Assert.Null(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.AddAsync(genre));
     }
 
     [Fact]
@@ -149,13 +168,11 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateAsync_UpdateNonExistingGenre_Fails()
+    public async Task UpdateAsync_UpdateNonExistingGenre_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
 
-        var result = await repository.UpdateAsync(_testParentGenre);
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.UpdateAsync(_testParentGenre));
     }
 
     [Fact]
@@ -171,13 +188,11 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteAsync_DeleteNonExistingGenre_Fails()
+    public async Task DeleteAsync_DeleteNonExistingGenre_ThrowsArgumentNullException()
     {
         var repository = _creator.Create();
 
-        var result = await repository.DeleteAsync(Guid.NewGuid());
-
-        Assert.False(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.DeleteAsync(Guid.NewGuid()));
     }
 
     [Fact]
@@ -213,7 +228,7 @@ public class GenreRepositoryTests
     }
 
     [Fact]
-    public async Task AddAsync_MultipleSameGenres_Fails()
+    public async Task AddAsync_MultipleSameGenres_ThrowsArgumentException()
     {
         var repository = _creator.Create();
 
@@ -233,10 +248,7 @@ public class GenreRepositoryTests
     {
         var repository = _creator.Create();
 
-
-        var result = await repository.AddAsync(_testChildGenre);
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await repository.AddAsync(_testChildGenre));
     }
 
     // #####################
@@ -245,11 +257,7 @@ public class GenreRepositoryTests
     [Fact]
     public async Task AddAsync_GenreWithNonExistingGame_CreatesGame()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var context = new OnlineGameStoreDbContext(options);
+        var context = GetOnlineGameStoreDbContext();
         var genreRepository = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
         var gameRepository = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
 
@@ -275,11 +283,7 @@ public class GenreRepositoryTests
     [Fact]
     public async Task DeleteAsync_DeletesGenreWithGameReference_RemovesReferenceToGame()
     {
-        var options = new DbContextOptionsBuilder<OnlineGameStoreDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        var context = new OnlineGameStoreDbContext(options);
+        var context = GetOnlineGameStoreDbContext();
         var genreRepository = (GenreRepository)Activator.CreateInstance(typeof(GenreRepository), context)!;
         var gameRepository = (GameRepository)Activator.CreateInstance(typeof(GameRepository), context)!;
 
@@ -304,5 +308,56 @@ public class GenreRepositoryTests
 
         Assert.NotNull(addedGame);
         Assert.Empty(addedGame.Genres);
+    }
+
+    [Fact]
+    public async Task UpdateGameRefsAsync_GenreNotFound_ThrowsKeyNotFoundException()
+    {
+        var ctx = GetOnlineGameStoreDbContext();
+        var repo = new GenreRepository(ctx);
+        var missingGenreId = Guid.NewGuid();
+        var game = GetGame();
+
+        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            repo.UpdateGameRefsAsync(missingGenreId, new List<Game> { game }));
+    }
+
+    [Fact]
+    public async Task UpdateGameRefsAsync_GameNotFoundOnExistingGenre_ThrowsDbUpdateException()
+    {
+        var ctx = GetOnlineGameStoreDbContext();
+        var repo = new GenreRepository(ctx);
+        var genre = _testParentGenre;
+        await repo.AddAsync(genre);
+
+        var missingGame = GetGame();
+
+        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() =>
+            repo.UpdateGameRefsAsync(genre.Id, new List<Game> { missingGame }));
+    }
+
+    [Fact]
+    public async Task UpdateGameRefsAsync_GenreAndGameExist_UpdatesGenre()
+    {
+        var ctx = GetOnlineGameStoreDbContext();
+        var genreRepo = new GenreRepository(ctx);
+        var gameRepo = new GameRepository(ctx);
+
+        var genre = _testParentGenre;
+        var game = GetGame();
+
+        await genreRepo.AddAsync(genre);
+        await gameRepo.AddAsync(game);
+
+        var ex = await Record.ExceptionAsync(() =>
+            genreRepo.UpdateGameRefsAsync(genre.Id, new List<Game> { game }));
+
+        Assert.Null(ex);
+
+        var updated = await genreRepo.GetByIdAsync(genre.Id);
+
+        Assert.NotNull(updated);
+        Assert.Single(updated.Games);
+        Assert.Equal(game.Id, updated.Games.First().Id);
     }
 }

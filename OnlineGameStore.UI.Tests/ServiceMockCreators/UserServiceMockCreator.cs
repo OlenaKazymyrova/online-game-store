@@ -1,5 +1,6 @@
 using Moq;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 
