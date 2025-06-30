@@ -2,24 +2,39 @@ using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.SharedLogic.Constants;
+using OnlineGameStore.SharedLogic.Enums;
+using OnlineGameStore.SharedLogic.Settings;
 
 namespace OnlineGameStore.DAL.Repositories;
 
 public class UserRoleRepository : IUserRoleRepository
 {
     private readonly OnlineGameStoreDbContext _dbContext;
+    protected readonly DbSet<UserRole> _dbSet;
 
     public UserRoleRepository(OnlineGameStoreDbContext dbContext)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _dbSet = _dbContext.Set<UserRole>();
     }
 
-    public async Task<IEnumerable<Role>> GetUserRolesAsync(Guid userId)
+    public async Task<HashSet<PermissionEnum>> GetUserRolesAsync(Guid userId)
     {
-        return await _dbContext.UserRoles
+        var roles = await _dbSet
             .Where(ur => ur.UserId == userId)
+            .Include(ur => ur.Role)
+            .ThenInclude(r => r.RolePermissions)
+            .ThenInclude(rp => rp.Permission)
             .Select(ur => ur.Role)
             .ToListAsync();
+        
+        var permissions = roles
+            .SelectMany(r => r.RolePermissions.Select(rp => rp.Permission))
+            .Select(p => SystemPermissionSettings.GetPermissionFromGuid(p.Id))
+            .ToHashSet();
+        
+        return permissions;
     }
 
     public async Task<IEnumerable<User>> GetUsersByRoleAsync(Guid roleId)
@@ -29,7 +44,6 @@ public class UserRoleRepository : IUserRoleRepository
             .Select(ur => ur.User)
             .ToListAsync();
     }
-
     public async Task<bool> UserHasRoleAsync(Guid userId, Guid roleId)
     {
         return await _dbContext.UserRoles

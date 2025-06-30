@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs.Games;
@@ -10,6 +11,7 @@ namespace OnlineGameStore.UI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class GamesController : ControllerBase
 {
     private readonly IGameService _service;

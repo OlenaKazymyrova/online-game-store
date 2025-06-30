@@ -1,6 +1,4 @@
-using Microsoft.Win32.SafeHandles;
-
-namespace OnlineGameStore.SharedLogic;
+namespace OnlineGameStore.BLL.Infrastracture;
 
 public class PasswordHasherer: IPasswordHasher
 {
