@@ -10,7 +10,6 @@ using OnlineGameStore.UI.QueryBuilders;
 namespace OnlineGameStore.UI.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("api/[controller]")]
 public class PlatformsController : ControllerBase
 {

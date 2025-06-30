@@ -1,21 +1,22 @@
 services:
   sqlserver:
     image: mcr.microsoft.com/azure-sql-edge:latest
-    platform: linux/arm64  # Required for Apple Silicon
+    platform: linux/arm64
     environment:
       MSSQL_SA_PASSWORD: "rhIRr5i8R7n39Ckn1QWj"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
     volumes:
-      - sqlserver_data:/var/opt/mssql/data  # Changed to /data subdirectory
+      - sqlserver_data:/var/opt/mssql
     ports:
       - "1433:1433"
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "rhIRr5i8R7n39Ckn1QWj", "-Q", "SELECT 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
+    # Temporarily comment out healthcheck if sqlcmd missing
+    # healthcheck:
+    #   test: ["CMD-SHELL", "echo 'select 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P rhIRr5i8R7n39Ckn1QWj"]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 10
 
 volumes:
   sqlserver_data:
