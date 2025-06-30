@@ -20,6 +20,7 @@ public class PlatformsControllerTests
         var mockCreator = new PlatformServiceMockCreator(data);
         var factory = new ControllerTestsHelper<IPlatformService>(mockCreator);
         _client = factory.CreateClient();
+        
     }
 
     private static PlatformCreateDto GenPlatformCreateDto()

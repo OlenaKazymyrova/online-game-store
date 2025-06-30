@@ -26,9 +26,10 @@ public class GamesController : ControllerBase
     /// Retrieves a game by its unique ID.
     /// </summary>
     /// <param name="id">The ID of the game to retrieve.</param>
+    [HttpGet("{id:guid}")]
+    [Authorize(Policy = "Permissions.Read")]
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var game = await _service.GetByIdAsync(id);
@@ -41,6 +42,7 @@ public class GamesController : ControllerBase
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
     /// <param name="aggregationParams"> Specifies the possible filtering and ordering</param>
     [HttpGet]
+    [Authorize(Policy = "Permissions.Read")]
     [ProducesResponseType(typeof(PaginatedResponse<GameDetailedDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -71,9 +73,10 @@ public class GamesController : ControllerBase
     /// Creates a new game.
     /// </summary>
     /// <param name="gameDto">The game data to create.</param>
+    [HttpPost]
+    [Authorize(Policy = "Permissions.Create")]
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] GameCreateDto gameDto)
     {
         var createdGame = await _service.AddAsync(gameDto);
@@ -85,9 +88,10 @@ public class GamesController : ControllerBase
     /// Deletes a game by its ID.
     /// </summary>
     /// <param name="id">The ID of the game to delete.</param>
+    [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "Permissions.Delete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
         var result = await _service.DeleteAsync(id);
@@ -106,6 +110,7 @@ public class GamesController : ControllerBase
     /// <param name="id"> The id of the Game to update.</param>
     /// <param name="genreIds"> The updated list of Genres ids.</param>
     [HttpPut("{id:guid}/genres")]
+    [Authorize(Policy = "Permissions.Update")]
     public async Task<IActionResult> UpdateGenresAsync([FromRoute] Guid id, [FromBody] List<Guid> genreIds)
     {
         await _service.UpdateGenreRefsAsync(id, genreIds);
@@ -119,6 +124,7 @@ public class GamesController : ControllerBase
     /// <param name="id"> The id go the Game to update.</param>
     /// <param name="platformIds"> The updated list of Genres ids.</param>
     [HttpPut("{id:guid}/platforms")]
+    [Authorize(Policy = "Permissions.Update")]
     public async Task<IActionResult> UpdatePlatformsAsync([FromRoute] Guid id, [FromBody] List<Guid> platformIds)
     {
         await _service.UpdatePlatformRefsAsync(id, platformIds);
@@ -132,6 +138,7 @@ public class GamesController : ControllerBase
     /// <param name="id">The unique identifier of the Game to update.</param>
     /// <param name="gameDto">The new Game data.</param>
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "Permissions.Update")]
     public async Task<IActionResult> UpdatePutAsync([FromRoute] Guid id, [FromBody] GameCreateDto gameDto)
     {
         var isUpdated = await _service.UpdateAsync(id, gameDto);
@@ -167,6 +174,7 @@ public class GamesController : ControllerBase
     /// <param name="id">ID of a Game entity to update</param>
     /// <param name="patchDoc">JSON object that contains fields to be updated and new values</param>
     [HttpPatch("{id:guid}")]
+    [Authorize(Policy = "Permissions.Update")]
     public async Task<IActionResult> UpdatePatchAsync(Guid id, [FromBody] JsonPatchDocument<GameDto> patchDoc)
     {
         var result = await _service.PatchAsync(id, patchDoc);

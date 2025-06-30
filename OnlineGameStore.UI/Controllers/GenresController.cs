@@ -25,9 +25,10 @@ public class GenresController : ControllerBase
     /// Retrieves a genre by its unique ID.
     /// </summary>
     /// <param name="id">The id of the genre to retrieve.</param>
+    [HttpGet("{id:guid}")]
+    [Authorize(Policy = "Permissions.Read")]
     [ProducesResponseType(typeof(GenreDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var dto = await _service.GetByIdAsync(id);
@@ -39,9 +40,10 @@ public class GenresController : ControllerBase
     /// </summary>
     /// <param name="aggregationParams"> Specifies the possible filtering and logic.</param>
     /// <param name="pagingParams"> Specifies the pageSize and page pagination parameters.</param>
+    [HttpGet]
+    [Authorize(Policy = "Permissions.Read")]
     [ProducesResponseType(typeof(PaginatedResponse<GenreDetailedDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpGet]
     public async Task<IActionResult> Get([FromQuery] GenreAggregationParams aggregationParams, [FromQuery] PagingParams pagingParams)
     {
         var queryBuilder = new GenreQueryBuilder();
@@ -61,9 +63,10 @@ public class GenresController : ControllerBase
     /// Creates a new genre.
     /// </summary>
     /// <param name="dto">The genre data to create from.</param>
+    [HttpPost]
+    [Authorize(Policy = "Permissions.Create")]
     [ProducesResponseType(typeof(GenreDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [HttpPost]
     public async Task<IActionResult> Create([FromBody] GenreCreateDto dto)
     {
         var createdGenre = await _service.AddAsync(dto);
@@ -80,6 +83,7 @@ public class GenresController : ControllerBase
     /// <param name="id"> The id of the genre to update.</param>>
     /// <param name="gameIds"> The update list of Games Ids.</param>>
     [HttpPut("{id:guid}/games")]
+    [Authorize(Policy = "Permissions.Update")]
     public async Task<IActionResult> UpdateGames(Guid id, List<Guid> gameIds)
     {
         await _service.UpdateGameRefsAsync(id, gameIds);
@@ -91,10 +95,11 @@ public class GenresController : ControllerBase
     /// </summary>
     /// <param name="id">The unique identifier of the Genre to update.</param>
     /// <param name="genreDto">The new Genre data.</param>
+    [HttpPut("{id:guid}")]
+    [Authorize(Policy = "Permissions.Update")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdatePut([FromRoute] Guid id, [FromBody] GenreCreateDto genreDto)
     {
         var isUpdated = await _service.UpdateAsync(id, genreDto);
@@ -105,9 +110,10 @@ public class GenresController : ControllerBase
     /// Deletes a genre by its unique ID.
     /// </summary>
     /// <param name="id">The ID of the genre to delete.</param>
+    [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "Permissions.Delete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var isDeleted = await _service.DeleteAsync(id);
