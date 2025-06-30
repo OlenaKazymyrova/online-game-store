@@ -3,6 +3,7 @@ using OnlineGameStore.BLL.DTOs.Users;
 using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace OnlineGameStore.UI.Tests.ServiceMockCreators;
 
@@ -22,10 +23,10 @@ public class UserServiceMockCreator :
                 var user = _mapper.Map<User>(userCreateDto);
                 
                 if (_data.Any(u => u.Email == user.Email))
-                    throw new ArgumentException("Email exists", nameof(UserCreateDto.Email));
+                    throw new ConflictException("Email exists");
                 
                 if (_data.Any(u => u.Username == user.Username))
-                    throw new ArgumentException("Username exists", nameof(UserCreateDto.Username));
+                    throw new ConflictException("Username exists");
                 
                 _data.Add(user);
 

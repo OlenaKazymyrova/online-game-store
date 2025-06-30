@@ -9,6 +9,7 @@ using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
+using OnlineGameStore.SharedLogic.Settings;
 
 namespace OnlineGameStore.BLL.Services;
 
@@ -29,10 +30,8 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
 
     public override async Task<UserReadDto?> AddAsync(UserCreateDto? dto)
     {
-        if (dto == null)
-        {
-            return null;
-        }
+        if (dto is null)
+            throw new ValidationException("UsersCreateDto is required for create.");
 
         bool userExists = await _userRepository.GetByNameAsync(dto.Username) != null;
         if (userExists)
@@ -58,6 +57,12 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
 
             var user = _mapper.Map<User>(dto);
             user.PasswordHash = hashedPassword;
+            
+            user.UserRoles.Add(new UserRole
+            {
+                UserId = user.Id,
+                RoleId = SystemPermissionSettings.UserId
+            });
 
             var createdUser = await _repository.AddAsync(user);
             return _mapper.Map<UserReadDto>(createdUser);
