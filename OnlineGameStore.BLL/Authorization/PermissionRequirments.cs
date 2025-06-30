@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Enums;
 
-namespace OnlineGameStore.BLL.Infrastracture;
+namespace OnlineGameStore.BLL.Authorization;
 
 public class PermissionRequirement(ICollection<PermissionEnum> permissions) : IAuthorizationRequirement
 {

@@ -3,12 +3,13 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using OnlineGameStore.BLL.Authentication.Interface;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.SharedLogic.Constants;
+using OnlineGameStore.SharedLogic.Settings;
 
-namespace OnlineGameStore.BLL.Infrastracture;
+namespace OnlineGameStore.BLL.Authentication.Services;
 
-public class JwtProvider: IJwtProvider
+public class JwtProvider : IJwtProvider
 {
     public string GenerateAccessToken(User user)
     {
@@ -18,20 +19,21 @@ public class JwtProvider: IJwtProvider
             new(CustomClaims.UserName, user.Username),
             new(CustomClaims.Email, user.Email)
         };
-        
+
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey)),
             SecurityAlgorithms.HmacSha256);
-        
+
         var token = new JwtSecurityToken(
             claims: claims,
-            signingCredentials:signingCredentials,
+            signingCredentials: signingCredentials,
             expires: DateTime.UtcNow.AddMinutes(JwtSettings.ExpirationMinutes));
 
         var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-        
+
         return tokenValue;
     }
+
     public string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];

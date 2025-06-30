@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using OnlineGameStore.BLL.Authentication;
 using OnlineGameStore.BLL.Interfaces;
 
-namespace OnlineGameStore.BLL.Infrastracture;
+namespace OnlineGameStore.BLL.Authorization;
 
 public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
@@ -12,8 +13,9 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
     {
         _serviceScopeFactory = serviceScopeFactory;
     }
-    
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        PermissionRequirement requirement)
     {
         var userId = context.User.Claims.FirstOrDefault(
             c => c.Type == CustomClaims.UserId);
@@ -24,10 +26,10 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 
         using var scope = _serviceScopeFactory.CreateScope();
 
-        var userRoleService = scope.ServiceProvider
-            .GetRequiredService<IUserRoleService>();
+        var permissionService = scope.ServiceProvider
+            .GetRequiredService<IPermissionService>();
 
-        var permissions = await userRoleService.GetPermissionsAsync(id);
+        var permissions = await permissionService.GetPermissionAsync(id);
 
         if (requirement.Permissions.All(p => permissions.Contains(p)))
         {

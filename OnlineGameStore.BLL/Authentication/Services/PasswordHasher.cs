@@ -1,10 +1,12 @@
-namespace OnlineGameStore.BLL.Infrastracture;
+using OnlineGameStore.BLL.Authentication.Interface;
 
-public class PasswordHasherer: IPasswordHasher
+namespace OnlineGameStore.BLL.Authentication.Services;
+
+public class PasswordHasherer : IPasswordHasher
 {
     public string Generate(string password) =>
         BCrypt.Net.BCrypt.EnhancedHashPassword(password);
 
     public bool Verify(string password, string hashedPasswod) =>
         BCrypt.Net.BCrypt.EnhancedVerify(password, hashedPasswod);
-} 
+}

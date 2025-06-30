@@ -1,4 +1,4 @@
-namespace OnlineGameStore.BLL.Infrastracture;
+namespace OnlineGameStore.BLL.Authentication;
 
 internal class CustomClaims
 {

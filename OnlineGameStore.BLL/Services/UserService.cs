@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.BLL.Authentication.Interface;
 using OnlineGameStore.BLL.DTOs.Logins;
 using OnlineGameStore.BLL.DTOs.Tokens;
 using OnlineGameStore.BLL.DTOs.Users;
-using OnlineGameStore.BLL.Infrastracture;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;

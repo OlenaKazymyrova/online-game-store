@@ -1,14 +1,13 @@
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnlineGameStore.BLL;
-using OnlineGameStore.BLL.Infrastracture;
+using OnlineGameStore.BLL.Authorization;
 using OnlineGameStore.DAL;
-using OnlineGameStore.SharedLogic.Constants;
 using OnlineGameStore.SharedLogic.Enums;
+using OnlineGameStore.SharedLogic.Settings;
 using OnlineGameStore.UI.Services;
 
 const string apiVersion = "1.0.0";
@@ -27,7 +26,7 @@ builder.Services.AddSwaggerGen(options =>
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-    
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -35,9 +34,10 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter 'Bearer' followed by a space and your JWT access token.\n\nExample: `Bearer eyJhbGciOiJIUzI1...`"
+        Description =
+            "Enter 'Bearer' followed by a space and your JWT access token.\n\nExample: `Bearer eyJhbGciOiJIUzI1...`"
     });
-    
+
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -92,7 +92,6 @@ builder.Services.AddAuthorization(options =>
         options.AddPolicy($"Permissions.{permission}", policy =>
             policy.Requirements.Add(new PermissionRequirement(new[] { permission })));
     }
-
 });
 
 builder.Services.AddAuthorization();
@@ -112,4 +111,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.Run();
 
-public partial class Program { }
+public partial class Program
+{
+}
