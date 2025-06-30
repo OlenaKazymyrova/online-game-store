@@ -26,7 +26,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         _userRepository = repository;
         _jwtProvider = jwtProvider;
     }
-    
+
     public override async Task<UserReadDto?> AddAsync(UserCreateDto? dto)
     {
         if (dto == null)
@@ -37,21 +37,21 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         bool userExists = await _userRepository.GetByNameAsync(dto.Username) != null;
         if (userExists)
         {
-            throw new ArgumentException("Invalid argument", nameof(dto.Username));
+            throw new ConflictException("Username already exists.");
         }
 
         userExists = await _userRepository.GetByEmailAsync(dto.Email) != null;
         if (userExists)
         {
-            throw new ArgumentException("Invalid argument", nameof(dto.Email));
+            throw new ConflictException("An account with this email already exists.");
         }
 
         if (dto.Password.Length < UserConstants.PasswordMinLength)
         {
-            throw new ArgumentException(
-                $"Password must be at least {UserConstants.PasswordMinLength} characters long", nameof(dto.Password));
+            throw new ValidationException(
+                $"Password must be at least {UserConstants.PasswordMinLength} characters long");
         }
-        
+
         try
         {
             var hashedPassword = _passwordHasher.Generate(dto.Password);
@@ -77,19 +77,17 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         }
     }
 
-    public async Task<TokenResponseDto?> LoginAsync(LoginDto loginDto)
+    public async Task<TokenResponseDto?> LoginAsync(LoginDto? loginDto)
     {
+        if (loginDto is null)
+            throw new ValidationException("LoginDto is required for create.");
+
         var user = await _userRepository.GetByEmailAsync(loginDto.Email);
-        if (user is null)
-        {
-            return null;
-        }
 
-        var isValid = _passwordHasher.Verify(loginDto.Password, user.PasswordHash);
-
+        var isValid = user != null ? _passwordHasher.Verify(loginDto.Password, user.PasswordHash) : false;
         if (!isValid)
         {
-            return null;
+            throw new UnauthorizedException("Invalid email or password.");
         }
 
         var accessToken = _jwtProvider.GenerateAccessToken(user);
@@ -109,12 +107,24 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         };
     }
 
-    public async Task<TokenResponseDto?> RefreshTokenAsync(string refreshToken)
+    public async Task<TokenResponseDto?> RefreshTokenAsync(string? refreshToken)
     {
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            throw new ValidationException("Refresh token must be provided.");
+        }
+        
         var user = await _userRepository.GetByRefreshTokenAsync(refreshToken);
 
-        if (user == null || user.RefreshTokenExpiryTime < DateTime.UtcNow)
-            return null;
+        if (user == null)
+        {
+            throw new UnauthorizedException("Invalid refresh token.");
+        }
+
+        if (user.RefreshTokenExpiryTime < DateTime.UtcNow)
+        {
+            throw new UnauthorizedException("Refresh token has expired.");
+        }
 
         var newAccessToken = _jwtProvider.GenerateAccessToken(user);
         var newRefreshToken = _jwtProvider.GenerateRefreshToken();

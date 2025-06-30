@@ -27,23 +27,8 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RegisterUser([FromBody] UserCreateDto userCreateDto)
     {
-        try
-        {
-            var responseDto = await _service.AddAsync(userCreateDto);
-            return CreatedAtAction(nameof(RegisterUser), responseDto);
-        }
-        catch (ArgumentException ex) when (ex.ParamName == nameof(UserCreateDto.Email))
-        {
-            return BadRequest(new { Message = "An account with this email already exists." });
-        }
-        catch (ArgumentException ex) when (ex.ParamName == nameof(UserCreateDto.Password))
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-        catch (ArgumentException ex) when (ex.ParamName == nameof(UserCreateDto.Username))
-        {
-            return BadRequest(new { Message = "Username already exists." });
-        }
+        var responseDto = await _service.AddAsync(userCreateDto);
+        return CreatedAtAction(nameof(RegisterUser), responseDto);
     }
 
     /// <summary>
@@ -55,11 +40,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         var tokenResult = await _service.LoginAsync(loginDto);
-        if (tokenResult is null)
-        {
-            return BadRequest("Invalid credentials");
-        }
-
         HttpContext.Response.Cookies.Append(CookieNames.RefreshToken, tokenResult.RefreshToken);
 
         return Ok(new { token = tokenResult.AccessToken });
@@ -75,12 +55,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Refresh()
     {
         var refreshToken = Request.Cookies[CookieNames.RefreshToken];
-        if (string.IsNullOrWhiteSpace(refreshToken))
-            return BadRequest("No refresh token found.");
-
+        
         var result = await _service.RefreshTokenAsync(refreshToken);
-        if (result is null)
-            return BadRequest("Invalid or expired refresh token");
 
         HttpContext.Response.Cookies.Append(CookieNames.RefreshToken, result.RefreshToken);
 

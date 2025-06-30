@@ -114,12 +114,12 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint($"/swagger/{documentName}/swagger.json", $"OGS API v{apiVersion}");
     });
 }
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 
 app.MapControllers();
 app.Run();
