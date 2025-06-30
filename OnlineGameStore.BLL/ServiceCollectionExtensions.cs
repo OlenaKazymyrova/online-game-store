@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IJwtProvider, JwtProvider>();
-        services.AddScoped<IPasswordHasher, PasswordHasherer>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddAutoMapper(typeof(BllGameMappingProfile));
         services.AddAutoMapper(typeof(BllGenreMappingProfile));
         services.AddAutoMapper(typeof(BllPlatformMappingProfile));
@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GenreResolver>();
         services.AddScoped<PlatformResolver>();
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<PasswordHasher>();
 
         return services;
     }
