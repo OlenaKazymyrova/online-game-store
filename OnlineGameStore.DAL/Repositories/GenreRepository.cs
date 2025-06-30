@@ -9,34 +9,18 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
 {
     public override async Task<Genre?> AddAsync(Genre entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        ArgumentNullException.ThrowIfNull(entity);
 
         var isParentGenreValid = await IsParentGenreValidAsync(entity.Id, entity.ParentId);
 
         if (!isParentGenreValid)
         {
-            return null;
+            throw new KeyNotFoundException("Parent genre not found.");
         }
 
-        try
-        {
-            await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error adding genre: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
-            throw;
-        }
+        await _dbSet.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
+        return entity;
     }
 
     public override async Task<Genre?> GetByIdAsync(Guid id)
@@ -47,19 +31,30 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
             .FirstOrDefaultAsync(g => g.Id == id);
     }
 
+    public async Task UpdateGameRefsAsync(Guid id, List<Game> games)
+    {
+        ArgumentNullException.ThrowIfNull(games);
+
+        var entityToUpdate = await _dbSet.Include(genre => genre.Games).FirstOrDefaultAsync(genre => genre.Id == id);
+
+        if (entityToUpdate is null)
+        {
+            throw new KeyNotFoundException($"Could not find the Genre with ID {id}");
+        }
+
+        entityToUpdate.Games = games;
+
+        await _dbContext.SaveChangesAsync();
+    }
+
     public override async Task<bool> UpdateAsync(Genre entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
+        ArgumentNullException.ThrowIfNull(entity);
 
         var existingGenre = await _dbSet.FindAsync(entity.Id);
 
         if (existingGenre is null)
-        {
-            return false;
-        }
+            throw new KeyNotFoundException("Genre not found.");
 
         var isParentGenreValid = await IsParentGenreValidAsync(entity.Id, entity.ParentId);
 
@@ -70,21 +65,8 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
 
         _dbContext.Entry(existingGenre).CurrentValues.SetValues(entity);
 
-        try
-        {
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error updating genre: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
-            throw;
-        }
+        await _dbContext.SaveChangesAsync();
+        return true;
     }
 
     public override async Task<bool> DeleteAsync(Guid id)
@@ -92,9 +74,7 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
         var existingGenre = await _dbSet.FindAsync(id);
 
         if (existingGenre is null)
-        {
-            return false;
-        }
+            throw new KeyNotFoundException("Genre not found.");
 
         if (existingGenre.ParentId is null)
         {
@@ -104,21 +84,8 @@ public class GenreRepository(OnlineGameStoreDbContext context) : Repository<Genr
 
         _dbSet.Remove(existingGenre);
 
-        try
-        {
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Error deleting genre: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
-            throw;
-        }
+        await _dbContext.SaveChangesAsync();
+        return true;
     }
 
     private async Task<bool> IsParentGenreValidAsync(Guid genreId, Guid? parentId)

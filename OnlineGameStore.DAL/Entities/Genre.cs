@@ -2,14 +2,14 @@
 
 namespace OnlineGameStore.DAL.Entities;
 
-public class Genre : TEntity
+public class Genre : Entity
 {
     [Required]
     public override Guid Id { get; set; } = Guid.NewGuid();
     [Required]
     public required string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public Guid? ParentId { get; set; } = Guid.Empty;
+    public Guid? ParentId { get; set; } = null;
     public Genre? ParentGenre { get; set; } = default;
     public ICollection<Game> Games { get; set; } = new List<Game>();
 

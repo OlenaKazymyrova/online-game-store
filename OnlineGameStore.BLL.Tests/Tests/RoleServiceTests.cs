@@ -1,5 +1,6 @@
 using AutoMapper;
 using OnlineGameStore.BLL.DTOs.Roles;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -39,13 +40,11 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task GetRoleAsync_RoleDoesNotExist_ReturnsNull()
+    public async Task GetRoleAsync_RoleDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentRoleId = Guid.NewGuid();
 
-        var result = await _roleService.GetByIdAsync(nonExistentRoleId);
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _roleService.GetByIdAsync(nonExistentRoleId));
     }
 
     [Fact]
@@ -64,13 +63,11 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task AddRoleAsync_InvalidRole_ReturnsNull()
+    public async Task AddRoleAsync_InvalidRole_ThrowsValidationException()
     {
         RoleCreateDto? invalidRole = null;
 
-        var addedRole = await _roleService.AddAsync(invalidRole);
-
-        Assert.Null(addedRole);
+        await Assert.ThrowsAsync<ValidationException>(async () => await _roleService.AddAsync(invalidRole!));
     }
 
     [Fact]
@@ -95,19 +92,18 @@ public class RoleServiceTests
     }
 
     [Fact]
-    public async Task UpdateRoleAsync_InvalidData_ReturnsFalse()
+    public async Task UpdateRoleAsync_InvalidData_ThrowsValidationException()
     {
         var role = _data[0];
 
         RoleCreateDto? invalidRoleDto = null;
 
-        var isUpdated = await _roleService.UpdateAsync(role.Id, invalidRoleDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<ValidationException>(async () =>
+            await _roleService.UpdateAsync(role.Id, invalidRoleDto!));
     }
 
     [Fact]
-    public async Task UpdateRoleAsync_RoleDoesNotExist_ReturnsFalse()
+    public async Task UpdateRoleAsync_RoleDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentRoleId = Guid.NewGuid();
 
@@ -117,13 +113,12 @@ public class RoleServiceTests
             Description = "Test description"
         };
 
-        var isUpdated = await _roleService.UpdateAsync(nonExistentRoleId, roleDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await _roleService.UpdateAsync(nonExistentRoleId, roleDto));
     }
 
     [Fact]
-    public async Task DeleteRoleAsync_RoleExists_ReturnsTrue()
+    public async Task DeleteRoleAsync_RoleExists_ThrowsNotFoundException()
     {
         var role = _data[0];
 
@@ -131,18 +126,14 @@ public class RoleServiceTests
 
         Assert.True(isDeleted);
 
-        var deletedRole = await _roleService.GetByIdAsync(role.Id);
-
-        Assert.Null(deletedRole);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _roleService.GetByIdAsync(role.Id));
     }
 
     [Fact]
-    public async Task DeleteRoleAsync_RoleDoesNotExist_ReturnsFalse()
+    public async Task DeleteRoleAsync_RoleDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentRoleId = Guid.NewGuid();
 
-        var isDeleted = await _roleService.DeleteAsync(nonExistentRoleId);
-
-        Assert.False(isDeleted);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _roleService.DeleteAsync(nonExistentRoleId));
     }
 }

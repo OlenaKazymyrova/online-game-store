@@ -1,7 +1,9 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
 using OnlineGameStore.SharedLogic.Pagination;
@@ -11,7 +13,7 @@ namespace OnlineGameStore.BLL.Services;
 public abstract class
     Service<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto> :
     IService<TEntity, TCreateDto, TReadDto, TUpdateDto, TDetailedDto>
-    where TEntity : DAL.Entities.TEntity
+    where TEntity : DAL.Entities.Entity
     where TCreateDto : class
     where TReadDto : class
     where TUpdateDto : class
@@ -28,7 +30,10 @@ public abstract class
     public virtual async Task<TReadDto?> GetByIdAsync(Guid id)
     {
         var entity = await _repository.GetByIdAsync(id);
-        return entity == null ? null : _mapper.Map<TReadDto>(entity);
+        if (entity == null)
+            throw new NotFoundException("Entity not found.");
+
+        return _mapper.Map<TReadDto>(entity);
     }
 
     public virtual async Task<PaginatedResponse<TDetailedDto>> GetAsync(
@@ -47,16 +52,134 @@ public abstract class
         };
     }
 
-    public virtual async Task<TReadDto?> AddAsync(TCreateDto dto)
+    public virtual async Task<TReadDto> AddAsync(TCreateDto dto)
     {
         if (dto is null)
-            return null;
+            throw new ValidationException("DTO is required for create.");
 
-        TEntity entity;
+        var entity = TryMap(dto);
+
+        TEntity? addedEntity;
+        try
+        {
+            addedEntity = await _repository.AddAsync(entity);
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("Entity cannot be null.", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("An error occurred while adding the entity. It may already exist.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while adding the entity.", ex);
+        }
+
+        if (addedEntity == null)
+            throw new BadRequestException("An unexpected error occurred while adding the entity.");
+
+        return _mapper.Map<TReadDto>(addedEntity);
+    }
+
+    public virtual async Task<bool> UpdateAsync(Guid id, TCreateDto dto)
+    {
+        if (dto is null)
+            throw new ValidationException("DTO is required for update.");
+
+        var entity = TryMap(dto);
+        entity.Id = id;
 
         try
         {
-            entity = _mapper.Map<TEntity>(dto);
+            return await _repository.UpdateAsync(entity);
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("Entity cannot be null.", ex);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new NotFoundException("Entity not found.", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("An error occurred while updating the entity.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while updating the entity.", ex);
+        }
+    }
+
+    public virtual async Task<bool> PatchAsync(Guid id, JsonPatchDocument<TUpdateDto> patchDoc)
+    {
+        if (patchDoc == null)
+            throw new ValidationException("Patch document is required.");
+
+        var entity = await _repository.GetByIdAsync(id);
+
+        if (entity == null)
+            throw new NotFoundException("Entity not found.");
+
+        var dto = _mapper.Map<TUpdateDto>(entity);
+
+        patchDoc.ApplyTo(dto);
+
+        _mapper.Map(dto, entity);
+
+        try
+        {
+            return await _repository.UpdateAsync(entity);
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("Entity cannot be null.", ex);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new NotFoundException("Entity not found.", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("An error occurred while updating the entity.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while updating the entity.", ex);
+        }
+    }
+
+    public virtual async Task<bool> DeleteAsync(Guid id)
+    {
+        try
+        {
+            return await _repository.DeleteAsync(id);
+        }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("ID is required for deletion.", ex);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new NotFoundException("Entity not found.", ex);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("An error occurred while deleting the entity.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while deleting the entity.", ex);
+        }
+    }
+
+    protected virtual TEntity TryMap(TCreateDto dto)
+    {
+        try
+        {
+            return _mapper.Map<TEntity>(dto);
         }
         catch (AutoMapperMappingException e)
         {
@@ -67,48 +190,9 @@ public abstract class
                     .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
 
             if (inner is KeyNotFoundException)
-                return null;
+                throw new NotFoundException("One or more properties in the DTO were not found in the entity.", inner);
 
-            throw;
+            throw new InternalErrorException("An error occurred while mapping the DTO to the entity.", inner);
         }
-
-        var addedEntity = await _repository.AddAsync(entity);
-
-        return addedEntity == null ? null : _mapper.Map<TReadDto>(addedEntity);
-    }
-
-    public virtual async Task<bool> UpdateAsync(Guid id, TCreateDto dto)
-    {
-        if (dto is null)
-            return false;
-
-        var entity = _mapper.Map<TEntity>(dto);
-        entity.Id = id;
-
-        return await _repository.UpdateAsync(entity);
-    }
-
-    public virtual async Task<bool> PatchAsync(Guid id, JsonPatchDocument<TUpdateDto> patchDoc)
-    {
-        if (patchDoc == null)
-            return false;
-
-        var entity = await _repository.GetByIdAsync(id);
-
-        if (entity == null)
-            return false;
-
-        var dto = _mapper.Map<TUpdateDto>(entity);
-
-        patchDoc.ApplyTo(dto);
-
-        _mapper.Map(dto, entity);
-
-        return await _repository.UpdateAsync(entity);
-    }
-
-    public virtual async Task<bool> DeleteAsync(Guid id)
-    {
-        return await _repository.DeleteAsync(id);
     }
 }

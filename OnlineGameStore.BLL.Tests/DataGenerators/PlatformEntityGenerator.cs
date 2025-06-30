@@ -1,3 +1,4 @@
+using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.SharedLogic.Interfaces;
 
 namespace OnlineGameStore.BLL.Tests.DataGenerators;

@@ -16,4 +16,36 @@ public class GameRepository : Repository<Game>, IGameRepository
             .Include(game => game.Platforms)
             .FirstOrDefaultAsync(game => game.Id == id);
     }
+
+    public async Task UpdateGenreRefsAsync(Guid id, List<Genre> genres)
+    {
+        ArgumentNullException.ThrowIfNull(genres);
+
+        var entityToUpdate = await _dbSet.Include(game => game.Genres).FirstOrDefaultAsync(game => game.Id == id);
+
+        if (entityToUpdate is null)
+        {
+            throw new KeyNotFoundException($"Could not find the Game with ID {id}");
+        }
+
+        entityToUpdate.Genres = genres;
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdatePlatformRefsAsync(Guid id, List<Platform> platforms)
+    {
+        ArgumentNullException.ThrowIfNull(platforms);
+
+        var entityToUpdate = await _dbSet.Include(game => game.Platforms).FirstOrDefaultAsync(game => game.Id == id);
+
+        if (entityToUpdate is null)
+        {
+            throw new KeyNotFoundException($"Could not find the Game with ID {id}");
+        }
+
+        entityToUpdate.Platforms = platforms;
+
+        await _dbContext.SaveChangesAsync();
+    }
 }

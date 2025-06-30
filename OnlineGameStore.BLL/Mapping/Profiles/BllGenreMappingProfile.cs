@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Design.Internal;
 using OnlineGameStore.BLL.DTOs.Genres;
-using OnlineGameStore.BLL.Mapping.Resolvers;
+using OnlineGameStore.BLL.Mapping.Converters;
 using OnlineGameStore.DAL.Entities;
 
 namespace OnlineGameStore.BLL.Mapping.Profiles;
@@ -24,6 +23,9 @@ public class BllGenreMappingProfile : Profile
         CreateMap<GenreCreateDto, Genre>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
                 .ForMember(dest => dest.ParentGenre, opt => opt.Ignore())
-                .ForMember(dest => dest.Games, opt => opt.MapFrom<GenreResolver>());
+                .ForMember(dest => dest.Games, opt => opt.Ignore());
+
+        CreateMap<Guid, Genre>()
+            .ConvertUsing<GuidToGenreConverter>();
     }
 }

@@ -2,6 +2,7 @@ using AutoMapper;
 using Moq;
 using OnlineGameStore.BLL.Authentication.Interface;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
@@ -43,13 +44,11 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetUserAsync_UserDoesNotExist_ReturnsNull()
+    public async Task GetUserAsync_UserDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentUserId = Guid.NewGuid();
 
-        var result = await _userService.GetByIdAsync(nonExistentUserId);
-
-        Assert.Null(result);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.GetByIdAsync(nonExistentUserId));
     }
 
     [Fact]
@@ -69,13 +68,11 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task AddUserAsync_InvalidUser_ReturnsNull()
+    public async Task AddUserAsync_InvalidUser_ThrowsValidationException()
     {
         UserCreateDto? invalidUser = null;
-        
-        var addedUser = await _userService.AddAsync(invalidUser);
 
-        Assert.Null(addedUser);
+        await Assert.ThrowsAsync<ValidationException>(async () => await _userService.AddAsync(invalidUser!));
     }
 
     [Fact]
@@ -101,19 +98,18 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task UpdateUserAsync_InvalidData_ReturnsFalse()
+    public async Task UpdateUserAsync_InvalidData_ThrowsValidationException()
     {
         var user = _data[0];
 
         UserCreateDto? invalidUserDto = null;
 
-        var isUpdated = await _userService.UpdateAsync(user.Id, invalidUserDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<ValidationException>(async () =>
+            await _userService.UpdateAsync(user.Id, invalidUserDto!));
     }
 
     [Fact]
-    public async Task UpdateUserAsync_UserDoesNotExist_ReturnsFalse()
+    public async Task UpdateUserAsync_UserDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentUserId = Guid.NewGuid();
 
@@ -124,13 +120,11 @@ public class UserServiceTests
             Password = "hashedpassword"
         };
 
-        var isUpdated = await _userService.UpdateAsync(nonExistentUserId, userDto);
-
-        Assert.False(isUpdated);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.UpdateAsync(nonExistentUserId, userDto));
     }
 
     [Fact]
-    public async Task DeleteUserAsync_UserExists_ReturnsTrue()
+    public async Task DeleteUserAsync_UserExists_ThrowsNotFoundException()
     {
         var user = _data[0];
 
@@ -138,18 +132,14 @@ public class UserServiceTests
 
         Assert.True(isDeleted);
 
-        var deletedUser = await _userService.GetByIdAsync(user.Id);
-
-        Assert.Null(deletedUser);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.GetByIdAsync(user.Id));
     }
 
     [Fact]
-    public async Task DeleteUserAsync_UserDoesNotExist_ReturnsFalse()
+    public async Task DeleteUserAsync_UserDoesNotExist_ThrowsNotFoundException()
     {
         var nonExistentUserId = Guid.NewGuid();
 
-        var isDeleted = await _userService.DeleteAsync(nonExistentUserId);
-
-        Assert.False(isDeleted);
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _userService.DeleteAsync(nonExistentUserId));
     }
 }

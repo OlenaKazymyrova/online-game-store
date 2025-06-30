@@ -1,7 +1,9 @@
 using System.Linq.Expressions;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using OnlineGameStore.BLL.DTOs.Games;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
@@ -50,5 +52,101 @@ public class GameService : Service<Game, GameCreateDto, GameDto, GameDto, GameDe
             Items = itemsWithInclude,
             Pagination = paginatedResponse.Pagination
         };
+    }
+
+    public async Task UpdateGenreRefsAsync(Guid gameId, List<Guid> genresIds)
+    {
+        List<Genre> genreEntities;
+
+        try
+        {
+            genreEntities = _mapper.Map<List<Genre>>(genresIds);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            Exception? inner = e.InnerException;
+
+            if (inner is AggregateException agg)
+                inner = agg.Flatten().InnerExceptions
+                    .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
+
+            if (inner is KeyNotFoundException)
+                throw new NotFoundException("One or more Genres were not found.", inner);
+
+            throw new InternalErrorException("An error occurred while mapping the GUID to the Genre entity.");
+        }
+
+        if (_repository is not IGameRepository gameRepo)
+            throw new InvalidOperationException("Repository does not support genre updates.");
+
+        try
+        {
+            await gameRepo.UpdateGenreRefsAsync(gameId, genreEntities);
+        }
+        catch (ArgumentNullException e)
+        {
+            throw new ValidationException("The argument cannot be null.", e);
+        }
+        catch (KeyNotFoundException e)
+        {
+            throw new NotFoundException("Game cannot be found.", e);
+        }
+        catch (DbUpdateConcurrencyException e)
+        {
+            throw new ConflictException("An error occured while updating.", e);
+        }
+        catch (Exception e)
+        {
+            throw new InternalErrorException("An unexpected error occurred while updating the entity.", e);
+        }
+    }
+
+    public async Task UpdatePlatformRefsAsync(Guid gameId, List<Guid> platformIds)
+    {
+        List<Platform> platformEntities;
+
+        try
+        {
+            platformEntities = _mapper.Map<List<Platform>>(platformIds);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            Exception? inner = e.InnerException;
+
+            if (inner is AggregateException agg)
+                inner = agg.Flatten().InnerExceptions
+                    .FirstOrDefault(exception => exception is KeyNotFoundException) ?? agg;
+
+            if (inner is KeyNotFoundException)
+                throw new NotFoundException("One or more Platforms were not found.");
+
+            throw new InternalErrorException("An error occurred while mapping the GUID to the Platform entity.");
+        }
+
+        if (_repository is not IGameRepository gameRepo)
+            throw new InvalidOperationException("Repository does not support platform updates.");
+
+        try
+        {
+            await gameRepo.UpdatePlatformRefsAsync(gameId, platformEntities);
+        }
+        catch (ArgumentNullException e)
+        {
+
+            throw new ValidationException("The argument cannot be null.", e);
+        }
+        catch (KeyNotFoundException e)
+        {
+            throw new NotFoundException("Game cannot be found.", e);
+        }
+        catch (DbUpdateConcurrencyException e)
+        {
+            throw new ConflictException("An error occured while updating.", e);
+        }
+        catch (Exception e)
+        {
+            throw new InternalErrorException("An unexpected error occurred while updating the entity.", e);
+        }
+
     }
 }

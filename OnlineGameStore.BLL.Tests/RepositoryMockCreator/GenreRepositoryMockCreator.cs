@@ -17,7 +17,7 @@ public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRep
                     && genre.ParentId != Guid.Empty
                     && _data.Find(g => g.Id == genre.ParentId) is null)
                 {
-                    return null;
+                    throw new KeyNotFoundException("Parent genre not found.");
                 }
 
                 _data.Add(genre);
@@ -33,7 +33,7 @@ public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRep
                 var index = _data.FindIndex(x => x.Id == genre.Id);
                 if (index == -1)
                 {
-                    return false;
+                    throw new KeyNotFoundException("Genre not found.");
                 }
 
                 if (genre.ParentId is Guid parentId
@@ -55,7 +55,7 @@ public class GenreRepositoryMockCreator : RepositoryMockCreator<Genre, IGenreRep
                 var index = _data.FindIndex(x => x.Id == id);
                 if (index == -1)
                 {
-                    return false;
+                    throw new KeyNotFoundException("Genre not found.");
                 }
 
                 _data.RemoveAt(index);

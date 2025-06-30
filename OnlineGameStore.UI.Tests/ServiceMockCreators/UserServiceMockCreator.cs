@@ -1,5 +1,6 @@
 using Moq;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 
@@ -19,7 +20,7 @@ public class UserServiceMockCreator :
             .ReturnsAsync((UserCreateDto userCreateDto) =>
             {
                 var user = _mapper.Map<User>(userCreateDto);
-
+                
                 if (_data.Any(u => u.Email == user.Email))
                     throw new ArgumentException("Email exists", nameof(UserCreateDto.Email));
                 

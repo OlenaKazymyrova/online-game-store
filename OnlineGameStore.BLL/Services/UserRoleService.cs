@@ -1,7 +1,10 @@
+using System.Runtime.CompilerServices;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using OnlineGameStore.BLL.DTOs;
 using OnlineGameStore.BLL.DTOs.Roles;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Interfaces;
 
@@ -48,7 +51,18 @@ public class UserRoleService : IUserRoleService
         CheckGuids(userId, roleId);
         await CheckEntityExistence(userId, roleId);
 
-        return await _userRoleRepository.AddUserRoleAsync(userId, roleId);
+        try
+        {
+            return await _userRoleRepository.AddUserRoleAsync(userId, roleId);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("Failed to remove user role due to a database update error.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while removing the user role.", ex);
+        }
     }
 
     public async Task<bool> RemoveUserRoleAsync(Guid userId, Guid roleId)
@@ -56,26 +70,37 @@ public class UserRoleService : IUserRoleService
         CheckGuids(userId, roleId);
         await CheckEntityExistence(userId, roleId);
 
-        return await _userRoleRepository.RemoveUserRoleAsync(userId, roleId);
+        try
+        {
+            return await _userRoleRepository.RemoveUserRoleAsync(userId, roleId);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new ConflictException("Failed to remove user role due to a database update error.", ex);
+        }
+        catch (Exception ex)
+        {
+            throw new InternalErrorException("An unexpected error occurred while removing the user role.", ex);
+        }
     }
 
     private void CheckGuids(Guid userId, Guid roleId)
     {
         if (userId == Guid.Empty || roleId == Guid.Empty)
-            throw new ArgumentException("User ID and Role ID must be valid GUIDs.");
+            throw new ValidationException("User ID and Role ID must be valid GUIDs.");
 
         if (userId == roleId)
-            throw new ArgumentException("User ID and Role ID cannot be the same.");
+            throw new ValidationException("User ID and Role ID cannot be the same.");
     }
 
     private async Task CheckEntityExistence(Guid userId, Guid roleId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException($"User with ID {userId} not found.");
+            throw new NotFoundException($"User with ID {userId} not found.");
 
         var role = await _roleRepository.GetByIdAsync(roleId);
         if (role == null)
-            throw new KeyNotFoundException($"Role with ID {roleId} not found.");
+            throw new NotFoundException($"Role with ID {roleId} not found.");
     }
 }

@@ -51,7 +51,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Register_UsernameAlreadyExists_ReturnsBadRequest()
+    public async Task Register_UsernameAlreadyExists_ReturnsConflict()
     {
         var request1 = new UserCreateDto
         {
@@ -73,11 +73,11 @@ public class AuthControllerTests
 
         var conflictResponse = await _client.PostAsJsonAsync("api/auth/register", request2);
 
-        Assert.Equal(HttpStatusCode.BadRequest, conflictResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, conflictResponse.StatusCode);
     }
 
     [Fact]
-    public async Task Register_EmailAlreadyExists_ReturnsBadRequest()
+    public async Task Register_EmailAlreadyExists_ReturnsConflict()
     {
         var request1 = new UserCreateDto
         {
@@ -99,6 +99,6 @@ public class AuthControllerTests
 
         var conflictResponse = await _client.PostAsJsonAsync("api/auth/register", request2);
 
-        Assert.Equal(HttpStatusCode.BadRequest, conflictResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, conflictResponse.StatusCode);
     }
 }

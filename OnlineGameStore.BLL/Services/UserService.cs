@@ -1,13 +1,14 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.SharedLogic.Constants;
 using OnlineGameStore.BLL.Authentication.Interface;
 using OnlineGameStore.BLL.DTOs.Logins;
 using OnlineGameStore.BLL.DTOs.Tokens;
 using OnlineGameStore.BLL.DTOs.Users;
+using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
 using OnlineGameStore.DAL.Interfaces;
-using OnlineGameStore.SharedLogic.Constants;
 
 namespace OnlineGameStore.BLL.Services;
 
@@ -25,7 +26,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         _userRepository = repository;
         _jwtProvider = jwtProvider;
     }
-
+    
     public override async Task<UserReadDto?> AddAsync(UserCreateDto? dto)
     {
         if (dto == null)
@@ -50,7 +51,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
             throw new ArgumentException(
                 $"Password must be at least {UserConstants.PasswordMinLength} characters long", nameof(dto.Password));
         }
-
+        
         try
         {
             var hashedPassword = _passwordHasher.Generate(dto.Password);
@@ -61,15 +62,18 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
             var createdUser = await _repository.AddAsync(user);
             return _mapper.Map<UserReadDto>(createdUser);
         }
+        catch (ArgumentNullException ex)
+        {
+            throw new ValidationException("UserCreateDto cannot be null. Please provide valid user data.", ex);
+        }
         catch (DbUpdateException ex)
         {
-            Console.WriteLine($"Error adding user: {ex.Message}");
-            return null;
+            throw new ConflictException("Failed to add user. Please check the data and try again.", ex);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Unexpected error: {ex.Message}");
-            return null;
+            throw new InternalErrorException(
+                "An unexpected error occurred while adding the user. Please try again later.", ex);
         }
     }
 
