@@ -1,14 +1,12 @@
 using AutoMapper;
 using Moq;
+using OnlineGameStore.BLL.Authentication.Interface;
 using OnlineGameStore.BLL.DTOs.Users;
-using OnlineGameStore.BLL.Infrastracture;
 using OnlineGameStore.BLL.Mapping.Profiles;
 using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.DAL.Interfaces;
-using OnlineGameStore.SharedLogic;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
@@ -74,7 +72,7 @@ public class UserServiceTests
     public async Task AddUserAsync_InvalidUser_ReturnsNull()
     {
         UserCreateDto? invalidUser = null;
-
+        
         var addedUser = await _userService.AddAsync(invalidUser);
 
         Assert.Null(addedUser);

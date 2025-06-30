@@ -19,22 +19,12 @@ public class UserRoleRepository : IUserRoleRepository
         _dbSet = _dbContext.Set<UserRole>();
     }
 
-    public async Task<HashSet<PermissionEnum>> GetUserRolesAsync(Guid userId)
+    public async Task<IEnumerable<Role>> GetUserRolesAsync(Guid userId)
     {
-        var roles = await _dbSet
+        return await _dbContext.UserRoles
             .Where(ur => ur.UserId == userId)
-            .Include(ur => ur.Role)
-            .ThenInclude(r => r.RolePermissions)
-            .ThenInclude(rp => rp.Permission)
             .Select(ur => ur.Role)
             .ToListAsync();
-        
-        var permissions = roles
-            .SelectMany(r => r.RolePermissions.Select(rp => rp.Permission))
-            .Select(p => SystemPermissionSettings.GetPermissionFromGuid(p.Id))
-            .ToHashSet();
-        
-        return permissions;
     }
 
     public async Task<IEnumerable<User>> GetUsersByRoleAsync(Guid roleId)

@@ -26,8 +26,13 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         _jwtProvider = jwtProvider;
     }
 
-    public override async Task<UserReadDto?> AddAsync(UserCreateDto dto)
+    public override async Task<UserReadDto?> AddAsync(UserCreateDto? dto)
     {
+        if (dto == null)
+        {
+            return null;
+        }
+
         bool userExists = await _userRepository.GetByNameAsync(dto.Username) != null;
         if (userExists)
         {
