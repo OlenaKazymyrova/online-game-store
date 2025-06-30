@@ -1,4 +1,6 @@
 using AutoMapper;
+using Moq;
+using OnlineGameStore.BLL.Authentication.Interface;
 using OnlineGameStore.BLL.DTOs.Users;
 using OnlineGameStore.BLL.Exceptions;
 using OnlineGameStore.BLL.Mapping.Profiles;
@@ -6,7 +8,6 @@ using OnlineGameStore.BLL.Services;
 using OnlineGameStore.BLL.Tests.DataGenerators;
 using OnlineGameStore.BLL.Tests.RepositoryMockCreator;
 using OnlineGameStore.DAL.Entities;
-using OnlineGameStore.DAL.Interfaces;
 
 namespace OnlineGameStore.BLL.Tests.Tests;
 
@@ -25,8 +26,10 @@ public class UserServiceTests
 
         var repoMock = new UserRepositoryMockCreator(_data);
         var mockRepository = repoMock.Create();
+        var mockPasswordHasher = new Mock<IPasswordHasher>();
+        var mockJwtProvider = new Mock<IJwtProvider>();
 
-        _userService = new UserService(mockRepository, mapper);
+        _userService = new UserService(mockRepository, mapper,mockPasswordHasher.Object,mockJwtProvider.Object);
     }
 
     [Fact]
@@ -68,7 +71,7 @@ public class UserServiceTests
     public async Task AddUserAsync_InvalidUser_ThrowsValidationException()
     {
         UserCreateDto? invalidUser = null;
-
+        var addedUser = await _userService.AddAsync(invalidUser);
         await Assert.ThrowsAsync<ValidationException>(async () => await _userService.AddAsync(invalidUser!));
     }
 

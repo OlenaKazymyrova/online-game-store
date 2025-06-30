@@ -1,4 +1,5 @@
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Enums;
 
 namespace OnlineGameStore.DAL.Interfaces;
 

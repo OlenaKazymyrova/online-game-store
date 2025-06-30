@@ -16,7 +16,10 @@ public class BllUserMappingProfile : Profile
                 opt =>
                     opt.MapFrom(src => Encoding.UTF8.GetString(SHA256.HashData(Encoding.UTF8.GetBytes(src.Password)))))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.RefreshToken, opt => opt.Ignore())
+            .ForMember(dest => dest.RefreshTokenExpiryTime, opt => opt.Ignore())
+            .ForMember(dest => dest.UserRoles, opt => opt.Ignore());
 
         CreateMap<User, UserReadDto>();
     }

@@ -21,16 +21,12 @@ public class UserServiceMockCreator :
             {
                 var user = _mapper.Map<User>(userCreateDto);
 
-                if (_data.Any(u => u.Username == user.Username))
-                {
-                    throw new ConflictException("Username already exists.");
-                }
-
                 if (_data.Any(u => u.Email == user.Email))
-                {
-                    throw new ConflictException("Email already exists.");
-                }
-
+                    throw new ArgumentException("Email exists", nameof(UserCreateDto.Email));
+                
+                if (_data.Any(u => u.Username == user.Username))
+                    throw new ArgumentException("Username exists", nameof(UserCreateDto.Username));
+                
                 _data.Add(user);
 
                 return new UserReadDto

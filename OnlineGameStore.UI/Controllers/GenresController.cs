@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineGameStore.BLL.DTOs.Genres;
 using OnlineGameStore.BLL.Interfaces;
 using OnlineGameStore.DAL.Entities;
@@ -10,6 +11,7 @@ namespace OnlineGameStore.UI.Controllers;
 
 [Route("api/[Controller]")]
 [ApiController]
+[Authorize]
 public class GenresController : ControllerBase
 {
     public GenresController(IGenreService service)
