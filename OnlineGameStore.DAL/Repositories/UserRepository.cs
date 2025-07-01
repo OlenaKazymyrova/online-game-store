@@ -15,11 +15,11 @@ public class UserRepository : Repository<User>, IUserRepository
 
     public async Task<User?> GetByNameAsync(string userName) =>
          await _dbSet.FirstOrDefaultAsync(u => u.Username == userName);
-    
+
     public async Task<User?> GetByEmailAsync(string email) =>
         await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
-    
+
     public async Task<User?> GetByRefreshTokenAsync(string refreshToken) =>
         await _dbSet.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
-    
+
 }

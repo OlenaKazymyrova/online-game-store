@@ -21,13 +21,13 @@ public class UserServiceMockCreator :
             .ReturnsAsync((UserCreateDto userCreateDto) =>
             {
                 var user = _mapper.Map<User>(userCreateDto);
-                
+
                 if (_data.Any(u => u.Email == user.Email))
                     throw new ConflictException("Email exists");
-                
+
                 if (_data.Any(u => u.Username == user.Username))
                     throw new ConflictException("Username exists");
-                
+
                 _data.Add(user);
 
                 return new UserReadDto

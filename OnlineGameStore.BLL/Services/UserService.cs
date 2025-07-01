@@ -57,7 +57,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
 
             var user = _mapper.Map<User>(dto);
             user.PasswordHash = hashedPassword;
-            
+
             user.UserRoles.Add(new UserRole
             {
                 UserId = user.Id,
@@ -118,7 +118,7 @@ public class UserService : Service<User, UserCreateDto, UserReadDto, UserCreateD
         {
             throw new ValidationException("Refresh token must be provided.");
         }
-        
+
         var user = await _userRepository.GetByRefreshTokenAsync(refreshToken);
 
         if (user == null)

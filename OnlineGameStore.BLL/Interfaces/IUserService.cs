@@ -11,5 +11,5 @@ public interface IUserService : IService<User, UserCreateDto, UserReadDto, UserC
     Task<TokenResponseDto?> LoginAsync(LoginDto loginDto);
 
     Task<TokenResponseDto?> RefreshTokenAsync(string refreshToken);
-    
+
 }

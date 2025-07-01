@@ -7,7 +7,7 @@ using OnlineGameStore.SharedLogic.Settings;
 
 namespace OnlineGameStore.DAL.Repositories;
 
-public class PermissionRepository:IPermissionRepository
+public class PermissionRepository : IPermissionRepository
 {
     private readonly OnlineGameStoreDbContext _dbContext;
     protected readonly DbSet<Permission> _dbSet;
@@ -25,7 +25,7 @@ public class PermissionRepository:IPermissionRepository
                     .Any(ur => ur.UserId == userId)))
             .Select(p => p.Id)
             .ToListAsync();
-        
+
         var permissions = permissionIds
             .Select(SystemPermissionSettings.GetPermissionFromGuid)
             .ToHashSet();

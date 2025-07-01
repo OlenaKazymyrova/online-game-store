@@ -20,7 +20,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
     {
         var userId = context.User.Claims.FirstOrDefault(
             c => c.Type == CustomClaims.UserId);
-        
+
         if (userId is null || !Guid.TryParse(userId.Value, out var id))
         {
             throw new UnauthorizedException("User is not authenticated or user ID claim is invalid.");
@@ -37,8 +37,8 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         {
             throw new ForbiddenException("Missed required permissions.");
         }
-        
+
         context.Succeed(requirement);
-        
+
     }
 }

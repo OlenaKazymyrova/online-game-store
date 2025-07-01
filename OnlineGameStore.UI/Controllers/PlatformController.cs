@@ -63,7 +63,7 @@ public class PlatformsController : ControllerBase
     [HttpGet("{id:guid}")]
     [Authorize(Policy = "Permissions.Read")]
     [ProducesResponseType(typeof(PlatformDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)] 
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var platform = await _service.GetByIdAsync(id);

@@ -4,8 +4,8 @@ namespace OnlineGameStore.BLL.DTOs.Roles;
 
 public class RoleCreateDto
 {
-    [Required] 
+    [Required]
     public required string Name { get; set; }
-    [Required] 
+    [Required]
     public required string Description { get; set; }
 }

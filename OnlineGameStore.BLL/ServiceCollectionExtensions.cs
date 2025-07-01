@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GameResolver>(); // no parameterless constructor defined
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<PasswordHasher>();
-        
+
         services.AddScoped<ITypeConverter<Guid, Genre>, GuidToGenreConverter>();
         services.AddScoped<ITypeConverter<Guid, Platform>, GuidToPlatformConverter>();
         services.AddScoped<ITypeConverter<Guid, Game>, GuidToGameConverter>();

@@ -40,13 +40,13 @@ public class ControllerTestsHelper<TService> : WebApplicationFactory<Program>
         {
             services.RemoveAll<TService>();
             services.AddSingleton(serviceMock);
-            
+
             services.AddAuthentication("TestScheme")
                 .AddScheme<AuthenticationSchemeOptions, AuthHandlerMock>("TestScheme", _ => { });
-            
+
             services.RemoveAll<IPermissionService>();
             services.AddSingleton<IPermissionService>(new PermissionServiceMock());
-            
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Permissions.Read", policy =>
@@ -55,7 +55,7 @@ public class ControllerTestsHelper<TService> : WebApplicationFactory<Program>
                     policy.AddAuthenticationSchemes("TestScheme");
                 });
             });
-            
+
             services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         });
     }

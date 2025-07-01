@@ -28,27 +28,27 @@ public class AdminSeederService : BackgroundService
             throw new ArgumentNullException(nameof(dbContext));
 
         var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
-        await SeedUserAsync(dbContext, configuration, RoleEnum.Admin, "AdminSeed",passwordHasher, cancellationToken);
-        await SeedUserAsync(dbContext, configuration, RoleEnum.User, "UserSeed",passwordHasher, cancellationToken);
+        await SeedUserAsync(dbContext, configuration, RoleEnum.Admin, "AdminSeed", passwordHasher, cancellationToken);
+        await SeedUserAsync(dbContext, configuration, RoleEnum.User, "UserSeed", passwordHasher, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        
+
         var usersCount = await dbContext.Users.CountAsync();
         Console.WriteLine($"Users in DB after seeding: {usersCount}");
 
     }
 
     private async Task SeedUserAsync(OnlineGameStoreDbContext dbContext, IConfiguration configuration,
-        RoleEnum roleEnum, string section,PasswordHasher passwordHasher, CancellationToken cancellationToken)
+        RoleEnum roleEnum, string section, PasswordHasher passwordHasher, CancellationToken cancellationToken)
     {
-        
+
         var username = configuration[$"{section}:Username"];
-        var email  = configuration[$"{section}:Email"];
+        var email = configuration[$"{section}:Email"];
         var password = configuration[$"{section}:Password"];
 
         if (await dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken))
             return;
-        
+
         var hashedPassword = passwordHasher.Generate(password);
         var user = new User
         {
@@ -58,7 +58,7 @@ public class AdminSeederService : BackgroundService
             PasswordHash = hashedPassword
         };
         dbContext.Users.Add(user);
-        
+
         var roleId = SystemPermissionSettings.GetRoleGuid(roleEnum);
         dbContext.UserRoles.Add(new UserRole
         {

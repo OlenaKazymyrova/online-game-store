@@ -4,9 +4,9 @@ namespace OnlineGameStore.DAL.Entities;
 
 public class Role : Entity
 {
-    [Required] 
+    [Required]
     public override Guid Id { get; set; } = Guid.NewGuid();
-    [Required] 
+    [Required]
     public required string Name { get; set; }
     public string? Description { get; set; }
     public ICollection<Permission> Permissions { get; set; } = new List<Permission>();

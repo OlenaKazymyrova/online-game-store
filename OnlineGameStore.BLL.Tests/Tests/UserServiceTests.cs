@@ -29,7 +29,7 @@ public class UserServiceTests
         var mockPasswordHasher = new Mock<IPasswordHasher>();
         var mockJwtProvider = new Mock<IJwtProvider>();
 
-        _userService = new UserService(mockRepository, mapper,mockPasswordHasher.Object,mockJwtProvider.Object);
+        _userService = new UserService(mockRepository, mapper, mockPasswordHasher.Object, mockJwtProvider.Object);
     }
 
     [Fact]

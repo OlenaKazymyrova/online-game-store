@@ -14,9 +14,9 @@ public static class SystemPermissionSettings
             PermissionEnum.Update,
             PermissionEnum.Delete
         },
-        [RoleEnum.User] = new[] 
-        { 
-            PermissionEnum.Read 
+        [RoleEnum.User] = new[]
+        {
+            PermissionEnum.Read
         }
     };
 
@@ -30,8 +30,8 @@ public static class SystemPermissionSettings
     public static readonly Guid CreateId = Guid.Parse("00000002-0000-0000-0000-000000000000");
     public static readonly Guid UpdateId = Guid.Parse("00000003-0000-0000-0000-000000000000");
     public static readonly Guid DeleteId = Guid.Parse("00000004-0000-0000-0000-000000000000");
-    
-    
+
+
     public static readonly Guid AdminId = Guid.Parse("11111111-1111-1111-1111-111111111111");
     public static readonly Guid UserId = Guid.Parse("22222222-2222-2222-2222-222222222222");
 
@@ -42,7 +42,7 @@ public static class SystemPermissionSettings
             RoleEnum.User => UserId
         };
 
-    public static Guid GetPermissionGuid(PermissionEnum permission) => 
+    public static Guid GetPermissionGuid(PermissionEnum permission) =>
         permission switch
         {
             PermissionEnum.Read => ReadId,
@@ -50,12 +50,12 @@ public static class SystemPermissionSettings
             PermissionEnum.Update => UpdateId,
             PermissionEnum.Delete => DeleteId,
         };
-    
+
     public static string GetRoleDescription(RoleEnum role) =>
-        RoleDescriptions.TryGetValue(role, out var description) 
-            ? description 
+        RoleDescriptions.TryGetValue(role, out var description)
+            ? description
             : string.Empty;
-    
+
     public static PermissionEnum GetPermissionFromGuid(Guid permissionId) =>
         permissionId switch
         {
@@ -65,5 +65,5 @@ public static class SystemPermissionSettings
             _ when permissionId == DeleteId => PermissionEnum.Delete
         };
 
-    
+
 }
