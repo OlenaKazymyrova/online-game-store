@@ -1,8 +1,8 @@
 namespace OnlineGameStore.BLL.Authentication;
 
-internal class CustomClaims
+public class CustomClaims
 {
-    internal const string UserId = "userId";
-    internal const string UserName = "userName";
-    internal const string Email = "email";
+    public const string UserId = "userId";
+    public const string UserName = "userName";
+    public const string Email = "email";
 }
