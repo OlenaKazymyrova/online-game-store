@@ -43,5 +43,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(g => g.UpdatedAt)
             .HasColumnName("updated_at")
             .HasDefaultValueSql("NULL");
+
+        builder.HasMany(u => u.UserRoles)
+            .WithOne(ur => ur.User)
+            .HasForeignKey(ur => ur.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

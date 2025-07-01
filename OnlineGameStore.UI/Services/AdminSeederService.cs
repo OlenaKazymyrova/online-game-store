@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OnlineGameStore.BLL.Authentication.Services;
 using OnlineGameStore.DAL.DBContext;
 using OnlineGameStore.DAL.Entities;
+using OnlineGameStore.SharedLogic.Enums;
+using OnlineGameStore.SharedLogic.Settings;
 
 namespace OnlineGameStore.UI.Services;
 
@@ -17,80 +20,51 @@ public class AdminSeederService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        var passwordHasher = _serviceProvider.GetRequiredService<PasswordHasher>();
         using var scope = _serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<OnlineGameStoreDbContext>();
 
         if (dbContext == null)
             throw new ArgumentNullException(nameof(dbContext));
 
-        if (await dbContext.Users.AnyAsync(cancellationToken))
-            return;
-
         var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
+        await SeedUserAsync(dbContext, configuration, RoleEnum.Admin, "AdminSeed", passwordHasher, cancellationToken);
+        await SeedUserAsync(dbContext, configuration, RoleEnum.User, "UserSeed", passwordHasher, cancellationToken);
 
-        var adminUsername = configuration["AdminSeed:Username"];
-        var adminEmail = configuration["AdminSeed:Email"];
-        var adminPassword = configuration["AdminSeed:Password"];
+        await dbContext.SaveChangesAsync(cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(adminEmail) || string.IsNullOrWhiteSpace(adminPassword) ||
-            string.IsNullOrWhiteSpace(adminUsername))
-        {
-            Console.WriteLine("Admin seed data missing from configuration.");
+        var usersCount = await dbContext.Users.CountAsync();
+        Console.WriteLine($"Users in DB after seeding: {usersCount}");
+
+    }
+
+    private async Task SeedUserAsync(OnlineGameStoreDbContext dbContext, IConfiguration configuration,
+        RoleEnum roleEnum, string section, PasswordHasher passwordHasher, CancellationToken cancellationToken)
+    {
+
+        var username = configuration[$"{section}:Username"];
+        var email = configuration[$"{section}:Email"];
+        var password = configuration[$"{section}:Password"];
+
+        if (await dbContext.Users.AnyAsync(u => u.Email == email, cancellationToken))
             return;
-        }
 
-        var adminRole = await dbContext.Roles.FirstOrDefaultAsync(r => r.Name == "Admin", cancellationToken);
-
-        if (adminRole == null) // In case our Role seeding fails or starts later
+        var hashedPassword = passwordHasher.Generate(password);
+        var user = new User
         {
-            Console.WriteLine("Admin role not found in the database.");
-
-            var newAdminRole = new Role
-            {
-                Name = "Admin",
-                Description = "Administrator role with full permissions"
-            };
-            try
-            {
-                dbContext.Roles.Add(newAdminRole);
-                await dbContext.SaveChangesAsync(cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to create admin role: {ex.Message}");
-                return;
-            }
-
-            adminRole = newAdminRole;
-        }
-
-        var hasher = new PasswordHasher<User>();
-
-        var adminUser = new User
-        {
-            Email = adminEmail,
-            Username = adminUsername
+            Id = Guid.NewGuid(),
+            Username = username,
+            Email = email,
+            PasswordHash = hashedPassword
         };
+        dbContext.Users.Add(user);
 
-        adminUser.PasswordHash = hasher.HashPassword(adminUser, adminPassword);
-
-        try
+        var roleId = SystemPermissionSettings.GetRoleGuid(roleEnum);
+        dbContext.UserRoles.Add(new UserRole
         {
-            dbContext.Users.Add(adminUser);
-            dbContext.UserRoles.Add(new UserRole
-            {
-                UserId = adminUser.Id,
-                RoleId = adminRole.Id
-            });
+            UserId = user.Id,
+            RoleId = roleId
+        });
 
-            await dbContext.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to seed admin user: {ex.Message}");
-            return;
-        }
-
-        Console.WriteLine($"Seeded default admin user: {adminEmail}");
     }
 }

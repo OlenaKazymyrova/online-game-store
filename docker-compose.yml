@@ -1,17 +1,23 @@
-version: '3.9'
-
 services:
   sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-CU19-ubuntu-22.04
-    container_name: dev-sqlserver
-    ports:
-      - "1433:1433"
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    platform: linux/arm64
     environment:
-      SA_PASSWORD: "rhIRr5i8R7n39Ckn1QWj"
+      MSSQL_SA_PASSWORD: "rhIRr5i8R7n39Ckn1QWj"
       ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
     volumes:
       - sqlserver_data:/var/opt/mssql
+    ports:
+      - "1433:1433"
     restart: unless-stopped
+    # Temporarily comment out healthcheck if sqlcmd missing
+    # healthcheck:
+    #   test: ["CMD-SHELL", "echo 'select 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P rhIRr5i8R7n39Ckn1QWj"]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 10
 
 volumes:
   sqlserver_data:
+
